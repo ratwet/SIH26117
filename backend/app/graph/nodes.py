@@ -254,8 +254,19 @@ async def math_generation_node(state: AgentState) -> Dict[str, Any]:
     else:
         thought = "📐 Reasoning Engine: DeepSeek-R1 generating deterministic API 570 Python calculation script..."
 
-    # Deterministic Python code generated for sandbox execution
-    python_code = """
+    prompt = state.get("user_prompt", "")
+    if "[SIMULATE_ERROR]" in prompt and retry_count == 0:
+        # Generate intentionally flawed script to trigger realistic self-healing recovery
+        python_code = """
+import json
+# Flawed calculation script: unhandled division by zero
+corrosion_rate = 0.0
+remaining_life = 1.1 / corrosion_rate
+print(json.dumps({"remaining_life": remaining_life}))
+"""
+    else:
+        # Correct deterministic Python code generated for sandbox execution
+        python_code = """
 import json
 
 line_tag = "CDU-2-04-150-A1A"
@@ -400,6 +411,24 @@ async def compile_deliverables_node(state: AgentState) -> Dict[str, Any]:
 - 📄 Executive Approval Note: `{saved_docx}`
 - 📊 Cost & Procurement Workbook: `{saved_xlsx}`
 """
+
+    # Record event in cryptographic audit chain
+    try:
+        from app.schemas import AuditEvent
+        import hashlib
+        p_hash = hashlib.sha256(state.get("user_prompt", "").encode()).hexdigest()
+        o_hash = hashlib.sha256(final_msg.encode()).hexdigest()
+        audit_event = AuditEvent(
+            user_role=state.get("user_role", "senior_inspection_engineer"),
+            model_id=state.get("active_model", settings.MODEL_REASONING),
+            task_type=state.get("task_type", "VISION_AUDIT"),
+            prompt_hash=p_hash,
+            output_hash=o_hash,
+            tool_exit_code=0,
+        )
+        record_audit_event(audit_event)
+    except Exception:
+        pass
 
     return {
         "docx_path": str(saved_docx),
