@@ -44,3 +44,7 @@ deepseek-harness/
 .DS_Store
 Thumbs.db
 *.log
+
+# Internal Agent Notes (Kept local, never pushed)
+context.md
+memory.md
