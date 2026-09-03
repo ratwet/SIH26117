@@ -41,10 +41,15 @@ async def _mock_call_llm(model: str, prompt: str, system: str = "") -> str:
     return "Processed request successfully per MRPL operating procedures."
 
 
-async def _mock_execute_sandbox(code: str, retry_count: int = 0) -> SandboxResult:
-    """Mock sandbox execution for Anand's module."""
-    # To demonstrate self-healing: if retry_count == 0, simulate a missing variable error
-    if "SIMULATE_ERROR" in code and retry_count == 0:
+async def _mock_execute_sandbox(
+    code: str,
+    timeout: int = 5,
+    mem_limit_mb: int = 256,
+    **kwargs
+) -> SandboxResult:
+    """Mock sandbox execution matching Anand's execute_in_sandbox signature."""
+    # To demonstrate self-healing: if SIMULATE_ERROR is in code, simulate an error
+    if "SIMULATE_ERROR" in code:
         return SandboxResult(
             success=False,
             exit_code=1,
@@ -74,12 +79,24 @@ async def _mock_execute_sandbox(code: str, retry_count: int = 0) -> SandboxResul
     )
 
 
-# Try importing real functions if Anand or Kaushal have implemented them
+# --- 1. Anand's Sandbox Runner ---
 try:
     from app.sandbox.runner import execute_in_sandbox
 except ImportError:
     execute_in_sandbox = _mock_execute_sandbox
 
+# --- 2. Anand's Traceback Error Distiller ---
+try:
+    from app.sandbox.error_parser import distill_python_traceback
+except ImportError:
+    def distill_python_traceback(raw_stderr: str) -> str:
+        lines = [l.strip() for l in raw_stderr.splitlines() if l.strip()]
+        for l in reversed(lines):
+            if any(e in l for e in ["Error", "Exception", "Fault"]):
+                return l
+        return lines[-1] if lines else "Unknown runtime execution error"
+
+# --- 3. Anand's Word & Excel Deliverable Compilers ---
 try:
     from app.compilers.docx_builder import compile_approval_note
     from app.compilers.xlsx_builder import compile_cost_matrix
@@ -94,6 +111,28 @@ except ImportError:
         out_path.write_text(f"Mock MRPL Cost Matrix for {payload.line_tag}")
         return out_path
 
+# --- 4. Anand's Sovereign RAG Retriever ---
+try:
+    from app.rag.retriever import query_sovereign_rag
+except ImportError:
+    async def query_sovereign_rag(query: str, top_k: int = 5):
+        from app.schemas import RagQueryResponse, RagChunk
+        chunk = RagChunk(
+            doc_name="API-570-Piping-Inspection-Code.pdf",
+            clause_reference="Section 7.1.1: Assessment of Minimum Required Thickness",
+            text_content="If remaining life of an in-service hydrocarbon piping circuit is calculated to be under 5.0 years, mandatory replacement or derating must be scheduled during the next planned turnaround.",
+            relevance_score=0.92,
+        )
+        return RagQueryResponse(query=query, chunks=[chunk], combined_context=chunk.text_content)
+
+# --- 5. Anand's Cryptographic Audit Chain ---
+try:
+    from app.security.audit_chain import record_audit_event
+except ImportError:
+    def record_audit_event(event) -> str:
+        return "mock_genesis_audit_hash"
+
+# --- 6. Kaushal's LLM Gateway ---
 try:
     from app.llm.client import call_llm
 except ImportError:
@@ -262,8 +301,16 @@ async def sandbox_execution_node(state: AgentState) -> Dict[str, Any]:
 
     thought = "⚡ Sandbox Runner: Executing calculation script in bwrap isolated namespace (--unshare-net)..."
 
-    # Call execution runner (real or mock)
-    res = await execute_in_sandbox(code, retry_count=retry_count)
+    # Call execution runner (real or mock) with Anand's exact signature
+    try:
+        res = await execute_in_sandbox(
+            code=code,
+            timeout=settings.SANDBOX_TIMEOUT_SECONDS,
+            mem_limit_mb=settings.SANDBOX_MEMORY_LIMIT_MB,
+        )
+    except TypeError:
+        # Graceful fallback for mock taking retry_count
+        res = await execute_in_sandbox(code, retry_count=retry_count)
 
     if res.success:
         thought_done = f"✅ Sandbox: Execution Success (Exit Code 0) | Remaining Life = {res.parsed_output.get('remaining_life_years')} Years"
@@ -288,7 +335,14 @@ async def distill_error_node(state: AgentState) -> Dict[str, Any]:
     retry_count = state.get("retry_count", 0) + 1
     sandbox_result = state.get("sandbox_result")
 
-    error_summary = sandbox_result.distilled_error if sandbox_result else "Unknown execution failure"
+    # Use Anand's traceback distiller if distilled_error not already extracted
+    if sandbox_result and not sandbox_result.distilled_error and sandbox_result.stderr:
+        error_summary = distill_python_traceback(sandbox_result.stderr)
+    elif sandbox_result and sandbox_result.distilled_error:
+        error_summary = sandbox_result.distilled_error
+    else:
+        error_summary = "Unknown execution failure"
+
     thought = f"🔧 Error Distiller: Extracted root cause -> '{error_summary}'. Routing back to Math Node (Retry #{retry_count})..."
 
     return {
