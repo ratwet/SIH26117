@@ -132,11 +132,8 @@ except ImportError:
     def record_audit_event(event) -> str:
         return "mock_genesis_audit_hash"
 
-# --- 6. Kaushal's LLM Gateway ---
-try:
-    from app.llm.client import call_llm
-except ImportError:
-    call_llm = _mock_call_llm
+# --- Internal Model Simulation Caller ---
+call_llm = _mock_call_llm
 
 
 # =====================================================================
