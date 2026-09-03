@@ -210,7 +210,7 @@ SIH/
 ---
 
 ## 🎯 8. Immediate Next Steps (Sprint 1 Kickoff)
-1. **Rajat (Dev 1):** Build `AgentState` and the LangGraph state machine with cyclic self-healing edges.
-2. **Anand (Dev 2):** Implement the `bwrap` sandbox runner, error parser, and Word/Excel deliverable templates per [`DEV2_SPEC.md`](DEV2_SPEC.md).
-3. **Kaushal (Dev 3):** Configure Ollama daemon, pull baseline models (`qwen2.5:3b`, `deepseek-r1:8b`, `qwen2-vl:7b`), and implement `call_llm`.
+1. **Rajat (Dev 1):** Build `AgentState` and the LangGraph state machine per [`RAJAT_SPEC.md`](RAJAT_SPEC.md).
+2. **Anand (Dev 2):** Implement the `bwrap` sandbox runner, error parser, and Word/Excel deliverable templates per [`ANAND_SPEC.md`](ANAND_SPEC.md).
+3. **Kaushal (Dev 3):** Configure Ollama daemon, pull baseline models, and implement `call_llm` per [`KAUSHAL_SPEC.md`](KAUSHAL_SPEC.md).
 4. **All:** Read [`PRD.md`](PRD.md) and [`backend/app/schemas.py`](backend/app/schemas.py) for the frozen shared contract!
