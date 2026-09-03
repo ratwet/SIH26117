@@ -1,0 +1,60 @@
+# =====================================================================
+# SovereignWorkbench — Central GPU Workstation Stack (docker-compose.yml)
+# Multi-container on-premise deployment: Ollama Daemon + FastAPI Server
+# =====================================================================
+
+services:
+  # --- 1. Local Ollama Model Serving Daemon ---
+  ollama:
+    image: ollama/ollama:latest
+    container_name: sovereign-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_cache:/root/.ollama
+      - ./models_storage:/models_storage
+    environment:
+      - OLLAMA_NO_UPDATE=1
+      - OLLAMA_ORIGINS=*
+      - OLLAMA_MODELS=/root/.ollama/models
+    # GPU Acceleration via NVIDIA Container Toolkit
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  # --- 2. SovereignWorkbench Backend (LangGraph + FastAPI) ---
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sovereign-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./models_storage:/app/models_storage
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - DATA_DIR=/app/data
+      - MODELS_DIR=/app/models_storage
+      - CHROMA_PERSIST_DIR=/app/data/chromadb
+      - AUDIT_DB_PATH=/app/data/mrpl_audit.db
+      - HOST=0.0.0.0
+      - PORT=8000
+    # Required for Linux Bubblewrap (bwrap) namespace sandboxing inside container
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    depends_on:
+      - ollama
+
+volumes:
+  ollama_cache:
+    name: sovereign_ollama_cache
