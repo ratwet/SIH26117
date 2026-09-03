@@ -24,6 +24,9 @@ wheels/
 venv/
 ENV/
 
+# Runtime data
+data/
+
 # Data & Models (Do not commit models or runtime data)
 backend/data/
 backend/models_storage/

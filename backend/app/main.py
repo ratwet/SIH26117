@@ -13,6 +13,8 @@ from app.config import settings
 from app.api.health import router as health_router
 from app.api.admin import router as admin_router
 from app.api.chat import router as chat_router
+from app.api.files import router as files_router
+from app.api.telemetry import router as telemetry_router
 
 
 @asynccontextmanager
@@ -58,6 +60,8 @@ app.add_middleware(
 app.include_router(health_router)
 app.include_router(admin_router)
 app.include_router(chat_router)
+app.include_router(files_router)
+app.include_router(telemetry_router)
 
 
 @app.get("/")

@@ -302,15 +302,19 @@ async def sandbox_execution_node(state: AgentState) -> Dict[str, Any]:
     thought = "⚡ Sandbox Runner: Executing calculation script in bwrap isolated namespace (--unshare-net)..."
 
     # Call execution runner (real or mock) with Anand's exact signature
-    try:
+    import asyncio
+    if asyncio.iscoroutinefunction(execute_in_sandbox):
         res = await execute_in_sandbox(
             code=code,
             timeout=settings.SANDBOX_TIMEOUT_SECONDS,
             mem_limit_mb=settings.SANDBOX_MEMORY_LIMIT_MB,
         )
-    except TypeError:
-        # Graceful fallback for mock taking retry_count
-        res = await execute_in_sandbox(code, retry_count=retry_count)
+    else:
+        res = execute_in_sandbox(
+            code=code,
+            timeout=settings.SANDBOX_TIMEOUT_SECONDS,
+            mem_limit_mb=settings.SANDBOX_MEMORY_LIMIT_MB,
+        )
 
     if res.success:
         thought_done = f"✅ Sandbox: Execution Success (Exit Code 0) | Remaining Life = {res.parsed_output.get('remaining_life_years')} Years"
