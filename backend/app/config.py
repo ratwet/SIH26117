@@ -12,8 +12,13 @@ from pathlib import Path
 class Settings(BaseSettings):
     """Application configuration with env-var overrides."""
 
-    # --- Ollama ---
-    OLLAMA_HOST: str = "http://localhost:11434"
+    # --- 3-Node Physical Offline LAN Topology ---
+    SERVER_NODE_IP: str = "192.168.1.100"
+    ADMIN_NODE_IP: str = "192.168.1.101"
+    USER_NODE_IP: str = "192.168.1.102"
+
+    # --- Ollama Model Engine (Bound strictly to local loopback per ADR-007) ---
+    OLLAMA_HOST: str = "http://127.0.0.1:11434"
 
     # Model tags (must match `ollama list` output)
     MODEL_ROUTER: str = "qwen2.5:3b-instruct-q8_0"
