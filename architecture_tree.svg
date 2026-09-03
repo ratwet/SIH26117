@@ -1,0 +1,301 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1680 980" width="100%" height="100%" style="background-color: #0b111e; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <!-- Drop Shadow Filter -->
+    <filter id="dropShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.45" />
+    </filter>
+    <filter id="glowRoot" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#38bdf8" flood-opacity="0.3" />
+    </filter>
+
+    <!-- Arrow Markers -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+    <marker id="arrowPurple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#a78bfa" />
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f87171" />
+    </marker>
+
+    <!-- Gradients -->
+    <linearGradient id="rootGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7c3aed" />
+      <stop offset="100%" stop-color="#6d28d9" />
+    </linearGradient>
+
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#dc2626" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </linearGradient>
+
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+  </defs>
+
+  <!-- ========================================================================= -->
+  <!-- ROOT NODE: SYSTEM TITLE                                                   -->
+  <!-- ========================================================================= -->
+  <g id="rootNode" transform="translate(490, 30)">
+    <rect width="700" height="92" rx="14" fill="url(#rootGrad)" stroke="#38bdf8" stroke-width="2" filter="url(#glowRoot)" />
+    <rect x="235" y="-12" width="230" height="24" rx="12" fill="#0284c7" />
+    <text x="350" y="4" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle" letter-spacing="1">SIH 2026 • PROBLEM STATEMENT 117</text>
+    
+    <text x="350" y="44" fill="#f8fafc" font-size="20" font-weight="800" text-anchor="middle" letter-spacing="0.5">SOVEREIGN INDUSTRIAL AGENTIC AI WORKBENCH</text>
+    <text x="350" y="70" fill="#94a3b8" font-size="13" font-weight="500" text-anchor="middle">Air-Gapped, Multi-Tier Distributed Architecture for Mangalore Refinery (MRPL)</text>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- TREE DISTRIBUTION BUS LINES & ARROWS                                     -->
+  <!-- ========================================================================= -->
+  <!-- Main Vertical Trunk from Root -->
+  <path d="M 840 122 L 840 170" stroke="#475569" stroke-width="2.5" />
+
+  <!-- Horizontal Distribution Bus -->
+  <path d="M 215 170 L 1465 170" stroke="#475569" stroke-width="2.5" />
+
+  <!-- Drops to Column 1 (Admin) -->
+  <path d="M 215 170 L 215 210" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrowBlue)" />
+
+  <!-- Drops to Column 2 (Server) -->
+  <path d="M 630 170 L 630 210" stroke="#34d399" stroke-width="2.5" marker-end="url(#arrowGreen)" />
+
+  <!-- Drops to Column 3 (Client) -->
+  <path d="M 1050 170 L 1050 210" stroke="#a78bfa" stroke-width="2.5" marker-end="url(#arrowPurple)" />
+
+  <!-- Drops to Column 4 (Security) -->
+  <path d="M 1465 170 L 1465 210" stroke="#f87171" stroke-width="2.5" marker-end="url(#arrowRed)" />
+
+  <!-- ========================================================================= -->
+  <!-- BRANCH 1: MANAGEMENT TIER (LAPTOP 1: IT ADMIN CONSOLE)                   -->
+  <!-- ========================================================================= -->
+  <g id="branch1" transform="translate(60, 215)">
+    <!-- Branch Header Box -->
+    <rect width="310" height="60" rx="10" fill="url(#blueGrad)" filter="url(#dropShadow)" />
+    <text x="155" y="27" fill="#ffffff" font-size="14" font-weight="800" text-anchor="middle">1. MANAGEMENT TIER</text>
+    <text x="155" y="46" fill="#e0f2fe" font-size="11.5" font-weight="500" text-anchor="middle">Laptop 1: IT Admin &amp; Governance Console</text>
+
+    <!-- Branch Connector Line -->
+    <path d="M 155 60 L 155 90" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrowBlue)" />
+
+    <!-- Child Box 1.1: Model Ingestion -->
+    <g transform="translate(0, 90)">
+      <rect width="310" height="130" rx="8" fill="url(#cardGrad)" stroke="#1e3a5f" stroke-width="1.5" filter="url(#dropShadow)" />
+      <rect x="14" y="14" width="8" height="8" rx="2" fill="#38bdf8" />
+      <text x="30" y="22" fill="#38bdf8" font-size="13" font-weight="700">Model Registry &amp; Ingestion</text>
+      
+      <text x="20" y="52" fill="#cbd5e1" font-size="11.5">• Offline <tspan fill="#38bdf8" font-weight="600">.gguf</tspan> Drop-In Importer</text>
+      <text x="20" y="74" fill="#cbd5e1" font-size="11.5">• SHA-256 Checksum Verification</text>
+      <text x="20" y="96" fill="#cbd5e1" font-size="11.5">• Zero Code Changes for New Models</text>
+      <text x="20" y="118" fill="#94a3b8" font-size="10.5">  (Ensures system is 100% future-proof)</text>
+    </g>
+
+    <!-- Connector to Child 1.2 -->
+    <path d="M 155 220 L 155 245" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrowBlue)" />
+
+    <!-- Child Box 1.2: Enterprise Governance & RBAC -->
+    <g transform="translate(0, 245)">
+      <rect width="310" height="185" rx="8" fill="url(#cardGrad)" stroke="#1e3a5f" stroke-width="1.5" filter="url(#dropShadow)" />
+      <rect x="14" y="14" width="8" height="8" rx="2" fill="#38bdf8" />
+      <text x="30" y="22" fill="#38bdf8" font-size="13" font-weight="700">Enterprise Governance &amp; RBAC</text>
+
+      <text x="20" y="52" fill="#93c5fd" font-size="11.5" font-weight="600">• Junior Tier (Trainees):</text>
+      <text x="32" y="72" fill="#cbd5e1" font-size="11">Fast 3B Models, Routine SOP Search</text>
+
+      <text x="20" y="100" fill="#93c5fd" font-size="11.5" font-weight="600">• Senior Tier (Chief Inspectors):</text>
+      <text x="32" y="120" fill="#cbd5e1" font-size="11">DeepSeek-R1, Critical Failure Math</text>
+
+      <text x="20" y="148" fill="#93c5fd" font-size="11.5" font-weight="600">• Priority Preemption Engine:</text>
+      <text x="32" y="168" fill="#cbd5e1" font-size="11">Emergency plant tasks jump GPU queue</text>
+    </g>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- BRANCH 2: COMPUTE & STORAGE TIER (LAPTOP 2: GPU SERVER)                  -->
+  <!-- ========================================================================= -->
+  <g id="branch2" transform="translate(450, 215)">
+    <!-- Branch Header Box -->
+    <rect width="360" height="60" rx="10" fill="url(#greenGrad)" filter="url(#dropShadow)" />
+    <text x="180" y="27" fill="#ffffff" font-size="14" font-weight="800" text-anchor="middle">2. COMPUTE &amp; STORAGE TIER</text>
+    <text x="180" y="46" fill="#d1fae5" font-size="11.5" font-weight="500" text-anchor="middle">Laptop 2: Gaming Laptop (Central Plant Server)</text>
+
+    <!-- Branch Connector Line -->
+    <path d="M 180 60 L 180 90" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreen)" />
+
+    <!-- Child Box 2.1: Gateway & Discovery -->
+    <g transform="translate(0, 90)">
+      <rect width="360" height="100" rx="8" fill="url(#cardGrad)" stroke="#065f46" stroke-width="1.5" filter="url(#dropShadow)" />
+      <rect x="14" y="14" width="8" height="8" rx="2" fill="#34d399" />
+      <text x="30" y="22" fill="#34d399" font-size="13" font-weight="700">Network Gateway &amp; Discovery</text>
+
+      <text x="20" y="52" fill="#cbd5e1" font-size="11.5">• <tspan fill="#34d399" font-weight="600">mDNS Broadcast:</tspan> Resolves as <tspan fill="#f1f5f9" font-weight="600">mrpl-server.local</tspan></text>
+      <text x="20" y="74" fill="#cbd5e1" font-size="11.5">• Zero IP configuration required for users</text>
+      <text x="20" y="94" fill="#cbd5e1" font-size="11.5">• FastAPI Sovereign Orchestration Daemon (:8000)</text>
+    </g>
+
+    <!-- Connector to Child 2.2 -->
+    <path d="M 180 190 L 180 215" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreen)" />
+
+    <!-- Child Box 2.2: Local Model Serving (Ollama) -->
+    <g transform="translate(0, 215)">
+      <rect width="360" height="210" rx="8" fill="url(#cardGrad)" stroke="#065f46" stroke-width="1.5" filter="url(#dropShadow)" />
+      <rect x="14" y="14" width="8" height="8" rx="2" fill="#34d399" />
+      <text x="30" y="22" fill="#34d399" font-size="13" font-weight="700">Local Multi-Model Inference (Ollama)</text>
+
+      <text x="20" y="50" fill="#a7f3d0" font-size="11.5" font-weight="600">1. Dynamic Task Router: <tspan fill="#f1f5f9" font-weight="400">Qwen-2.5-3B (Q8)</tspan></text>
+      <text x="34" y="68" fill="#94a3b8" font-size="10.5">Sub-100ms task classification &amp; model selection</text>
+
+      <text x="20" y="94" fill="#a7f3d0" font-size="11.5" font-weight="600">2. Deep Reasoning &amp; Math: <tspan fill="#f1f5f9" font-weight="400">DeepSeek-R1-8B</tspan></text>
+      <text x="34" y="112" fill="#94a3b8" font-size="10.5">API 570 pipe failure analysis &amp; MAWP calculus</text>
+
+      <text x="20" y="138" fill="#a7f3d0" font-size="11.5" font-weight="600">3. Multimodal Vision Engine: <tspan fill="#f1f5f9" font-weight="400">Qwen2-VL-7B</tspan></text>
+      <text x="34" y="156" fill="#94a3b8" font-size="10.5">P&amp;ID blueprints, scanned OCR &amp; ultrasonic logs</text>
+
+      <text x="20" y="182" fill="#a7f3d0" font-size="11.5" font-weight="600">4. Code &amp; Tool Scripting: <tspan fill="#f1f5f9" font-weight="400">Qwen-2.5-Coder-7B</tspan></text>
+      <text x="34" y="200" fill="#94a3b8" font-size="10.5">Deterministic Python calculation scripts</text>
+    </g>
+
+    <!-- Connector to Child 2.3 -->
+    <path d="M 180 425 L 180 450" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreen)" />
+
+    <!-- Child Box 2.3: Sandbox & Deliverables -->
+    <g transform="translate(0, 450)">
+      <rect width="360" height="175" rx="8" fill="url(#cardGrad)" stroke="#065f46" stroke-width="1.5" filter="url(#dropShadow)" />
+      <rect x="14" y="14" width="8" height="8" rx="2" fill="#34d399" />
+      <text x="30" y="22" fill="#34d399" font-size="13" font-weight="700">Deterministic Sandbox &amp; Artifacts</text>
+
+      <text x="20" y="52" fill="#cbd5e1" font-size="11.5">• <tspan fill="#34d399" font-weight="600">Isolated Python REPL:</tspan> Executes code in</text>
+      <text x="30" y="70" fill="#cbd5e1" font-size="11">  zero-network Linux namespace (bwrap)</text>
+
+      <text x="20" y="94" fill="#cbd5e1" font-size="11.5">• <tspan fill="#34d399" font-weight="600">Sovereign Plant RAG:</tspan> Local ChromaDB + BGE</text>
+
+      <text x="20" y="122" fill="#cbd5e1" font-size="11.5">• <tspan fill="#34d399" font-weight="600">Native Office Deliverables:</tspan></text>
+      <text x="30" y="142" fill="#f1f5f9" font-size="11">  - Formal MRPL Approval Note (<tspan fill="#38bdf8" font-weight="600">.docx</tspan>)</text>
+      <text x="30" y="162" fill="#f1f5f9" font-size="11">  - Pipe Replacement Cost Matrix (<tspan fill="#34d399" font-weight="600">.xlsx</tspan>)</text>
+    </g>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- BRANCH 3: CLIENT WORKSTATION TIER (LAPTOP 3: ENGINEER CLIENT)            -->
+  <!-- ========================================================================= -->
+  <g id="branch3" transform="translate(890, 215)">
+    <!-- Branch Header Box -->
+    <rect width="310" height="60" rx="10" fill="url(#purpleGrad)" filter="url(#dropShadow)" />
+    <text x="155" y="27" fill="#ffffff" font-size="14" font-weight="800" text-anchor="middle">3. CLIENT WORKSTATION TIER</text>
+    <text x="155" y="46" fill="#ede9fe" font-size="11.5" font-weight="500" text-anchor="middle">Laptop 3: Chemical Engineer Client</text>
+
+    <!-- Branch Connector Line -->
+    <path d="M 155 60 L 155 90" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrowPurple)" />
+
+    <!-- Child Box 3.1: Cross-Platform Native Desktop App -->
+    <g transform="translate(0, 90)">
+      <rect width="310" height="150" rx="8" fill="url(#cardGrad)" stroke="#4c1d95" stroke-width="1.5" filter="url(#dropShadow)" />
+      <rect x="14" y="14" width="8" height="8" rx="2" fill="#a78bfa" />
+      <text x="30" y="22" fill="#a78bfa" font-size="13" font-weight="700">Native Desktop App (Tauri)</text>
+
+      <text x="20" y="52" fill="#cbd5e1" font-size="11.5">• Single-click installer for all platforms:</text>
+      <text x="32" y="74" fill="#ddd6fe" font-size="11.5">  - Windows: <tspan fill="#f1f5f9" font-weight="600">Setup.exe</tspan></text>
+      <text x="32" y="96" fill="#ddd6fe" font-size="11.5">  - Linux: <tspan fill="#f1f5f9" font-weight="600">.AppImage</tspan> (Single-file run)</text>
+      <text x="32" y="118" fill="#ddd6fe" font-size="11.5">  - macOS: <tspan fill="#f1f5f9" font-weight="600">.dmg</tspan> Drag-and-drop</text>
+      <text x="20" y="140" fill="#94a3b8" font-size="10.5">• Zero technical setup for chemical engineers</text>
+    </g>
+
+    <!-- Connector to Child 3.2 -->
+    <path d="M 155 240 L 155 265" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrowPurple)" />
+
+    <!-- Child Box 3.2: Engineer Workspace -->
+    <g transform="translate(0, 265)">
+      <rect width="310" height="165" rx="8" fill="url(#cardGrad)" stroke="#4c1d95" stroke-width="1.5" filter="url(#dropShadow)" />
+      <rect x="14" y="14" width="8" height="8" rx="2" fill="#a78bfa" />
+      <text x="30" y="22" fill="#a78bfa" font-size="13" font-weight="700">Industrial Engineer Workspace</text>
+
+      <text x="20" y="52" fill="#cbd5e1" font-size="11.5">• <tspan fill="#a78bfa" font-weight="600">Auto-Connect:</tspan> Zero IP typing</text>
+      <text x="30" y="70" fill="#94a3b8" font-size="10.5">  (Auto-discovers mrpl-server.local on Wi-Fi)</text>
+
+      <text x="20" y="96" fill="#cbd5e1" font-size="11.5">• <tspan fill="#a78bfa" font-weight="600">Multimodal Viewer:</tspan> Drag &amp; drop P&amp;IDs,</text>
+      <text x="30" y="114" fill="#94a3b8" font-size="10.5">  scanned ultrasonic inspection PDFs</text>
+
+      <text x="20" y="140" fill="#cbd5e1" font-size="11.5">• <tspan fill="#a78bfa" font-weight="600">Native Disk Save:</tspan> Writes .docx and .xlsx</text>
+      <text x="30" y="158" fill="#94a3b8" font-size="10.5">  directly to local project directory</text>
+    </g>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- BRANCH 4: AIR-GAP SECURITY & INTERLOCK (CROSS-CUTTING)                    -->
+  <!-- ========================================================================= -->
+  <g id="branch4" transform="translate(1280, 215)">
+    <!-- Branch Header Box -->
+    <rect width="340" height="60" rx="10" fill="url(#redGrad)" filter="url(#dropShadow)" />
+    <text x="170" y="27" fill="#ffffff" font-size="14" font-weight="800" text-anchor="middle">4. AIR-GAP SECURITY</text>
+    <text x="170" y="46" fill="#fee2e2" font-size="11.5" font-weight="500" text-anchor="middle">Air-Gap Interlock &amp; Cryptographic Proof</text>
+
+    <!-- Branch Connector Line -->
+    <path d="M 170 60 L 170 90" stroke="#f87171" stroke-width="2" marker-end="url(#arrowRed)" />
+
+    <!-- Child Box 4.1: Air-Gap Interlock (Kill Switch) -->
+    <g transform="translate(0, 90)">
+      <rect width="340" height="150" rx="8" fill="url(#cardGrad)" stroke="#7f1d1d" stroke-width="1.5" filter="url(#dropShadow)" />
+      <rect x="14" y="14" width="8" height="8" rx="2" fill="#f87171" />
+      <text x="30" y="22" fill="#f87171" font-size="13" font-weight="700">Air-Gap Interlock (The Kill Switch)</text>
+
+      <text x="20" y="52" fill="#fca5a5" font-size="11.5" font-weight="600">• Active WAN / Gateway Sniffer:</text>
+      <text x="30" y="70" fill="#cbd5e1" font-size="11">  Monitors network routes every 2 seconds</text>
+
+      <text x="20" y="98" fill="#fca5a5" font-size="11.5" font-weight="600">• Emergency Red Lock Screen:</text>
+      <text x="30" y="118" fill="#cbd5e1" font-size="11">  If external Internet or 4G is detected,</text>
+      <text x="30" y="136" fill="#f87171" font-size="11" font-weight="600">  app freezes to prevent data exfiltration!</text>
+    </g>
+
+    <!-- Connector to Child 4.2 -->
+    <path d="M 170 240 L 170 265" stroke="#f87171" stroke-width="2" marker-end="url(#arrowRed)" />
+
+    <!-- Child Box 4.2: Physical Isolation & Telemetry -->
+    <g transform="translate(0, 265)">
+      <rect width="340" height="165" rx="8" fill="url(#cardGrad)" stroke="#7f1d1d" stroke-width="1.5" filter="url(#dropShadow)" />
+      <rect x="14" y="14" width="8" height="8" rx="2" fill="#f87171" />
+      <text x="30" y="22" fill="#f87171" font-size="13" font-weight="700">Physical Isolation &amp; Audit Proof</text>
+
+      <text x="20" y="52" fill="#cbd5e1" font-size="11.5">• <tspan fill="#f87171" font-weight="600">Offline Local Hotspot:</tspan></text>
+      <text x="30" y="72" fill="#cbd5e1" font-size="11">  WAN cable physically unplugged</text>
+
+      <text x="20" y="100" fill="#cbd5e1" font-size="11.5">• <tspan fill="#f87171" font-weight="600">Real-Time Telemetry HUD:</tspan></text>
+      <text x="30" y="120" fill="#cbd5e1" font-size="11">  Verifiable gauge proving <tspan fill="#34d399" font-weight="700">0 outbound bytes</tspan></text>
+
+      <text x="20" y="148" fill="#cbd5e1" font-size="11.5">• Immutable local SQLite cryptographic audit trail</text>
+    </g>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- FOOTER BADGE                                                              -->
+  <!-- ========================================================================= -->
+  <g transform="translate(60, 905)">
+    <rect width="1560" height="46" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <text x="780" y="28" fill="#94a3b8" font-size="12" font-weight="500" text-anchor="middle">
+      <tspan fill="#38bdf8" font-weight="700">100% AIR-GAPPED</tspan> • ZERO CLOUD DATA EXFILTRATION • DETERMINISTIC PYTHON MATH SANDBOX • DYNAMIC MULTI-MODEL ROUTING • VERIFIABLE TELEMETRY HUD
+    </text>
+  </g>
+</svg>

@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 680" width="100%" height="100%" style="background-color: #0d131f; font-family: 'Inter', system-ui, sans-serif;">
+  <defs>
+    <!-- Arrowhead Marker -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#38bdf8" />
+    </marker>
+    
+    <!-- Shadow -->
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Title -->
+  <text x="500" y="45" fill="#f8fafc" font-size="20" font-weight="700" text-anchor="middle">SOVEREIGN AI WORKBENCH — SYSTEM PIPELINE</text>
+  <text x="500" y="70" fill="#64748b" font-size="13" text-anchor="middle">End-to-End Execution Flow (From Input to Finished Industrial Deliverable)</text>
+
+  <!-- STAGE 1: INPUT -->
+  <g transform="translate(150, 100)">
+    <rect width="700" height="60" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="8" height="60" rx="4" fill="#38bdf8"/>
+    <text x="30" y="26" fill="#38bdf8" font-size="11" font-weight="700" letter-spacing="1">STAGE 1: INGESTION</text>
+    <text x="30" y="46" fill="#f1f5f9" font-size="14" font-weight="600">Chemical Engineer uploads scanned P&amp;ID drawing + ultrasonic report</text>
+    <text x="650" y="36" fill="#94a3b8" font-size="12" text-anchor="end">Laptop 3 (Client App)</text>
+  </g>
+
+  <!-- Down Arrow 1 -->
+  <path d="M 500 160 L 500 185" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- STAGE 2: AIR-GAP GATEWAY -->
+  <g transform="translate(150, 190)">
+    <rect width="700" height="60" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="8" height="60" rx="4" fill="#f87171"/>
+    <text x="30" y="26" fill="#f87171" font-size="11" font-weight="700" letter-spacing="1">STAGE 2: AIR-GAP INTERLOCK</text>
+    <text x="30" y="46" fill="#f1f5f9" font-size="14" font-weight="600">Kernel checks network routes — Confirms 0 WAN / strictly offline LAN</text>
+    <text x="650" y="36" fill="#f87171" font-size="12" font-weight="600" text-anchor="end">Kill Switch Active</text>
+  </g>
+
+  <!-- Down Arrow 2 -->
+  <path d="M 500 250 L 500 275" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- STAGE 3: ROUTER -->
+  <g transform="translate(150, 280)">
+    <rect width="700" height="60" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="8" height="60" rx="4" fill="#fbbf24"/>
+    <text x="30" y="26" fill="#fbbf24" font-size="11" font-weight="700" letter-spacing="1">STAGE 3: DISPATCHER &amp; ROUTER</text>
+    <text x="30" y="46" fill="#f1f5f9" font-size="14" font-weight="600">Lightweight 3B model decomposes goal into [Vision Task] + [Math Task]</text>
+    <text x="650" y="36" fill="#94a3b8" font-size="12" text-anchor="end">Sub-100ms Heuristic</text>
+  </g>
+
+  <!-- Down Arrow 3 -->
+  <path d="M 500 340 L 500 365" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- STAGE 4: LOCAL GPU INFERENCE -->
+  <g transform="translate(150, 370)">
+    <rect width="700" height="70" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="8" height="70" rx="4" fill="#a78bfa"/>
+    <text x="30" y="25" fill="#a78bfa" font-size="11" font-weight="700" letter-spacing="1">STAGE 4: LOCAL GPU INFERENCE (OLLAMA)</text>
+    <text x="30" y="45" fill="#f1f5f9" font-size="13" font-weight="600">• Qwen2-VL: Extracts pipe thickness (3.2mm) from diagram</text>
+    <text x="30" y="62" fill="#f1f5f9" font-size="13" font-weight="600">• DeepSeek-R1: Retrieves API 570 formulas &amp; writes calculation code</text>
+    <text x="650" y="42" fill="#94a3b8" font-size="12" text-anchor="end">Laptop 2 (GPU Host)</text>
+  </g>
+
+  <!-- Down Arrow 4 -->
+  <path d="M 500 440 L 500 465" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- STAGE 5: ISOLATED SANDBOX -->
+  <g transform="translate(150, 470)">
+    <rect width="700" height="60" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="8" height="60" rx="4" fill="#34d399"/>
+    <text x="30" y="26" fill="#34d399" font-size="11" font-weight="700" letter-spacing="1">STAGE 5: DETERMINISTIC SANDBOX</text>
+    <text x="30" y="46" fill="#f1f5f9" font-size="14" font-weight="600">Runs Python script in isolated container ➔ Computes remaining life (3.1 yrs)</text>
+    <text x="650" y="36" fill="#34d399" font-size="12" font-weight="600" text-anchor="end">Zero Hallucination</text>
+  </g>
+
+  <!-- Down Arrow 5 -->
+  <path d="M 500 530 L 500 555" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- STAGE 6: ARTIFACT OUTPUT -->
+  <g transform="translate(150, 560)">
+    <rect width="700" height="60" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="8" height="60" rx="4" fill="#38bdf8"/>
+    <text x="30" y="26" fill="#38bdf8" font-size="11" font-weight="700" letter-spacing="1">STAGE 6: DELIVERABLE COMPILER</text>
+    <text x="30" y="46" fill="#f1f5f9" font-size="14" font-weight="600">Generates MRPL_Approval_Note.docx + Cost_Matrix.xlsx directly to disk</text>
+    <text x="650" y="36" fill="#38bdf8" font-size="12" font-weight="700" text-anchor="end">Signed Artifact</text>
+  </g>
+</svg>
