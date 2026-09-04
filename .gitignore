@@ -42,6 +42,8 @@ backend/rag_docs/*.pdf
 *.gguf
 *.bin
 *.tar.gz
+*.zip
+1bug.md
 
 # External references
 deepseek-harness/
