@@ -94,6 +94,14 @@ if FRONTEND_DIST.exists() and (FRONTEND_DIST / "index.html").exists():
             "documentation": "/docs",
             "health_check": "/api/health",
         }
+
+    @app.get("/{file_path:path}", include_in_schema=False)
+    async def serve_static_or_spa(file_path: str):
+        """Serves public assets (e.g. logos, favicon) or falls back to index.html."""
+        target = FRONTEND_DIST / file_path
+        if target.is_file():
+            return FileResponse(str(target))
+        return FileResponse(str(FRONTEND_DIST / "index.html"))
 else:
     @app.get("/")
     async def root():
