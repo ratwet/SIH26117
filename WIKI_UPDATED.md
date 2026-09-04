@@ -135,9 +135,23 @@ SIH/
 │   ├── docker-compose.yml              # GPU passthrough stack (Ollama + Backend)
 │   └── requirements.txt                # Pinned production dependencies
 │
-├── frontend/                           # Native Desktop Application (Tauri Shell)
-│   ├── src/                            # UI Components (Chat HUD, Files, Red Lock Screen)
-│   └── src-tauri/                      # Rust desktop core & network watchdog
+├── frontend/                           # Aquanex Air-Gapped Desktop Client (Dev 4: Naveen)
+│   ├── index.html                      # Editorial Dark UI (Zero CDNs, 100% local assets)
+│   ├── src/                            # Frontend Logic & Styles
+│   │   ├── style.css                   # Obsidian/Amber/Cyan refinery design system
+│   │   ├── api.js                      # Dual-mode client (Live FastAPI SSE + Offline Mock Engine)
+│   │   └── main.js                     # Workspace controller & thought stream renderer
+│   ├── src-tauri/                      # Native Rust Desktop Core (Tauri v2)
+│   │   ├── src/main.rs                 # Native desktop application entry point
+│   │   ├── src/lib.rs                  # OS detection & air-gap verification commands
+│   │   ├── tauri.conf.json             # Window constraints & multi-OS bundle targets
+│   │   └── Cargo.toml                  # Rust dependencies & memory optimizations
+│   ├── public/                         # Brand emblems & icon sets
+│   ├── vite.config.js                  # Vite 6 bundler configuration
+│   └── package.json                    # Vite + Tauri v2 build scripts
+│
+├── .github/workflows/                  # Automated CI/CD Workflows
+│   └── build-desktop.yml               # Multi-OS Desktop matrix (Windows, Linux, macOS)
 │
 ├── data/                               # Local Storage (Excluded from Git)
 │   ├── uploads/                        # Uploaded engineering drawings & logs
@@ -153,6 +167,10 @@ SIH/
 ├── RAJAT_SPEC.md                       # Dev 1 Implementation Specification
 ├── ANAND_SPEC.md                       # Dev 2 Implementation Specification
 ├── KAUSHAL_SPEC.md                     # Dev 3 Implementation Specification
+├── FRONTEND_SPEC.md                    # Dev 4 Handshake Specification
+├── DEV4_AGENT_PROMPT.md                # Dev 4 AI Agent Master Prompt & Mock Engine
+├── DEV4_AQUANEX_FRONTEND_DESKTOP_REPORT.md # Dev 4 Delivery Report
+├── PRESENTATION_MASTER_DOSSIER.md      # SIH 10-slide deck & pitch defense
 ├── BACKEND_IMPLEMENTATION.md           # Master backend blueprint
 └── README.md                           # Hackathon documentation
 ```
@@ -179,3 +197,5 @@ SIH/
   Run local RAG embeddings via FastEmbed ONNX (`BAAI/bge-small-en-v1.5`) exclusively on the CPU (0 MB GPU VRAM) to leave 100% of GPU memory available for LLM inference on consumer gaming hardware.
 * **ADR-009 — Cyclic Self-Healing Error Loop:**  
   Intercept sandbox execution failures, distill Python `stderr` down to offending lines via `error_parser.py`, and automatically cycle back to the reasoning model with a 3-attempt circuit breaker before human escalation.
+* **ADR-010 — Aquanex Air-Gapped Desktop Architecture (Tauri v2 + Vite + Zero-CDN CSS):**  
+  Package the chemical engineer workbench via Tauri v2 and modern ES Modules with strictly 0 external CDN calls. Embed a dual-mode communication engine in `api.js` allowing instant offline simulation while consuming live Server-Sent Events from `POST /api/chat`, `POST /api/files/upload`, and `GET /api/telemetry/network/stream`. Include multi-OS build matrix via GitHub Actions (`build-desktop.yml`).

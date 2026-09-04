@@ -134,7 +134,7 @@ This is the exact sequence we will perform in front of the evaluators:
 | **Rajat (Dev 1: LangGraph & API Lead)** | LangGraph Orchestrator & SSE Streaming | Python, FastAPI, LangGraph, SSE | • LangGraph state graph & conditional edges<br>• Intent routing & self-healing loop<br>• Streaming chat API (`/api/chat`) |
 | **Anand (Dev 2: Tools & Security Lead)** | Sandboxing, Self-Healing, Deliverables & Security | Linux `bwrap`, `python-docx`, `openpyxl`, ChromaDB | • Secure Bubblewrap sandbox runner<br>• Error distillation parser<br>• Word & Excel deliverable compilers<br>• CPU Sovereign RAG & SHA-256 audit |
 | **Kaushal (Dev 3: Model & GPU Lead)** | Ollama GPU Server, GGUF Models & VRAM | Ollama API, GGUF Quantization, NVIDIA CUDA | • Local Ollama daemon configuration<br>• Model weight ingestion & quantization<br>• Sequential VRAM offloader (`keep_alive: 0`)<br>• Async `call_llm` model gateway |
-| **Developer 4 (Frontend & Desktop Lead)** | Tauri Desktop Client & UI/UX | Tauri (Rust), HTML5, CSS/Tailwind, SSE Client | • Native desktop application bundle<br>• Governed by [`FRONTEND_SPEC.md`](FRONTEND_SPEC.md)<br>• Emergency Red Lock Screen modal<br>• Live network packet HUD gauge |
+| **Naveen (Dev 4 — Frontend & Desktop Lead)** | Aquanex Air-Gapped UI & Cross-Platform Desktop | Tauri v2 (Rust), Vite 6, Modern ES Modules, Vanilla CSS | • Aquanex refinery dark workspace (`frontend/`)<br>• Zero-CDN air-gapped architecture<br>• Native desktop client (Windows, Linux, macOS)<br>• Multi-OS GitHub Actions workflow (`build-desktop.yml`) |
 | **QA, Pitch & Demo Lead** | Integration, Synthetic Data & Presentation | Hardware rig, PPT deck, Test scenarios | • 3-laptop network setup & hotspot routing<br>• Synthetic inspection PDFs & P&ID mockups<br>• Presentation deck & demo choreography |
 
 ---
@@ -219,9 +219,15 @@ SIH/
    * `app/rag/ingest.py`, `retriever.py` (ChromaDB + CPU FastEmbed) (**COMPLETED & MERGED ✅**)
    * `app/security/audit_chain.py` (SHA-256 ledger), `network_monitor.py` (**COMPLETED & MERGED ✅**)
    * `app/api/files.py`, `app/api/telemetry.py` (**COMPLETED & MERGED ✅**)
-3. **Automated Testing & Simulation:**
+3. **Naveen (Dev 4 — Frontend & Desktop Lead):**
+   * Aquanex air-gapped UI in `frontend/` with zero CDN dependencies (**COMPLETED & MERGED ✅**)
+   * Native cross-platform desktop shell in `frontend/src-tauri/` (Windows, Linux, macOS) (**COMPLETED & MERGED ✅**)
+   * Dual-mode API client (`frontend/src/api.js`) consuming live SSE streams + offline simulation (**COMPLETED & MERGED ✅**)
+   * Multi-OS automated CI/CD workflow in `.github/workflows/build-desktop.yml` (**COMPLETED & MERGED ✅**)
+4. **Automated Testing & Integration:**
    * Full unit test suite (`pytest`): **15 out of 15 tests passing** (**COMPLETED ✅**)
    * End-to-end industrial audit simulation (`test_e2e_simulation.py`): **COMPLETED ✅** (Generates real 38KB Word Approval Note and 6KB Excel Cost Matrix on disk).
-4. **Immediate Next Steps (Sprint 2):**
-   * **Presentation Preparation:** Rehearse pitch deck and demo script per [`PRESENTATION_MASTER_DOSSIER.md`](PRESENTATION_MASTER_DOSSIER.md).
-   * **Client UI (Node 3):** Scaffolding the Desktop UI (P&ID upload, live thought stream HUD, deliverable shelf, and the Air-Gap Red Lock Screen).
+   * Frontend production build (`vite build`): **100% SUCCESSFUL (155ms) ✅**
+5. **Immediate Next Steps:**
+   * Rehearse pitch deck and demo choreography per [`PRESENTATION_MASTER_DOSSIER.md`](PRESENTATION_MASTER_DOSSIER.md).
+   * Final live dry-run connecting Aquanex desktop client to local FastAPI backend on `http://127.0.0.1:8000`.
