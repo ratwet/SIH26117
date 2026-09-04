@@ -60,6 +60,10 @@ Thumbs.db
 *.tmp
 .pytest_cache/
 
-# Internal Agent Notes (Kept local, never pushed)
+# Internal Agent Notes & Developer Specs (Kept local, never pushed)
 context.md
 memory.md
+docs/specs/
+docs/reports/
+SIH2026-IDEA-Presentation-Format.pptx
+
