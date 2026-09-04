@@ -65,5 +65,6 @@ context.md
 memory.md
 docs/specs/
 docs/reports/
-SIH2026-IDEA-Presentation-Format.pptx
+SIH2026*
+scripts/generate_sih_presentation.py
 
