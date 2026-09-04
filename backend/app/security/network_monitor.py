@@ -8,6 +8,7 @@ Thread-safe and compliant with frontend kill-switch contract.
 import os
 import threading
 import time
+import socket
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Tuple, Optional
@@ -25,6 +26,23 @@ _MONITOR_LOCK = threading.Lock()
 _LAST_TX_BYTES: int = 0
 _LAST_CHECK_TIME: float = 0.0
 _SIMULATE_BREACH_OVERRIDE: Optional[bool] = None
+
+
+def check_wan_reachability(timeout: float = 0.4) -> bool:
+    """
+    Actively checks if host can reach the public Internet.
+    Probes reliable public Anycast DNS endpoints (1.1.1.1, 8.8.8.8) on port 53.
+    Returns:
+        True: Actual public Internet connectivity is active (Breach!).
+        False: Host is air-gapped or on an isolated local Wi-Fi/LAN without internet backhaul.
+    """
+    for host in ("1.1.1.1", "8.8.8.8"):
+        try:
+            with socket.create_connection((host, 53), timeout=timeout):
+                return True
+        except (socket.timeout, OSError):
+            pass
+    return False
 
 
 def check_default_gateway() -> Tuple[bool, Optional[str]]:
@@ -169,12 +187,23 @@ def read_network_stats() -> NetworkStats:
             outbound_wan_delta = 4096
             air_gap_status = "AIR_GAP_VIOLATION_DETECTED"
         elif is_strict_mode and has_default_gw:
-            is_air_gapped = False
-            external_gateway_detected = True
-            outbound_wan_delta = delta_tx
-            air_gap_status = "AIR_GAP_VIOLATION_DETECTED" if delta_tx > 0 else "GATEWAY_DETECTED_ZERO_TX"
+            # A default route exists (could be air-gapped local Wi-Fi router or live Internet).
+            # Actively test if outbound packets can reach the public Internet:
+            has_internet = check_wan_reachability(timeout=0.4)
+            if has_internet:
+                # Actual public Internet access confirmed (Breach!)
+                is_air_gapped = False
+                external_gateway_detected = True
+                outbound_wan_delta = delta_tx if delta_tx > 0 else 4096
+                air_gap_status = "AIR_GAP_VIOLATION_DETECTED"
+            else:
+                # Local offline Wi-Fi router / Access Point with NO internet (e.g. wireless link to GPU server)
+                is_air_gapped = True
+                external_gateway_detected = False
+                outbound_wan_delta = 0
+                air_gap_status = "LOCKED_AIR_GAP_COMPLIANT"
         else:
-            # 100% compliant air-gap operation
+            # 100% compliant air-gap operation (no gateway present)
             is_air_gapped = True
             external_gateway_detected = False
             outbound_wan_delta = 0

@@ -48,7 +48,9 @@ echo -e "Health Check: ${BLUE}http://192.168.1.100:8000/api/health${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
 # Check virtualenv if present
-if [ -d ".venv" ]; then
+if [ -d "$HOME/myenv" ]; then
+  source "$HOME/myenv/bin/activate"
+elif [ -d ".venv" ]; then
   source .venv/bin/activate
 elif [ -d "../myenv" ]; then
   source ../myenv/bin/activate

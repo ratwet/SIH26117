@@ -96,7 +96,7 @@ class Settings(BaseSettings):
     # --- Security ---
     AUDIT_DB_PATH: Path = Path("data/mrpl_audit.db")
     NETWORK_POLL_INTERVAL_SECONDS: float = 2.0
-    AIR_GAP_STRICT: bool = False
+    AIR_GAP_STRICT: bool = True
     SIMULATE_AIR_GAP_BREACH: bool = False
     WAN_INTERFACE_OVERRIDE: str = ""
     ALLOW_UNSANDBOXED_FALLBACK: bool = True

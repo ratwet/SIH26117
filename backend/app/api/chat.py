@@ -15,6 +15,7 @@ from pydantic import BaseModel, Field
 from app.graph.builder import sovereign_graph
 from app.graph.state import AgentState
 from app.config import settings
+from app.security.network_monitor import read_network_stats
 
 router = APIRouter(prefix="/api", tags=["Chat"])
 
@@ -33,6 +34,13 @@ async def chat_sync(request: ChatRequest):
     Synchronous / standard JSON endpoint.
     Executes the full LangGraph workflow and returns the final state in a single response.
     """
+    net_stats = read_network_stats()
+    if not net_stats.is_air_gapped:
+        raise HTTPException(
+            status_code=403,
+            detail="AIR-GAP SECURITY VIOLATION: Active external Internet connection detected. Operations halted."
+        )
+
     tier = getattr(settings, "MODEL_TIER", "ENTERPRISE_100B")
     initial_state: AgentState = {
         "session_id": request.session_id,
@@ -111,6 +119,22 @@ async def chat_stream(
     Pipes LangGraph state machine node updates directly into an SSE text/event-stream.
     """
     active_session_id = session_id or str(uuid.uuid4())[:8]
+
+    # Pre-flight Air-Gap Check: Reject streaming if internet connection active
+    net_stats = read_network_stats()
+    if not net_stats.is_air_gapped:
+        async def breach_generator():
+            error_payload = {
+                "session_id": active_session_id,
+                "error": "AIR-GAP SECURITY VIOLATION: Active external Internet connection detected. Disconnect to resume.",
+                "status": "AIR_GAP_VIOLATION",
+            }
+            yield f"event: error\ndata: {json.dumps(error_payload)}\n\n"
+        return StreamingResponse(
+            breach_generator(),
+            media_type="text/event-stream",
+            headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
+        )
 
     # Save any uploaded files to data/uploads
     saved_file_paths = []

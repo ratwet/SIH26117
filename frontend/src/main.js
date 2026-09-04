@@ -241,10 +241,7 @@ function setupEventListeners() {
   }
 
   btnRestoreAirGap.addEventListener('click', () => {
-    lockdownModal.style.display = 'none';
-    airGapStatusBadge.style.background = 'var(--status-emerald-bg)';
-    airGapStatusBadge.style.color = 'var(--status-emerald)';
-    airGapStatusText.textContent = 'Air-Gap Enforced';
+    restoreAirGap();
   });
 
   // 5. Suggestion Pills
@@ -863,15 +860,46 @@ function triggerLockdown(reason) {
   airGapStatusBadge.style.background = 'var(--emergency-crimson-bg)';
   airGapStatusBadge.style.color = 'var(--emergency-crimson)';
   airGapStatusText.textContent = 'AIR-GAP VIOLATION';
-  console.warn("LOCKDOWN:", reason);
+
+  // Strictly disable user interaction during breach
+  if (chatTextarea) chatTextarea.disabled = true;
+  if (btnChatSend) btnChatSend.disabled = true;
+  if (btnAttachFile) btnAttachFile.disabled = true;
+  if (pillAudit) pillAudit.style.pointerEvents = 'none';
+  if (pillSelfHeal) pillSelfHeal.style.pointerEvents = 'none';
+  if (pillSummarize) pillSummarize.style.pointerEvents = 'none';
+  if (pillExplain) pillExplain.style.pointerEvents = 'none';
+
+  console.warn("LOCKDOWN TRIGGERED:", reason);
+}
+
+function restoreAirGap() {
+  lockdownModal.style.display = 'none';
+  airGapStatusBadge.style.background = 'var(--status-emerald-bg)';
+  airGapStatusBadge.style.color = 'var(--status-emerald)';
+  airGapStatusText.textContent = 'Air-Gap Enforced';
+
+  // Automatically re-enable user interaction when air-gap is restored
+  if (chatTextarea) chatTextarea.disabled = false;
+  if (btnChatSend) btnChatSend.disabled = false;
+  if (btnAttachFile) btnAttachFile.disabled = false;
+  if (pillAudit) pillAudit.style.pointerEvents = 'auto';
+  if (pillSelfHeal) pillSelfHeal.style.pointerEvents = 'auto';
+  if (pillSummarize) pillSummarize.style.pointerEvents = 'auto';
+  if (pillExplain) pillExplain.style.pointerEvents = 'auto';
 }
 
 function startTelemetry() {
   SovereignAPI.listenToTelemetry({
     onTelemetry: (data) => {
-      if (!data.is_air_gapped) triggerLockdown("WAN bytes detected");
+      // Status update
     },
-    onLockdown: () => triggerLockdown("Gateway active")
+    onLockdown: (data) => {
+      triggerLockdown("Active Internet (WAN) connection detected by kernel monitor.");
+    },
+    onRestore: (data) => {
+      restoreAirGap();
+    }
   });
 }
 

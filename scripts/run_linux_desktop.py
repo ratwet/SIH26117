@@ -45,7 +45,8 @@ def ensure_backend_running(url: str):
     if backend_script.exists():
         subprocess.Popen(["bash", str(backend_script)], cwd=str(ROOT_DIR))
     else:
-        python_bin = sys.executable
+        myenv_python = Path.home() / "myenv" / "bin" / "python"
+        python_bin = str(myenv_python) if myenv_python.exists() else sys.executable
         subprocess.Popen(
             [python_bin, "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"],
             cwd=str(ROOT_DIR / "backend"),

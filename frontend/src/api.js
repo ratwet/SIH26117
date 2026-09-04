@@ -282,7 +282,7 @@ export const SovereignAPI = {
   },
 
   // 6. Network Telemetry Stream
-  listenToTelemetry({ onTelemetry, onLockdown }) {
+  listenToTelemetry({ onTelemetry, onLockdown, onRestore }) {
     if (USE_MOCK) {
       const interval = setInterval(() => {
         if (onTelemetry) {
@@ -303,8 +303,10 @@ export const SovereignAPI = {
       try {
         const data = JSON.parse(event.data);
         if (onTelemetry) onTelemetry(data);
-        if ((!data.is_air_gapped || data.external_gateway_detected || (data.outbound_wan_bytes_delta > 0)) && onLockdown) {
-          onLockdown(data);
+        if (!data.is_air_gapped || data.external_gateway_detected || (data.outbound_wan_bytes_delta > 0)) {
+          if (onLockdown) onLockdown(data);
+        } else {
+          if (onRestore) onRestore(data);
         }
       } catch (e) {
         console.error("Telemetry parse error:", e);

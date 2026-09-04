@@ -242,3 +242,24 @@ def test_chat_refuses_to_run_without_model(monkeypatch):
     assert "event: error" in body
     assert "FAILED_NO_MODEL" in body
 
+
+def test_chat_refuses_to_run_when_internet_connected(monkeypatch):
+    """Verifies that API strictly rejects requests with HTTP 403 when Internet WAN is detected."""
+    from app.security import network_monitor
+    client = TestClient(app)
+    # Simulate active internet connectivity
+    monkeypatch.setattr(network_monitor, "check_wan_reachability", lambda timeout=0.4: True)
+
+    # 1. Sync endpoint returns 403 Forbidden
+    resp = client.post("/api/chat/sync", json={"prompt": "Audit line CDU-2-04-150-A1A"})
+    assert resp.status_code == 403
+    assert "AIR-GAP SECURITY VIOLATION" in resp.json()["detail"]
+
+    # 2. SSE stream emits AIR_GAP_VIOLATION error
+    stream_resp = client.post("/api/chat", data={"prompt": "Audit line CDU-2-04-150-A1A"})
+    assert stream_resp.status_code == 200
+    body = stream_resp.text
+    assert "event: error" in body
+    assert "AIR_GAP_VIOLATION" in body
+
+
