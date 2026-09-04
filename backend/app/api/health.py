@@ -21,7 +21,7 @@ async def get_health_status():
 
     return {
         "status": "OPERATIONAL",
-        "system": "SovereignWorkbench Node 2 (GPU Server)",
+        "system": "SovereignWorkbench Server Node (Node 1: 192.168.1.100)",
         "air_gap_verified": True,
         "wan_connection": "DISABLED_ISOLATED_SUBNET",
         "uptime_seconds": uptime_seconds,

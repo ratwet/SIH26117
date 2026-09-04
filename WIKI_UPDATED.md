@@ -43,13 +43,20 @@ The **MRPL Sovereign On-Premise Agentic AI Workbench** provides a fully local, s
 +------------------+    +------------------+    +------------------+
 | UBUNTU NODE 1:   |    | UBUNTU NODE 2:   |    | UBUNTU NODE 3:   |
 | SERVER           |    | ADMIN / AUDIT    |    | USER WORKBENCH   |
-| - FastAPI Gateway|    | - Egress Monitor |    | - Web UI Client  |
-| - Ollama (127.0.1|    | - Audit Dashboard|    | - Doc Upload     |
-| - LangGraph Core |    | - System Rules   |    | - Deliverable    |
-| - bwrap Sandbox  |    +------------------+    |   Downloads      |
-| - ChromaDB (CPU) |                            +------------------+
+| - FastAPI Gateway|    | - Egress Monitor |    | - Aquanex UI     |
+| - Ollama (Loop)  |    | - Audit Dashboard|    | - Tauri Desktop  |
+| - LangGraph Core |    | - System Rules   |    | - Doc Upload     |
+| - bwrap Sandbox  |    +------------------+    | - Deliverables   |
+| - ChromaDB & DB  |                            +------------------+
 +------------------+
 ```
+
+### Authoritative 3-Node IP & Port Assignment Matrix
+| Node | Role | Static LAN IP | Bound Interfaces & Ports | Accessible Services |
+| :--- | :--- | :--- | :--- | :--- |
+| **Node 1** | Central Server Workstation | `192.168.1.100/24` | `0.0.0.0:8000` (FastAPI Gateway)<br>`127.0.0.1:11434` (Ollama Engine) | REST API, SSE Chat, Deliverables, Telemetry, Embedded Web UI |
+| **Node 2** | Security & Egress Admin | `192.168.1.101/24` | Egress Watchdog (`tcpdump`, `NetHogs`) | Packet Audit, SHA-256 Ledger Validation |
+| **Node 3** | User Workbench Client | `192.168.1.102/24` | Outbound client to `http://192.168.1.100:8000` | Native Aquanex Desktop App (Tauri v2) / Web Client |
 
 ### Ubuntu Netplan Configuration (`/etc/netplan/01-sih-lan.yaml`)
 ```yaml
@@ -62,7 +69,7 @@ network:
         - 192.168.1.100/24 # .100 for Server Node, .101 for Admin Node, .102 for User Node
       routes: []           # NO default gateway = strictly offline OS kernel
       nameservers:
-        addresses: []     # NO external DNS resolution configured
+        addresses: []      # NO external DNS resolution configured
 ```
 
 ---

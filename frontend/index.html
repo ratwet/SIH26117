@@ -197,6 +197,32 @@
 
         <div class="modal-body-scroll">
           <!-- Air-Gap Status Card -->
+          <!-- 3-Node Subnet Topology & Gateway Configuration -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <span class="card-title">3-Node Subnet &amp; Gateway Endpoint</span>
+              <span class="badge-emerald" id="backendConnStatusBadge">ACTIVE TARGET</span>
+            </div>
+            <p class="settings-card-desc">
+              Wiki 3-Node Offline Subnet (<code>192.168.1.0/24</code>): <strong>Node 1</strong> (Server Workstation: <code>192.168.1.100:8000</code>), <strong>Node 2</strong> (Admin/Audit: <code>192.168.1.101</code>), <strong>Node 3</strong> (User Workbench: <code>192.168.1.102</code>).
+            </p>
+            <div class="network-config-row">
+              <input type="text" id="inputBackendUrl" class="custom-network-input" value="http://192.168.1.100:8000" placeholder="http://192.168.1.100:8000" spellcheck="false" />
+              <button id="btnTestBackendConn" class="btn-network-action" type="button">
+                Ping Node 1
+              </button>
+            </div>
+            <div class="network-preset-row">
+              <button id="btnPresetLan" class="btn-preset-chip active" type="button" title="Switch to Node 1 Server Workstation (192.168.1.100:8000)">
+                🏢 Node 1 LAN (192.168.1.100:8000)
+              </button>
+              <button id="btnPresetLocal" class="btn-preset-chip" type="button" title="Switch to Local Loopback (127.0.0.1:8000)">
+                💻 Localhost (127.0.0.1:8000)
+              </button>
+            </div>
+            <div id="backendPingResult" class="ping-result-text" style="display: none;"></div>
+          </div>
+
           <div class="settings-card">
             <div class="settings-card-header">
               <span class="card-title">Air-Gap &amp; Socket Telemetry</span>
@@ -212,8 +238,8 @@
                 <div class="t-value">KERNEL DROP</div>
               </div>
               <div class="t-stat">
-                <div class="t-label">HOST / PORT</div>
-                <div class="t-value">127.0.0.1:8000</div>
+                <div class="t-label">GATEWAY TARGET</div>
+                <div class="t-value" id="modalBackendHostPort">192.168.1.100:8000</div>
               </div>
               <div class="t-stat">
                 <div class="t-label">LAN CLIENTS</div>

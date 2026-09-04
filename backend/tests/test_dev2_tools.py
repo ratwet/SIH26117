@@ -273,3 +273,33 @@ def test_fastapi_endpoints(tmp_path: Path):
     assert res_upload.status_code == 200
     assert res_upload.json()["status"] == "success"
     assert res_upload.json()["filename"] == "test_upload_doc.txt"
+
+
+def test_main_app_lan_topology():
+    """Verifies that the main FastAPI app exposes the authoritative 3-node LAN topology and Node 1 health."""
+    from app.main import app
+    from fastapi.testclient import TestClient
+
+    client = TestClient(app)
+
+    # 1. Health check returns Server Node 1 (192.168.1.100)
+    res_health = client.get("/api/health")
+    assert res_health.status_code == 200
+    health_data = res_health.json()
+    assert health_data["status"] == "OPERATIONAL"
+    assert "Node 1: 192.168.1.100" in health_data["system"]
+    assert health_data["air_gap_verified"] is True
+
+    # 2. SPA or Info endpoint returns authoritative 3-node subnet IP topology
+    res_info = client.get("/api/info")
+    assert res_info.status_code == 200
+    info_data = res_info.json()
+    assert info_data["lan_topology"]["server_node_1"] == "http://192.168.1.100:8000"
+    assert info_data["lan_topology"]["admin_node_2"] == "http://192.168.1.101"
+    assert info_data["lan_topology"]["user_node_3"] == "http://192.168.1.102"
+
+    # 3. Root serves Aquanex SPA HTML
+    res_root = client.get("/")
+    assert res_root.status_code == 200
+    assert "text/html" in res_root.headers.get("content-type", "")
+    assert "Aquanex" in res_root.text

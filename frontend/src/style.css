@@ -968,8 +968,6 @@ html, body {
   color: #FFA5B2;
   font-size: 0.78rem;
   font-weight: 600;
-  padding: 0.5rem;
-  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -977,6 +975,101 @@ html, body {
 .btn-danger-outline:hover {
   background: var(--emergency-crimson);
   color: #FFFFFF;
+}
+
+/* Network Configuration Card & Gateway Selector */
+.network-config-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.custom-network-input {
+  flex: 1;
+  background: #101217;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-headline);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.custom-network-input:focus {
+  border-color: var(--gold-primary);
+}
+
+.btn-network-action {
+  background: var(--bg-card);
+  border: 1px solid var(--border-medium);
+  color: var(--gold-primary);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.55rem 0.85rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.btn-network-action:hover {
+  background: var(--gold-primary);
+  color: #000000;
+  border-color: var(--gold-primary);
+}
+
+.network-preset-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-preset-chip {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-body);
+  font-size: 0.72rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-sans);
+}
+
+.btn-preset-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--border-bright);
+  color: #FFFFFF;
+}
+
+.btn-preset-chip.active {
+  background: var(--gold-bg-subtle);
+  border-color: var(--gold-primary);
+  color: var(--gold-primary);
+  font-weight: 600;
+}
+
+.ping-result-text {
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-sm);
+  line-height: 1.4;
+}
+
+.ping-result-text.success {
+  background: var(--status-emerald-bg);
+  border: 1px solid rgba(46, 196, 182, 0.3);
+  color: var(--status-emerald);
+}
+
+.ping-result-text.error {
+  background: var(--emergency-crimson-bg);
+  border: 1px solid rgba(239, 35, 60, 0.3);
+  color: #FFA5B2;
 }
 
 .modal-audit-table-wrapper {

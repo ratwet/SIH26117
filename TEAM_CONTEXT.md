@@ -31,33 +31,38 @@ We are building a **100% on-premise, air-gapped Agentic AI Workbench** running e
 
 ## 🖥️ 2. Physical System Topology: The 3-Laptop Layout
 
-To prove sovereign, air-gapped compliance during the live SIH demo, the system operates across **three separate machines over an isolated local network (no internet cable)**:
+To prove sovereign, air-gapped compliance during the live SIH demo, the system operates across **three separate machines over an isolated local Ethernet switch (no internet cable)**:
 
-```
-                      [OFFLINE LOCAL WI-FI / MOBILE HOTSPOT]
-                       (SSID: MRPL_AIRGAP | WAN / Mobile Data: OFF)
-                                        │
-         ┌──────────────────────────────┼──────────────────────────────┐
-         │                              │                              │
-         ▼                              ▼                              ▼
+```text
+                      [OFFLINE PHYSICAL ETHERNET SWITCH / ISOLATED LAN]
+                         (Subnet: 192.168.1.0/24 | Default Gateway: NONE)
+                                         │
+          ┌──────────────────────────────┼──────────────────────────────┐
+          │ (192.168.1.100)              │ (192.168.1.101)              │ (192.168.1.102)
+          ▼                              ▼                              ▼
 ┌──────────────────────┐    ┌──────────────────────┐    ┌──────────────────────┐
-│  NODE 1: IT ADMIN    │    │  NODE 2: GPU SERVER  │    │  NODE 3: CLIENT APP  │
-│ (Laptop 1: Standard) │    │ (Laptop 2: Gaming)   │    │ (Laptop 3: Standard) │
-│ • Model Ingestion    │    │ • Ollama GPU Engine  │    │ • Tauri Desktop App  │
-│ • RBAC Role Matrix   │    │ • LangGraph Engine   │    │ • Air-Gap Kill Switch│
-│ • SHA-256 Audit Log  │    │ • bwrap Sandbox      │    │ • P&ID Viewer & Chat │
-│ • System Telemetry   │    │ • mDNS Broadcast     │    │ • Native Disk Export │
-└──────────────────────┘    └──────────────────────┘    └──────────────────────┘
-```
+│  NODE 1: GPU SERVER  │    │  NODE 2: ADMIN/AUDIT │    │  NODE 3: USER CLIENT │
+│ (Laptop 1: 16GB+ VRAM│    │ (Laptop 2: Standard) │    │ (Laptop 3: Standard) │
+│ • FastAPI Gateway:8000    │ • Live Egress Monitor│    │ • Aquanex UI / Tauri │
+│ • Ollama (127.0.0.1) │    │ • tcpdump Sniffer    │    │ • Air-Gap Kill Switch│
+│ • LangGraph Engine   │    │ • SHA-256 Audit View │    │ • P&ID Viewer & Chat │
+│ • Linux bwrap Sandbox│    │ • Security Watchdog  │    │ • Deliverable DL     │
+│ • ChromaDB & SQLite  │    └──────────────────────┘    └──────────────────────┘
+└──────────────────────┘
 
-### Node Roles:
-* **Node 1 (IT & Security Admin Console):** A lightweight laptop running the corporate IT admin dashboard (`http://mrpl-server.local:8000/admin`). Used to configure RBAC roles, register `.gguf` models, and inspect cryptographic audit chains.
-* **Node 2 (Central GPU Plant Server):** A gaming laptop with an NVIDIA RTX GPU (RTX 3060/4060, 6GB–12GB VRAM). Runs:
-  * `Ollama` (`:11434`) hosting quantized open-weight models.
-  * `FastAPI` orchestrator (`:8000`) powered by **LangGraph**.
+### Node Roles & Static IP Matrix (Authoritative Wiki Spec):
+* **Node 1: Central GPU Server Workstation (`192.168.1.100:8000`):**
+  A high-compute laptop with NVIDIA RTX GPU (6GB–16GB VRAM). Runs:
+  * `Ollama` daemon bound strictly to local loopback (`http://127.0.0.1:11434`) per ADR-007 proxy isolation.
+  * `FastAPI` gateway listening on `0.0.0.0:8000` (accessible across LAN at `http://192.168.1.100:8000`).
+  * `LangGraph` deterministic cyclic state machine.
   * Isolated Linux sandbox (`bwrap`).
-  * mDNS service broadcasting hostname `mrpl-server.local`.
-* **Node 3 (Chemical / Process Engineer Workstation):** Standard office laptop running the native desktop client. Auto-discovers the server via mDNS without typing IP addresses.
+  * Local ChromaDB vector store and SQLite cryptographic audit ledger.
+  * Embedded Aquanex Web UI served directly from `/` for browser access.
+* **Node 2: IT & Security Admin / Audit Console (`192.168.1.101`):**
+  A dedicated audit laptop running real-time packet monitoring (`scripts/verify_sovereignty.sh`), `tcpdump` egress sniffer, and inspecting tamper-evident SHA-256 audit ledger records from `http://192.168.1.100:8000/api/telemetry/audit`.
+* **Node 3: User Workbench Client (`192.168.1.102`):**
+  Standard process engineer laptop running the native cross-platform desktop client (Tauri v2) or browser pointing to `http://192.168.1.100:8000`. Auto-connects to Node 1 via configurable gateway settings.
 
 ---
 

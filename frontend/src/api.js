@@ -1,5 +1,45 @@
-// src/api.js - SovereignWorkbench API Client with Full Mock Fallback
-const BACKEND_URL = "http://127.0.0.1:8000";
+// src/api.js - SovereignWorkbench API Client with Full Mock Fallback & Dynamic LAN IP Resolution
+
+export const DEFAULT_LAN_URL = "http://192.168.1.100:8000";   // Node 1: Server Workstation (Wiki Authoritative)
+export const DEFAULT_LOCAL_URL = "http://127.0.0.1:8000";     // Local loopback for single-laptop dev
+
+export function getInitialBackendUrl() {
+  if (typeof window !== "undefined") {
+    const saved = localStorage.getItem("sovereign_backend_url");
+    if (saved) return saved;
+
+    const hostname = window.location.hostname;
+    // If accessed directly on the Server Workstation Node 1
+    if (hostname === "192.168.1.100") {
+      return `http://${hostname}:8000`;
+    }
+    // If running on User Node 3 (192.168.1.102) or Admin Node 2 (192.168.1.101)
+    if (hostname === "192.168.1.102" || hostname === "192.168.1.101") {
+      return DEFAULT_LAN_URL;
+    }
+    // If running dev server on localhost or file://
+    if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "") {
+      return DEFAULT_LOCAL_URL;
+    }
+  }
+  return DEFAULT_LAN_URL;
+}
+
+let currentBackendUrl = getInitialBackendUrl();
+
+export function getBackendUrl() {
+  return currentBackendUrl;
+}
+
+export function setBackendUrl(url) {
+  if (!url) return currentBackendUrl;
+  currentBackendUrl = url.trim().replace(/\/+$/, "");
+  if (typeof localStorage !== "undefined") {
+    localStorage.setItem("sovereign_backend_url", currentBackendUrl);
+  }
+  return currentBackendUrl;
+}
+
 export let USE_MOCK = true; // Toggle to false when connecting to live Python server
 
 export function setMockMode(val) {
@@ -8,11 +48,12 @@ export function setMockMode(val) {
 
 export const SovereignAPI = {
   // 1. Health Check
-  async checkHealth() {
-    if (USE_MOCK) {
+  async checkHealth(targetUrl = null) {
+    const baseUrl = targetUrl ? targetUrl.trim().replace(/\/+$/, "") : getBackendUrl();
+    if (USE_MOCK && !targetUrl) {
       return {
         status: "OPERATIONAL",
-        system: "SovereignWorkbench Node 2 (MOCK)",
+        system: "SovereignWorkbench Server Node (Node 1: 192.168.1.100 MOCK)",
         air_gap_verified: true,
         wan_connection: "DISABLED_ISOLATED_SUBNET",
         uptime_seconds: 342.1,
@@ -29,7 +70,7 @@ export const SovereignAPI = {
         }
       };
     }
-    const res = await fetch(`${BACKEND_URL}/api/health`);
+    const res = await fetch(`${baseUrl}/api/health`);
     return await res.json();
   },
 
@@ -45,7 +86,7 @@ export const SovereignAPI = {
     }
     const formData = new FormData();
     formData.append("file", file);
-    const res = await fetch(`${BACKEND_URL}/api/files/upload`, { method: "POST", body: formData });
+    const res = await fetch(`${getBackendUrl()}/api/files/upload`, { method: "POST", body: formData });
     return await res.json();
   },
 
@@ -107,7 +148,7 @@ export const SovereignAPI = {
     formData.append("prompt", prompt);
     formData.append("user_role", userRole);
 
-    fetch(`${BACKEND_URL}/api/chat`, { method: "POST", body: formData })
+    fetch(`${getBackendUrl()}/api/chat`, { method: "POST", body: formData })
       .then(async (response) => {
         const reader = response.body.getReader();
         const decoder = new TextDecoder("utf-8");
@@ -147,7 +188,7 @@ export const SovereignAPI = {
   // 4. Download Deliverable URL
   getDownloadUrl(filename) {
     if (USE_MOCK) return `#mock-download-${filename}`;
-    return `${BACKEND_URL}/api/files/download/${encodeURIComponent(filename)}`;
+    return `${getBackendUrl()}/api/files/download/${encodeURIComponent(filename)}`;
   },
 
   // 5. Network Telemetry Stream
@@ -167,7 +208,7 @@ export const SovereignAPI = {
       return { close: () => clearInterval(interval) };
     }
 
-    const eventSource = new EventSource(`${BACKEND_URL}/api/telemetry/network/stream`);
+    const eventSource = new EventSource(`${getBackendUrl()}/api/telemetry/network/stream`);
     eventSource.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
@@ -197,7 +238,7 @@ export const SovereignAPI = {
         ]
       };
     }
-    const res = await fetch(`${BACKEND_URL}/api/telemetry/audit`);
+    const res = await fetch(`${getBackendUrl()}/api/telemetry/audit`);
     return await res.json();
   }
 };

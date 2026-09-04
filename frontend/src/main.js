@@ -1,7 +1,16 @@
-import { SovereignAPI, USE_MOCK, setMockMode } from './api.js';
+import { SovereignAPI, USE_MOCK, setMockMode, getBackendUrl, setBackendUrl, DEFAULT_LAN_URL, DEFAULT_LOCAL_URL } from './api.js';
 
 // Workspace Screen Element
 const appView = document.getElementById('appView');
+
+// Network & Gateway Elements
+const inputBackendUrl = document.getElementById('inputBackendUrl');
+const btnTestBackendConn = document.getElementById('btnTestBackendConn');
+const btnPresetLan = document.getElementById('btnPresetLan');
+const btnPresetLocal = document.getElementById('btnPresetLocal');
+const backendPingResult = document.getElementById('backendPingResult');
+const backendConnStatusBadge = document.getElementById('backendConnStatusBadge');
+const modalBackendHostPort = document.getElementById('modalBackendHostPort');
 
 // Workspace Header & Model Dropdown
 const modelDropdownBtn = document.getElementById('modelDropdownBtn');
@@ -67,11 +76,12 @@ function init() {
   setupEventListeners();
   loadAuditLedger();
   startTelemetry();
+  updateBackendUi();
   if (userDisplayName) userDisplayName.textContent = currentUser.name;
   if (userRoleLabel) userRoleLabel.textContent = currentUser.role;
   if (userAvatarChar) userAvatarChar.textContent = currentUser.name.charAt(0).toUpperCase();
   if (greetingTitle) greetingTitle.textContent = `Good morning, ${currentUser.name}`;
-  console.log("🛡️ Aquanex UI Initialized. Mode:", USE_MOCK ? "MOCK" : "LIVE");
+  console.log("🛡️ Aquanex UI Initialized. Mode:", USE_MOCK ? "MOCK" : "LIVE", "Target Gateway:", getBackendUrl());
 }
 
 function setupEventListeners() {
@@ -97,7 +107,7 @@ function setupEventListeners() {
   // 3. New Chat
   btnNewChat.addEventListener('click', () => resetToNewChat());
 
-  // 4. Customize Modals
+  // 4. Customize Modals & Network Settings
   btnCustomize.addEventListener('click', () => openCustomizeModal());
   btnOpenCustomizeTop.addEventListener('click', () => openCustomizeModal());
   btnCloseCustomize.addEventListener('click', () => customizeModal.style.display = 'none');
@@ -105,6 +115,36 @@ function setupEventListeners() {
     setMockMode(e.target.checked);
     loadAuditLedger();
   });
+
+  // Network IP Gateway Configuration Handlers
+  if (inputBackendUrl) {
+    inputBackendUrl.addEventListener('input', (e) => {
+      setBackendUrl(e.target.value.trim());
+      updateBackendUi();
+    });
+  }
+
+  if (btnPresetLan) {
+    btnPresetLan.addEventListener('click', () => {
+      setBackendUrl(DEFAULT_LAN_URL);
+      updateBackendUi();
+      testBackendConnection();
+    });
+  }
+
+  if (btnPresetLocal) {
+    btnPresetLocal.addEventListener('click', () => {
+      setBackendUrl(DEFAULT_LOCAL_URL);
+      updateBackendUi();
+      testBackendConnection();
+    });
+  }
+
+  if (btnTestBackendConn) {
+    btnTestBackendConn.addEventListener('click', () => {
+      testBackendConnection();
+    });
+  }
 
   btnSimulateBreachInModal.addEventListener('click', () => {
     customizeModal.style.display = 'none';
@@ -377,7 +417,68 @@ function scrollToBottom() {
 }
 
 function openCustomizeModal() {
+  updateBackendUi();
   customizeModal.style.display = 'flex';
+}
+
+function updateBackendUi() {
+  const currentUrl = getBackendUrl();
+  if (inputBackendUrl) inputBackendUrl.value = currentUrl;
+  if (modalBackendHostPort) {
+    modalBackendHostPort.textContent = currentUrl.replace(/^https?:\/\//, '');
+  }
+  if (btnPresetLan && btnPresetLocal) {
+    if (currentUrl === DEFAULT_LAN_URL) {
+      btnPresetLan.classList.add('active');
+      btnPresetLocal.classList.remove('active');
+    } else if (currentUrl === DEFAULT_LOCAL_URL) {
+      btnPresetLocal.classList.add('active');
+      btnPresetLan.classList.remove('active');
+    } else {
+      btnPresetLan.classList.remove('active');
+      btnPresetLocal.classList.remove('active');
+    }
+  }
+}
+
+async function testBackendConnection() {
+  if (!backendPingResult) return;
+  const targetUrl = getBackendUrl();
+  backendPingResult.style.display = 'block';
+  backendPingResult.className = 'ping-result-text';
+  backendPingResult.textContent = `Pinging ${targetUrl}/api/health ...`;
+
+  const startTime = performance.now();
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
+    const res = await fetch(`${targetUrl}/api/health`, { signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    const latency = Math.round(performance.now() - startTime);
+    if (res.ok) {
+      const data = await res.json();
+      backendPingResult.className = 'ping-result-text success';
+      backendPingResult.innerHTML = `🟢 <strong>ONLINE (${latency}ms)</strong>: ${data.system || 'FastAPI Gateway'} | Air-Gap: ${data.air_gap_verified ? 'VERIFIED' : 'ACTIVE'}`;
+      if (backendConnStatusBadge) {
+        backendConnStatusBadge.textContent = 'CONNECTED ONLINE ✅';
+        backendConnStatusBadge.className = 'badge-emerald';
+        backendConnStatusBadge.style.color = 'var(--status-emerald)';
+        backendConnStatusBadge.style.borderColor = 'rgba(46, 196, 182, 0.4)';
+      }
+    } else {
+      throw new Error(`HTTP ${res.status}`);
+    }
+  } catch (err) {
+    backendPingResult.className = 'ping-result-text error';
+    backendPingResult.innerHTML = `🔴 <strong>OFFLINE</strong>: Cannot connect to ${targetUrl} (${err.name === 'AbortError' ? 'Timeout' : err.message}). In offline LAN, verify Node 1 is running at 192.168.1.100:8000 or switch to Localhost if developing on single laptop.`;
+    if (backendConnStatusBadge) {
+      backendConnStatusBadge.textContent = 'GATEWAY UNREACHABLE';
+      backendConnStatusBadge.className = 'badge-emerald';
+      backendConnStatusBadge.style.color = 'var(--emergency-crimson)';
+      backendConnStatusBadge.style.borderColor = 'var(--emergency-crimson)';
+    }
+  }
 }
 
 function triggerLockdown(reason) {
