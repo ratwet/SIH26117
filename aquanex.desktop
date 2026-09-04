@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Aquanex
+GenericName=Sovereign AI Workbench
+Comment=Sovereign On-Premise Agentic AI Workbench for Industrial Inspection (MRPL PS 117)
+Exec=/home/cyanide/SIH/scripts/launch_aquanex.sh
+Icon=/home/cyanide/SIH/frontend/public/aquanex-logo.png
+Terminal=false
+Categories=Development;Engineering;
+Keywords=aquanex;workbench;mrpl;sovereign;ai;inspection;
+StartupWMClass=aquanex
+StartupNotify=true

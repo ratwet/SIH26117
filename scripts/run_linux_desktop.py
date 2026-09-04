@@ -72,6 +72,7 @@ class AquanexDesktopWindow(Gtk.Window):
         # Window configuration matching tauri.conf.json
         self.set_default_size(1320, 860)
         self.set_position(Gtk.WindowPosition.CENTER)
+        self.set_wmclass("aquanex", "Aquanex")
 
         # Set Window Icon
         icon_path = ROOT_DIR / "frontend" / "public" / "aquanex-logo.png"
@@ -171,6 +172,9 @@ def main():
     print("   Platform: Linux (GTK 3.0 + WebKit2 Engine)")
     print(f"   Target Gateway: {args.url}")
     print("=" * 65)
+
+    GLib.set_prgname("aquanex")
+    GLib.set_application_name("Aquanex")
 
     ensure_backend_running(args.url)
 
