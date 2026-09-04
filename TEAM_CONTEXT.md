@@ -134,7 +134,7 @@ This is the exact sequence we will perform in front of the evaluators:
 | **Rajat (Dev 1: LangGraph & API Lead)** | LangGraph Orchestrator & SSE Streaming | Python, FastAPI, LangGraph, SSE | • LangGraph state graph & conditional edges<br>• Intent routing & self-healing loop<br>• Streaming chat API (`/api/chat`) |
 | **Anand (Dev 2: Tools & Security Lead)** | Sandboxing, Self-Healing, Deliverables & Security | Linux `bwrap`, `python-docx`, `openpyxl`, ChromaDB | • Secure Bubblewrap sandbox runner<br>• Error distillation parser<br>• Word & Excel deliverable compilers<br>• CPU Sovereign RAG & SHA-256 audit |
 | **Kaushal (Dev 3: Model & GPU Lead)** | Ollama GPU Server, GGUF Models & VRAM | Ollama API, GGUF Quantization, NVIDIA CUDA | • Local Ollama daemon configuration<br>• Model weight ingestion & quantization<br>• Sequential VRAM offloader (`keep_alive: 0`)<br>• Async `call_llm` model gateway |
-| **Frontend & Desktop Lead** | Tauri Desktop Client & UI/UX | Tauri (Rust), React, Tailwind CSS, Lucide | • Native desktop application bundle<br>• mDNS auto-discovery client<br>• Emergency Red Lock Screen modal<br>• Live network packet HUD gauge |
+| **Developer 4 (Frontend & Desktop Lead)** | Tauri Desktop Client & UI/UX | Tauri (Rust), HTML5, CSS/Tailwind, SSE Client | • Native desktop application bundle<br>• Governed by [`FRONTEND_SPEC.md`](FRONTEND_SPEC.md)<br>• Emergency Red Lock Screen modal<br>• Live network packet HUD gauge |
 | **QA, Pitch & Demo Lead** | Integration, Synthetic Data & Presentation | Hardware rig, PPT deck, Test scenarios | • 3-laptop network setup & hotspot routing<br>• Synthetic inspection PDFs & P&ID mockups<br>• Presentation deck & demo choreography |
 
 ---
