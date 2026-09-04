@@ -104,6 +104,10 @@ class CostMatrixPayload(BaseModel):
         ]
     )
     contingency_percentage: float = Field(default=10.0)
+    remaining_life_years: Optional[float] = Field(
+        default=None,
+        description="Calculated remaining service life in years per API 570."
+    )
 
 
 # =====================================================================
@@ -140,6 +144,18 @@ class NetworkStats(BaseModel):
         description="Must be exactly 0 during demo to prove air-gap compliance."
     )
     air_gap_status: str = Field(default="LOCKED_AIR_GAP_COMPLIANT")
+    is_air_gapped: bool = Field(
+        default=True,
+        description="True if completely air-gapped without external WAN leak, False otherwise."
+    )
+    external_gateway_detected: bool = Field(
+        default=False,
+        description="True if a default gateway or WAN route is detected."
+    )
+    active_local_connections: int = Field(
+        default=1,
+        description="Active local network socket connections (LAN/localhost)."
+    )
 
 
 class AuditEvent(BaseModel):

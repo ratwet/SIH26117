@@ -70,7 +70,7 @@ def build_sovereign_graph():
 
     # 4. Standard Forward Transitions
     workflow.add_edge("vision_extraction", "math_generation")
-    workflow.add_edge("rag_retrieval", "compile_deliverables")
+    workflow.add_edge("rag_retrieval", "general_chat")
     workflow.add_edge("math_generation", "sandbox_execution")
 
     # 5. Add Conditional Decision from Sandbox Execution (Self-Healing Loop)

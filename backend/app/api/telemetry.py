@@ -13,6 +13,8 @@ from fastapi.responses import StreamingResponse
 from app.schemas import NetworkStats, AuditEvent
 from app.security.network_monitor import read_network_stats
 from app.security.audit_chain import verify_audit_chain, get_audit_ledger
+from app.api.admin import require_permission
+from fastapi import Depends
 
 router = APIRouter(prefix="/api/telemetry", tags=["Telemetry & Security"])
 
@@ -44,7 +46,7 @@ async def stream_network_telemetry():
     )
 
 
-@router.get("/audit")
+@router.get("/audit", dependencies=[Depends(require_permission("can_view_audit_logs"))])
 async def get_audit_status() -> Dict[str, Any]:
     """
     Verify the cryptographic integrity of the SHA-256 audit ledger

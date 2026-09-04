@@ -4,6 +4,8 @@ Handles file uploads (inspection PDFs, P&ID blueprints) and deliverable download
 (.docx approval notes, .xlsx cost matrices).
 """
 
+import asyncio
+import logging
 import shutil
 from pathlib import Path
 from typing import Dict, Any, List
@@ -13,6 +15,7 @@ from fastapi.responses import FileResponse
 from app.config import settings
 from app.rag.ingest import ingest_document_to_rag
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/files", tags=["Files & Deliverables"])
 
 
@@ -35,15 +38,17 @@ async def upload_file(file: UploadFile = File(...)) -> Dict[str, Any]:
         
     file_size = destination.stat().st_size
     chunks_ingested = 0
+    indexing_error = None
     suffix = destination.suffix.lower()
 
     # Determine artifact category
     if suffix in [".pdf", ".docx", ".txt", ".md"]:
         category = "DOCUMENT_SPEC"
         try:
-            chunks_ingested = ingest_document_to_rag(destination)
-        except Exception:
-            pass
+            chunks_ingested = await asyncio.to_thread(ingest_document_to_rag, destination)
+        except Exception as exc:
+            logger.error("Failed to ingest document %s into Sovereign RAG: %s", destination.name, exc, exc_info=True)
+            indexing_error = str(exc)
     elif suffix in [".png", ".jpg", ".jpeg", ".tiff", ".bmp", ".svg"]:
         category = "VISION_BLUEPRINT"
     elif suffix in [".dxf", ".dwg"]:
@@ -58,11 +63,12 @@ async def upload_file(file: UploadFile = File(...)) -> Dict[str, Any]:
         category = "GENERAL_ARTIFACT"
             
     return {
-        "status": "success",
+        "status": "success" if indexing_error is None else "partial_success",
         "filename": safe_filename,
         "category": category,
         "size_bytes": file_size,
         "chunks_indexed": chunks_ingested,
+        "indexing_error": indexing_error,
         "file_path": str(destination)
     }
 

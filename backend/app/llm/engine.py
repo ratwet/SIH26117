@@ -36,9 +36,9 @@ class FoundationModelEngine:
 
     def __init__(self):
         self.vllm_host = getattr(settings, "VLLM_HOST", "127.0.0.1")
-        self.vllm_port = getattr(settings, "VLLM_PORT", 8000)
+        self.vllm_port = getattr(settings, "VLLM_PORT", 8001)
         self.base_url = f"http://{self.vllm_host}:{self.vllm_port}/v1"
-        self.timeout = 10.0
+        self.timeout = httpx.Timeout(10.0, connect=0.5)
 
     async def check_cluster_health(self) -> Dict[str, Any]:
         """
@@ -195,3 +195,8 @@ class FoundationModelEngine:
 
 # Global singleton instance
 foundation_engine = FoundationModelEngine()
+
+
+def get_llm_engine() -> FoundationModelEngine:
+    """Returns the singleton FoundationModelEngine gateway instance."""
+    return foundation_engine

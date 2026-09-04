@@ -4,7 +4,7 @@ Owned by Rajat (Dev 1: Orchestration & API Lead).
 """
 
 from pathlib import Path
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends, Header
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from app.config import settings
@@ -40,6 +40,28 @@ RBAC_REGISTRY = {
 }
 
 
+def require_permission(permission: str):
+    """
+    FastAPI dependency that enforces role-based access control (RBAC).
+    Reads the role from the X-User-Role HTTP header (defaults to 'senior').
+    """
+    async def _dependency(x_user_role: Optional[str] = Header(default="senior", alias="X-User-Role")):
+        role = (x_user_role or "senior").lower()
+        perms = RBAC_REGISTRY.get(role)
+        if not perms:
+            raise HTTPException(
+                status_code=403,
+                detail=f"Access Denied: Unrecognized role '{x_user_role}'. Valid roles: {list(RBAC_REGISTRY.keys())}"
+            )
+        if not perms.get(permission, False):
+            raise HTTPException(
+                status_code=403,
+                detail=f"Access Denied: Role '{role}' does not have required permission '{permission}'."
+            )
+        return role
+    return _dependency
+
+
 class ModelRegisterRequest(BaseModel):
     filename: str = Field(..., json_schema_extra={"example": "DeepSeek-R1-Distill-Qwen-8B-Q4_K_M.gguf"})
     role: str = Field(default="reasoning", json_schema_extra={"example": "reasoning"})
@@ -68,7 +90,7 @@ async def list_available_models():
     }
 
 
-@router.post("/models/register")
+@router.post("/models/register", dependencies=[Depends(require_permission("can_register_models"))])
 async def register_new_model(request: ModelRegisterRequest):
     """
     Registers a new dropped .gguf file into the active model registry.
@@ -151,7 +173,7 @@ async def get_model_tiers():
     }
 
 
-@router.post("/model-tier")
+@router.post("/model-tier", dependencies=[Depends(require_permission("can_manage_rbac"))])
 async def set_model_tier(request: SetModelTierRequest):
     """Sets active model tier (ENTERPRISE_100B, WORKSTATION_32B, EDGE_LAPTOP_8B)."""
     tier = request.tier.upper()

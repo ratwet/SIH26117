@@ -1,12 +1,13 @@
 """
 SovereignWorkbench — Sandbox Runner (app/sandbox/runner.py)
 Executes LLM-generated Python math scripts in an isolated Bubblewrap (bwrap) namespace
-or graceful local fallback with strict resource caps and JSON output parsing.
+or graceful local fallback with strict resource caps, filesystem whitelisting, and JSON output parsing.
 """
 
 import json
 import logging
 import os
+from pathlib import Path
 import re
 import shutil
 import subprocess
@@ -15,8 +16,20 @@ from typing import Optional, Dict, Any
 
 from app.schemas import SandboxResult
 from app.sandbox.error_parser import distill_python_traceback
+from app.config import settings
 
 logger = logging.getLogger(__name__)
+
+
+def _set_resource_limits(mem_limit_mb: int):
+    """Enforce strict memory caps (RLIMIT_AS) at the OS level via resource module."""
+    try:
+        import resource
+        mem_bytes = int(mem_limit_mb * 1024 * 1024)
+        # Limit total address space
+        resource.setrlimit(resource.RLIMIT_AS, (mem_bytes, mem_bytes))
+    except Exception as exc:
+        logger.debug(f"Resource limit setting skipped: {exc}")
 
 
 def _extract_json_from_stdout(stdout: str) -> Optional[Dict[str, Any]]:
@@ -52,30 +65,51 @@ def execute_in_sandbox(
     mem_limit_mb: int = 256
 ) -> SandboxResult:
     """
-    Execute Python code inside an isolated environment.
+    Execute Python code inside an isolated, non-networked environment.
     
-    Uses Linux Bubblewrap (bwrap) if present:
-      bwrap --unshare-net --unshare-pid --ro-bind / / --tmpfs /tmp --proc /proc --dev /dev python3 -c "<code>"
-    Falls back gracefully to standard subprocess on non-Linux / local dev machines without bwrap.
+    Uses Linux Bubblewrap (bwrap) with strict minimal filesystem allowlist:
+      - Unshared network (--unshare-net) and PID namespace (--unshare-pid)
+      - Read-only whitelist for system binaries and virtualenv only
+      - Host project files, uploads, and databases are strictly excluded
+      - Memory limits enforced via OS resource caps (RLIMIT_AS)
     """
     bwrap_path = shutil.which("bwrap")
-    
+    preexec = (lambda: _set_resource_limits(mem_limit_mb)) if os.name == "posix" else None
+
     if bwrap_path:
-        # Strict non-networked Linux namespace container
         cmd = [
             bwrap_path,
             "--unshare-net",
             "--unshare-pid",
-            "--ro-bind", "/", "/",
-            "--tmpfs", "/tmp",
-            "--proc", "/proc",
             "--dev", "/dev",
-            sys.executable,
-            "-c",
-            code
+            "--proc", "/proc",
+            "--tmpfs", "/tmp",
         ]
+        # Whitelist essential system directories read-only
+        system_dirs = ["/usr", "/lib", "/lib64", "/bin", "/etc"]
+        for d in system_dirs:
+            if Path(d).exists():
+                cmd.extend(["--ro-bind", d, d])
+
+        # Whitelist active Python virtualenv if outside standard /usr
+        py_prefix = sys.prefix
+        if py_prefix and not any(py_prefix.startswith(sd) for sd in system_dirs):
+            if Path(py_prefix).exists():
+                cmd.extend(["--ro-bind", py_prefix, py_prefix])
+
+        cmd.extend([sys.executable, "-c", code])
     else:
-        logger.warning("[WARNING] bwrap not found, running with standard subprocess")
+        allow_fallback = getattr(settings, "ALLOW_UNSANDBOXED_FALLBACK", True)
+        if not allow_fallback:
+            return SandboxResult(
+                success=False,
+                exit_code=-1,
+                stdout="",
+                stderr="Security Policy Violation: Bubblewrap (bwrap) isolation runtime is required in strict mode.",
+                distilled_error="Security Violation: bwrap sandbox runtime missing and fallback disabled.",
+                parsed_output=None
+            )
+        logger.warning("[WARNING] bwrap not found, running with resource-capped standard subprocess")
         cmd = [sys.executable, "-c", code]
         
     try:
@@ -84,7 +118,8 @@ def execute_in_sandbox(
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
-            timeout=timeout
+            timeout=timeout,
+            preexec_fn=preexec
         )
         
         stdout = result.stdout or ""

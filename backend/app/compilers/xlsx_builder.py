@@ -190,14 +190,27 @@ def compile_cost_matrix(payload: CostMatrixPayload, output_path: Path) -> Path:
     badge_row = grand_total_row + 2
     ws.cell(row=badge_row, column=2, value="Statutory Risk Evaluation:").font = font_bold
     
-    badge_cell = ws.cell(row=badge_row, column=3, value="MANDATORY REPLACEMENT REQUIRED")
-    badge_cell.font = Font(name="Calibri", size=10, bold=True, color=COLOR_CRITICAL_FG)
-    badge_cell.fill = PatternFill(start_color=COLOR_CRITICAL_BG, end_color=COLOR_CRITICAL_BG, fill_type="solid")
+    rem_life = getattr(payload, "remaining_life_years", None)
+    if rem_life is not None and rem_life >= 5.0:
+        badge_text = "IN-SERVICE MONITORING ACCEPTABLE"
+        badge_fg = "155724"  # Dark green
+        badge_bg = "D4EDDA"  # Light green
+        note_text = f"Compliance Note: Remaining Life ({rem_life} Years) >= 5.0 Years indicates acceptable wall thickness under API 570."
+    else:
+        badge_text = "MANDATORY REPLACEMENT REQUIRED"
+        badge_fg = COLOR_CRITICAL_FG
+        badge_bg = COLOR_CRITICAL_BG
+        life_str = f" ({rem_life} Years)" if rem_life is not None else ""
+        note_text = f"Compliance Note: Remaining Life{life_str} < 5.0 Years requires scheduled procurement under API 570."
+
+    badge_cell = ws.cell(row=badge_row, column=3, value=badge_text)
+    badge_cell.font = Font(name="Calibri", size=10, bold=True, color=badge_fg)
+    badge_cell.fill = PatternFill(start_color=badge_bg, end_color=badge_bg, fill_type="solid")
     badge_cell.alignment = align_center
     badge_cell.border = border_thin
     
     # Note on API 570 compliance
-    ws.cell(row=badge_row + 1, column=2, value="Compliance Note: Remaining Life < 5.0 Years requires scheduled procurement under API 570.").font = font_subtitle
+    ws.cell(row=badge_row + 1, column=2, value=note_text).font = font_subtitle
     
     # -------------------------------------------------------------
     # 6. Auto-fit column widths

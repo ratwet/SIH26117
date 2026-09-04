@@ -92,12 +92,15 @@ class Settings(BaseSettings):
     # --- Security ---
     AUDIT_DB_PATH: Path = Path("data/mrpl_audit.db")
     NETWORK_POLL_INTERVAL_SECONDS: float = 2.0
+    AIR_GAP_STRICT: bool = False
+    SIMULATE_AIR_GAP_BREACH: bool = False
+    WAN_INTERFACE_OVERRIDE: str = ""
+    ALLOW_UNSANDBOXED_FALLBACK: bool = True
 
     # --- Server ---
     HOST: str = "0.0.0.0"
     PORT: int = 8000
     CORS_ORIGINS: list[str] = [
-        "*",
         "tauri://localhost",
         "http://tauri.localhost",
         "https://tauri.localhost",
@@ -108,6 +111,9 @@ class Settings(BaseSettings):
         "http://192.168.1.100:8000",
         "http://192.168.1.101:8000",
         "http://192.168.1.102:8000",
+        "http://192.168.1.100:5173",
+        "http://192.168.1.101:5173",
+        "http://192.168.1.102:5173",
     ]
 
     model_config = SettingsConfigDict(
