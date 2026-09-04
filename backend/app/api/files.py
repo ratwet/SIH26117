@@ -67,10 +67,10 @@ async def upload_file(file: UploadFile = File(...)) -> Dict[str, Any]:
     }
 
 
-@router.get("/download/{filename}")
+@router.api_route("/download/{filename}", methods=["GET", "HEAD"])
 async def download_file(filename: str):
     """
-    Download a compiled deliverable (.docx, .xlsx, .pptx, .dxf, .png) or uploaded document.
+    Download a compiled deliverable or uploaded document.
     """
     safe_name = Path(filename).name
     deliverables_dir = getattr(settings, "DELIVERABLES_DIR", settings.DATA_DIR / "deliverables")
@@ -101,6 +101,10 @@ async def download_file(filename: str):
         media_type = "image/jpeg"
     elif safe_name.endswith(".pdf"):
         media_type = "application/pdf"
+    elif safe_name.endswith(".stl"):
+        media_type = "model/stl"
+    elif safe_name.endswith(".csv"):
+        media_type = "text/csv"
     elif safe_name.endswith(".py"):
         media_type = "text/x-python"
     elif safe_name.endswith(".json"):

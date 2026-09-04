@@ -1479,6 +1479,24 @@ input:checked + .slider:before {
   border: 1px solid rgba(46, 196, 182, 0.35);
 }
 
+.type-pdf {
+  background: rgba(239, 68, 68, 0.15);
+  color: #EF4444;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.type-stl {
+  background: rgba(168, 85, 247, 0.15);
+  color: #A855F7;
+  border: 1px solid rgba(168, 85, 247, 0.35);
+}
+
+.type-csv {
+  background: rgba(20, 184, 166, 0.15);
+  color: #14B8A6;
+  border: 1px solid rgba(20, 184, 166, 0.35);
+}
+
 /* Input File Attachment Pill Badges */
 .pill-category-badge {
   font-size: 0.65rem;
@@ -1612,7 +1630,45 @@ input:checked + .slider:before {
 .badge-docx { background: rgba(77, 171, 247, 0.2); color: #4DABF7; border: 1px solid rgba(77, 171, 247, 0.4); }
 .badge-xlsx { background: rgba(46, 213, 115, 0.2); color: #2ED573; border: 1px solid rgba(46, 213, 115, 0.4); }
 .badge-pptx { background: rgba(255, 107, 53, 0.2); color: #FF793F; border: 1px solid rgba(255, 107, 53, 0.4); }
+.badge-pdf { background: rgba(239, 68, 68, 0.2); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.4); }
 .badge-dxf { background: rgba(162, 155, 254, 0.2); color: #A29BFE; border: 1px solid rgba(162, 155, 254, 0.4); }
+.badge-stl { background: rgba(168, 85, 247, 0.2); color: #A855F7; border: 1px solid rgba(168, 85, 247, 0.4); }
 .badge-png { background: rgba(0, 210, 211, 0.2); color: #00D2D3; border: 1px solid rgba(0, 210, 211, 0.4); }
+.badge-csv { background: rgba(20, 184, 166, 0.2); color: #14B8A6; border: 1px solid rgba(20, 184, 166, 0.4); }
 .badge-py { background: rgba(254, 202, 87, 0.2); color: #FECA57; border: 1px solid rgba(254, 202, 87, 0.4); }
 .badge-json { background: rgba(46, 196, 182, 0.2); color: #2EC4B6; border: 1px solid rgba(46, 196, 182, 0.4); }
+
+/* Category Filter Bar for Deliverables */
+.deliverables-filter-bar {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.65rem;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.filter-chip {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-medium);
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.filter-chip:hover {
+  color: var(--text-headline);
+  border-color: var(--border-bright);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.filter-chip.active {
+  background: var(--gold-gradient);
+  color: #000000;
+  font-weight: 700;
+  border-color: var(--gold-primary);
+}

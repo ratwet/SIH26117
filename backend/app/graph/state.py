@@ -46,8 +46,11 @@ class AgentState(TypedDict):
     docx_path: Optional[str]                   # Path to generated MRPL_Approval_Note.docx
     xlsx_path: Optional[str]                   # Path to generated Cost_Matrix.xlsx
     pptx_path: Optional[str]                   # Path to generated Executive_Pitch_Deck.pptx
+    pdf_path: Optional[str]                    # Path to generated MRPL_Inspection_Certificate.pdf
     cad_path: Optional[str]                    # Path to generated Piping_Spool_Drawing.dxf
+    stl_path: Optional[str]                    # Path to generated Piping_Spool_3D.stl
     image_path: Optional[str]                  # Path to generated Inspection_Heatmap.png
+    csv_path: Optional[str]                    # Path to generated UT_Thickness_Survey.csv
     script_path: Optional[str]                 # Path to generated Standalone_Calculation_Script.py
     manifest_path: Optional[str]               # Path to generated MRPL_Audit_Manifest.json
     deliverables: Optional[List[Dict[str, Any]]] # Array of generated deliverable items

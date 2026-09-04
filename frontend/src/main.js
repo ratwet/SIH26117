@@ -454,8 +454,11 @@ function finishAssistantResponse(payload, container) {
   const actualDocx = payload.docx_path ? payload.docx_path.split('/').pop() : 'MRPL_Approval_Note_sim-2026.docx';
   const actualXlsx = payload.xlsx_path ? payload.xlsx_path.split('/').pop() : 'Cost_Matrix_sim-2026.xlsx';
   const actualPptx = payload.pptx_path ? payload.pptx_path.split('/').pop() : 'Executive_Pitch_Deck_sim-2026.pptx';
+  const actualPdf = payload.pdf_path ? payload.pdf_path.split('/').pop() : 'MRPL_Inspection_Certificate_sim-2026.pdf';
   const actualCad = payload.cad_path ? payload.cad_path.split('/').pop() : 'Piping_Spool_CAD_sim-2026.dxf';
+  const actualStl = payload.stl_path ? payload.stl_path.split('/').pop() : 'Piping_Spool_3D_sim-2026.stl';
   const actualImg = payload.image_path ? payload.image_path.split('/').pop() : 'Inspection_Heatmap_sim-2026.png';
+  const actualCsv = payload.csv_path ? payload.csv_path.split('/').pop() : 'UT_Thickness_Survey_sim-2026.csv';
   const actualPy = payload.script_path ? payload.script_path.split('/').pop() : 'CDU2_API570_Calculation_sim-2026.py';
   const actualJson = payload.manifest_path ? payload.manifest_path.split('/').pop() : 'MRPL_Audit_Manifest_sim-2026.json';
 
@@ -500,34 +503,53 @@ function finishAssistantResponse(payload, container) {
       </div>
     </div>
 
-    <!-- 7 Deliverables Action Grid -->
-    <div class="deliverables-grid-title">Generated Omni-Modal Artifacts (7 Files)</div>
+    <!-- 10 Deliverables Action Grid with Category Filter -->
+    <div class="deliverables-grid-title">Generated Omni-Modal Artifacts (10 Deliverables)</div>
+    <div class="deliverables-filter-bar">
+      <button class="filter-chip active" data-filter="all">All (10)</button>
+      <button class="filter-chip" data-filter="reports">Docs & Reports</button>
+      <button class="filter-chip" data-filter="cad">CAD & 3D</button>
+      <button class="filter-chip" data-filter="data">Data & APM</button>
+      <button class="filter-chip" data-filter="code">Code & Audit</button>
+    </div>
     <div class="deliverables-action-grid">
-      <button class="btn-deliverable-item type-btn-docx" id="btnDlDocx" title="Download Word Approval Note">
+      <button class="btn-deliverable-item type-btn-pdf" id="btnDlPdf" data-cat="reports" title="Download Statutory Inspection Certificate PDF">
+        <span class="deliv-badge badge-pdf">PDF</span>
+        <span class="deliv-label">Inspection Cert (.pdf)</span>
+      </button>
+      <button class="btn-deliverable-item type-btn-docx" id="btnDlDocx" data-cat="reports" title="Download Word Approval Note">
         <span class="deliv-badge badge-docx">DOCX</span>
         <span class="deliv-label">Approval Note (.docx)</span>
       </button>
-      <button class="btn-deliverable-item type-btn-xlsx" id="btnDlXlsx" title="Download Excel Cost Matrix">
+      <button class="btn-deliverable-item type-btn-xlsx" id="btnDlXlsx" data-cat="data" title="Download Excel Cost Matrix">
         <span class="deliv-badge badge-xlsx">XLSX</span>
         <span class="deliv-label">Cost Matrix (.xlsx)</span>
       </button>
-      <button class="btn-deliverable-item type-btn-pptx" id="btnDlPptx" title="Download Board Presentation">
+      <button class="btn-deliverable-item type-btn-pptx" id="btnDlPptx" data-cat="reports" title="Download Board Presentation">
         <span class="deliv-badge badge-pptx">PPTX</span>
         <span class="deliv-label">Board Deck (.pptx)</span>
       </button>
-      <button class="btn-deliverable-item type-btn-dxf" id="btnDlCad" title="Download AutoCAD DXF Spool">
+      <button class="btn-deliverable-item type-btn-dxf" id="btnDlCad" data-cat="cad" title="Download AutoCAD DXF Spool">
         <span class="deliv-badge badge-dxf">CAD</span>
         <span class="deliv-label">Spool Drawing (.dxf)</span>
       </button>
-      <button class="btn-deliverable-item type-btn-png" id="btnDlImg" title="Download High-Res Heatmap">
+      <button class="btn-deliverable-item type-btn-stl" id="btnDlStl" data-cat="cad" title="Download 3D Printable CAD Mesh">
+        <span class="deliv-badge badge-stl">3D</span>
+        <span class="deliv-label">3D Spool Mesh (.stl)</span>
+      </button>
+      <button class="btn-deliverable-item type-btn-png" id="btnDlImg" data-cat="code" title="Download High-Res Heatmap">
         <span class="deliv-badge badge-png">PNG</span>
         <span class="deliv-label">Inspection Map (.png)</span>
       </button>
-      <button class="btn-deliverable-item type-btn-py" id="btnDlPy" title="Download Standalone Python Script">
+      <button class="btn-deliverable-item type-btn-csv" id="btnDlCsv" data-cat="data" title="Download Ultrasonic NDT Survey Log">
+        <span class="deliv-badge badge-csv">CSV</span>
+        <span class="deliv-label">NDT APM Log (.csv)</span>
+      </button>
+      <button class="btn-deliverable-item type-btn-py" id="btnDlPy" data-cat="code" title="Download Standalone Python Script">
         <span class="deliv-badge badge-py">CODE</span>
         <span class="deliv-label">Math Script (.py)</span>
       </button>
-      <button class="btn-deliverable-item type-btn-json" id="btnDlJson" title="Download SHA-256 Audit Manifest">
+      <button class="btn-deliverable-item type-btn-json" id="btnDlJson" data-cat="code" title="Download SHA-256 Audit Manifest">
         <span class="deliv-badge badge-json">HASH</span>
         <span class="deliv-label">Audit Manifest (.json)</span>
       </button>
@@ -536,20 +558,44 @@ function finishAssistantResponse(payload, container) {
 
   container.appendChild(summaryCard);
 
+  // Wire category filter chips
+  const chips = summaryCard.querySelectorAll('.filter-chip');
+  const items = summaryCard.querySelectorAll('.btn-deliverable-item');
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const cat = chip.dataset.filter;
+      items.forEach(it => {
+        if (cat === 'all' || it.dataset.cat === cat) {
+          it.style.display = 'flex';
+        } else {
+          it.style.display = 'none';
+        }
+      });
+    });
+  });
+
   // Wire download buttons
+  const btnPdf = summaryCard.querySelector('#btnDlPdf');
   const btnDocx = summaryCard.querySelector('#btnDlDocx');
   const btnXlsx = summaryCard.querySelector('#btnDlXlsx');
   const btnPptx = summaryCard.querySelector('#btnDlPptx');
   const btnCad = summaryCard.querySelector('#btnDlCad');
+  const btnStl = summaryCard.querySelector('#btnDlStl');
   const btnImg = summaryCard.querySelector('#btnDlImg');
+  const btnCsv = summaryCard.querySelector('#btnDlCsv');
   const btnPy = summaryCard.querySelector('#btnDlPy');
   const btnJson = summaryCard.querySelector('#btnDlJson');
 
+  if (btnPdf) btnPdf.addEventListener('click', () => handleDownloadDeliverable(actualPdf, btnPdf));
   if (btnDocx) btnDocx.addEventListener('click', () => handleDownloadDeliverable(actualDocx, btnDocx));
   if (btnXlsx) btnXlsx.addEventListener('click', () => handleDownloadDeliverable(actualXlsx, btnXlsx));
   if (btnPptx) btnPptx.addEventListener('click', () => handleDownloadDeliverable(actualPptx, btnPptx));
   if (btnCad) btnCad.addEventListener('click', () => handleDownloadDeliverable(actualCad, btnCad));
+  if (btnStl) btnStl.addEventListener('click', () => handleDownloadDeliverable(actualStl, btnStl));
   if (btnImg) btnImg.addEventListener('click', () => handleDownloadDeliverable(actualImg, btnImg));
+  if (btnCsv) btnCsv.addEventListener('click', () => handleDownloadDeliverable(actualCsv, btnCsv));
   if (btnPy) btnPy.addEventListener('click', () => handleDownloadDeliverable(actualPy, btnPy));
   if (btnJson) btnJson.addEventListener('click', () => handleDownloadDeliverable(actualJson, btnJson));
 
@@ -613,19 +659,25 @@ async function loadDeliverables() {
         const isDocx = file.name.endsWith('.docx');
         const isXlsx = file.name.endsWith('.xlsx');
         const isPptx = file.name.endsWith('.pptx');
+        const isPdf = file.name.endsWith('.pdf');
         const isDxf = file.name.endsWith('.dxf');
+        const isStl = file.name.endsWith('.stl');
         const isPng = file.name.endsWith('.png');
+        const isCsv = file.name.endsWith('.csv');
         const isPy = file.name.endsWith('.py');
         const isJson = file.name.endsWith('.json');
 
         let badgeClass = 'type-default';
         let typeText = 'FILE';
 
-        if (isDocx) { badgeClass = 'type-docx'; typeText = 'DOCX'; }
+        if (isPdf) { badgeClass = 'type-pdf'; typeText = 'PDF'; }
+        else if (isDocx) { badgeClass = 'type-docx'; typeText = 'DOCX'; }
         else if (isXlsx) { badgeClass = 'type-xlsx'; typeText = 'XLSX'; }
         else if (isPptx) { badgeClass = 'type-pptx'; typeText = 'PPTX'; }
         else if (isDxf) { badgeClass = 'type-dxf'; typeText = 'CAD'; }
+        else if (isStl) { badgeClass = 'type-stl'; typeText = '3D'; }
         else if (isPng) { badgeClass = 'type-png'; typeText = 'HEAT'; }
+        else if (isCsv) { badgeClass = 'type-csv'; typeText = 'CSV'; }
         else if (isPy) { badgeClass = 'type-py'; typeText = 'CODE'; }
         else if (isJson) { badgeClass = 'type-json'; typeText = 'HASH'; }
         const sizeText = formatBytes(file.size_bytes);

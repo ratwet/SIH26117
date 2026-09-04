@@ -175,3 +175,26 @@ async def set_model_tier(request: SetModelTierRequest):
         "active_tier": settings.MODEL_TIER,
         "profile": profile,
     }
+
+
+@router.get("/llm-health")
+async def get_llm_cluster_health():
+    """
+    Returns datacenter vLLM cluster health, target GPU topology,
+    active model weights, and 100B emulation status.
+    """
+    try:
+        from app.llm import foundation_engine
+        telemetry = await foundation_engine.check_cluster_health()
+    except Exception as e:
+        telemetry = {
+            "tier": settings.MODEL_TIER,
+            "target_hardware": "4x NVIDIA A100 (80GB SXM4) / H100",
+            "tensor_parallel_size": settings.TENSOR_PARALLEL_SIZE,
+            "max_context_window": settings.MAX_MODEL_LEN,
+            "is_connected_to_vllm": False,
+            "mode": "HARDWARE_AGNOSTIC_EMULATION",
+            "error": str(e),
+        }
+    return telemetry
+

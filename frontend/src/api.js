@@ -137,14 +137,17 @@ export const SovereignAPI = {
         docx_path: "MRPL_Approval_Note_sim-2026.docx",
         xlsx_path: "Cost_Matrix_sim-2026.xlsx",
         pptx_path: "Executive_Pitch_Deck_sim-2026.pptx",
+        pdf_path: "MRPL_Inspection_Certificate_sim-2026.pdf",
         cad_path: "Piping_Spool_CAD_sim-2026.dxf",
+        stl_path: "Piping_Spool_3D_sim-2026.stl",
         image_path: "Inspection_Heatmap_sim-2026.png",
+        csv_path: "UT_Thickness_Survey_sim-2026.csv",
         script_path: "CDU2_API570_Calculation_sim-2026.py",
         manifest_path: "MRPL_Audit_Manifest_sim-2026.json",
       };
 
       steps.push(
-        { delay: isErrorScenario ? 6800 : 4600, type: "thought", payload: { node: "compile_deliverables_node", thought: "📄 Omni-Modal Compiler: Compiling Word, Excel, PowerPoint, AutoCAD DXF, Heatmap, Python Script, and SHA-256 Manifest..." } },
+        { delay: isErrorScenario ? 6800 : 4600, type: "thought", payload: { node: "compile_deliverables_node", thought: "📄 Omni-Modal Compiler: Compiling Word, Excel, PowerPoint, PDF, AutoCAD DXF, 3D STL, Heatmap, NDT CSV, Python Script, and SHA-256 Manifest..." } },
         { delay: isErrorScenario ? 7200 : 5000, type: "deliverable", payload: mockDeliverablesPayload },
         { delay: isErrorScenario ? 7800 : 5600, type: "done", payload: {
             status: "COMPLETED",
@@ -159,12 +162,15 @@ export const SovereignAPI = {
 > 🚨 **Statutory Finding (API 570 / OISD-STD-118):**  
 > Remaining life is below the mandatory 5.0-year threshold. **MANDATORY SHUTDOWN REPLACEMENT REQUIRED (< 5 YRS)**.
 
-**Generated Omni-Modal Deliverables Suite:**
+**Generated Omni-Modal Deliverables Suite (10 Deliverables):**
 - 📄 Executive Approval Note: \`MRPL_Approval_Note_sim-2026.docx\` (.docx)
 - 📊 Cost & Procurement Workbook: \`Cost_Matrix_sim-2026.xlsx\` (.xlsx)
 - 📑 Board-Level Pitch Deck: \`Executive_Pitch_Deck_sim-2026.pptx\` (.pptx)
+- 📜 Statutory Inspection Certificate: \`MRPL_Inspection_Certificate_sim-2026.pdf\` (.pdf)
 - 📐 Engineering Piping Spool CAD: \`Piping_Spool_CAD_sim-2026.dxf\` (.dxf)
+- 🧊 3D CAD Piping Spool Mesh: \`Piping_Spool_3D_sim-2026.stl\` (.stl)
 - 🖼️ Visual P&ID Corrosion Heatmap: \`Inspection_Heatmap_sim-2026.png\` (.png)
+- 📋 Ultrasonic CML Survey Log: \`UT_Thickness_Survey_sim-2026.csv\` (.csv)
 - 🐍 Standalone Verification Script: \`CDU2_API570_Calculation_sim-2026.py\` (.py)
 - 🔒 Cryptographic Audit Manifest: \`MRPL_Audit_Manifest_sim-2026.json\` (.json)`,
             ...mockDeliverablesPayload
