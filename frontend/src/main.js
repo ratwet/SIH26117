@@ -1,4 +1,20 @@
-import { SovereignAPI, USE_MOCK, setMockMode, getBackendUrl, setBackendUrl, DEFAULT_LAN_URL, DEFAULT_LOCAL_URL } from './api.js';
+import { SovereignAPI, USE_MOCK, setMockMode, getBackendUrl, setBackendUrl, getServerIP, setServerIP, DEFAULT_LAN_URL, DEFAULT_LOCAL_URL, DEFAULT_SERVER_IP } from './api.js';
+
+// Native Tauri file plugins (with browser fallback)
+let tauriDialog = null;
+let tauriFs = null;
+
+async function initTauriPlugins() {
+  try {
+    if (window.__TAURI_INTERNALS__) {
+      tauriDialog = await import('@tauri-apps/plugin-dialog');
+      tauriFs = await import('@tauri-apps/plugin-fs');
+      console.log("📁 Native Tauri dialog & fs plugins initialized.");
+    }
+  } catch (e) {
+    console.log("ℹ️ Tauri native plugins not loaded (running in browser or preview).", e);
+  }
+}
 
 // Workspace Screen Element
 const appView = document.getElementById('appView');
@@ -72,11 +88,14 @@ let currentThinkingBox = null;
 let currentThinkingList = null;
 
 // Initialize
-function init() {
+async function init() {
+  await initTauriPlugins();
   setupEventListeners();
   loadAuditLedger();
   startTelemetry();
   updateBackendUi();
+  await checkAirGapHealth();
+  await loadDeliverables();
   if (userDisplayName) userDisplayName.textContent = currentUser.name;
   if (userRoleLabel) userRoleLabel.textContent = currentUser.role;
   if (userAvatarChar) userAvatarChar.textContent = currentUser.name.charAt(0).toUpperCase();
@@ -114,6 +133,8 @@ function setupEventListeners() {
   modalMockToggle.addEventListener('change', (e) => {
     setMockMode(e.target.checked);
     loadAuditLedger();
+    checkAirGapHealth();
+    loadDeliverables();
   });
 
   // Network IP Gateway Configuration Handlers
@@ -146,10 +167,49 @@ function setupEventListeners() {
     });
   }
 
+  // Refresh Deliverables button
+  const btnRefreshDeliverables = document.getElementById('btnRefreshDeliverables');
+  if (btnRefreshDeliverables) {
+    btnRefreshDeliverables.addEventListener('click', () => loadDeliverables());
+  }
+
   btnSimulateBreachInModal.addEventListener('click', () => {
     customizeModal.style.display = 'none';
     triggerLockdown("Hotspot tether breach test triggered by evaluator.");
   });
+
+  // Server IP Settings (Wiki Spec)
+  const inputServerIp = document.getElementById('inputServerIp');
+  const btnSaveServerIp = document.getElementById('btnSaveServerIp');
+  const btnResetServerIp = document.getElementById('btnResetServerIp');
+  const modalHostPort = document.getElementById('modalHostPort');
+  const modalServerIpBadge = document.getElementById('modalServerIpBadge');
+
+  if (inputServerIp) inputServerIp.value = getServerIP();
+  if (modalHostPort) modalHostPort.textContent = getServerIP();
+  if (modalServerIpBadge) modalServerIpBadge.textContent = getServerIP();
+
+  if (btnSaveServerIp) {
+    btnSaveServerIp.addEventListener('click', () => {
+      const val = inputServerIp ? inputServerIp.value.trim() : '';
+      if (val) {
+        setServerIP(val);
+        if (modalHostPort) modalHostPort.textContent = val;
+        if (modalServerIpBadge) modalServerIpBadge.textContent = val;
+        console.log("🌐 Gateway IP updated to:", val);
+      }
+    });
+  }
+
+  if (btnResetServerIp) {
+    btnResetServerIp.addEventListener('click', () => {
+      setServerIP(DEFAULT_SERVER_IP);
+      if (inputServerIp) inputServerIp.value = DEFAULT_SERVER_IP;
+      if (modalHostPort) modalHostPort.textContent = DEFAULT_SERVER_IP;
+      if (modalServerIpBadge) modalServerIpBadge.textContent = DEFAULT_SERVER_IP;
+      console.log("🌐 Gateway IP reset to repo wiki default:", DEFAULT_SERVER_IP);
+    });
+  }
 
   btnRestoreAirGap.addEventListener('click', () => {
     lockdownModal.style.display = 'none';
@@ -288,15 +348,17 @@ function executeUserPrompt(prompt) {
     },
     onDeliverable: (payload) => {
       console.log("Deliverable ready:", payload);
+      loadDeliverables();
     },
     onDone: (payload) => {
       finishAssistantResponse(payload, responseContainer);
+      loadDeliverables();
     },
     onError: (err) => {
       console.error("Execution error:", err);
       isExecuting = false;
       btnChatSend.disabled = false;
-      responseContainer.innerHTML = `<p style="color: var(--emergency-crimson);">Execution encountered an error. Please retry or check backend connection.</p>`;
+      responseContainer.innerHTML = `<p style="color: var(--emergency-crimson); font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.5;">⚠️ Connection failed: Cannot reach server at <strong>${getServerIP()}</strong>.<br><small style="color: var(--text-muted);">Ensure the FastAPI backend is running and reachable on this host/port.</small></p>`;
     }
   });
 }
@@ -387,29 +449,170 @@ function finishAssistantResponse(payload, container) {
   // Wire download buttons
   const btnDocx = summaryCard.querySelector('#btnDlDocx');
   const btnXlsx = summaryCard.querySelector('#btnDlXlsx');
-  if (btnDocx) btnDocx.addEventListener('click', () => handleDownload('MRPL_Approval_Note_sim-2026.docx', 'docx'));
-  if (btnXlsx) btnXlsx.addEventListener('click', () => handleDownload('Cost_Matrix_sim-2026.xlsx', 'xlsx'));
+  const actualDocx = payload.docx_path ? payload.docx_path.split('/').pop() : 'MRPL_Approval_Note_sim-2026.docx';
+  const actualXlsx = payload.xlsx_path ? payload.xlsx_path.split('/').pop() : 'Cost_Matrix_sim-2026.xlsx';
+
+  if (btnDocx) btnDocx.addEventListener('click', () => handleDownloadDeliverable(actualDocx, btnDocx));
+  if (btnXlsx) btnXlsx.addEventListener('click', () => handleDownloadDeliverable(actualXlsx, btnXlsx));
 
   scrollToBottom();
 }
 
-function handleDownload(filename, type) {
-  if (USE_MOCK) {
-    const text = type === 'docx'
-      ? `MRPL REFINERY EXECUTIVE APPROVAL NOTE\nUnit: CDU-2\nLine: CDU-2-04-150-A1A\nStatus: Mandatory Replacement Required\nStatutory Code: API 570`
-      : `Line Tag,Nominal,Measured,Corrosion Rate,Remaining Life,Capex (INR)\nCDU-2-04-150-A1A,4.80mm,3.20mm,0.35mm/yr,3.14 Yrs,1154400`;
-    const blob = new Blob([text], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
+function formatBytes(bytes) {
+  if (!bytes || bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
+async function checkAirGapHealth() {
+  try {
+    const health = await SovereignAPI.checkHealth();
+    if (health && health.status === 'OPERATIONAL') {
+      airGapStatusBadge.style.background = 'var(--status-emerald-bg)';
+      airGapStatusBadge.style.color = 'var(--status-emerald)';
+      airGapStatusText.textContent = USE_MOCK ? 'Air-Gap Enforced (Mock)' : 'Air-Gap Enforced (Live Node 2)';
+      if (modalAirGapBadge) {
+        modalAirGapBadge.textContent = 'LOCKED AIR-GAP OK';
+        modalAirGapBadge.className = 'badge-emerald';
+      }
+    }
+  } catch (err) {
+    console.warn("Backend health check failed:", err);
+    airGapStatusBadge.style.background = 'rgba(239, 35, 60, 0.15)';
+    airGapStatusBadge.style.color = 'var(--emergency-crimson)';
+    airGapStatusText.textContent = `Server Offline (${getServerIP()})`;
+    if (modalAirGapBadge) {
+      modalAirGapBadge.textContent = 'SERVER OFFLINE';
+      modalAirGapBadge.className = 'badge-crimson';
+    }
+  }
+}
+
+async function loadDeliverables() {
+  const deliverablesList = document.getElementById('deliverablesList');
+  const deliverablesLoading = document.getElementById('deliverablesLoading');
+  const deliverablesError = document.getElementById('deliverablesError');
+  const deliverablesCountBadge = document.getElementById('deliverablesCountBadge');
+
+  if (!deliverablesList) return;
+  if (deliverablesLoading) deliverablesLoading.style.display = 'flex';
+  if (deliverablesError) deliverablesError.style.display = 'none';
+
+  try {
+    const data = await SovereignAPI.listFiles();
+    const files = data.deliverables || [];
+    if (deliverablesCountBadge) deliverablesCountBadge.textContent = files.length;
+    deliverablesList.innerHTML = '';
+
+    if (files.length === 0) {
+      deliverablesList.innerHTML = '<div class="deliverables-empty">No deliverables compiled yet. Run an inspection audit to generate Word/Excel artifacts.</div>';
+    } else {
+      files.forEach(file => {
+        const item = document.createElement('div');
+        item.className = 'deliverable-item';
+        const isDocx = file.name.endsWith('.docx');
+        const isXlsx = file.name.endsWith('.xlsx');
+        const badgeClass = isDocx ? 'type-docx' : (isXlsx ? 'type-xlsx' : 'type-default');
+        const typeText = isDocx ? 'DOCX' : (isXlsx ? 'XLSX' : 'FILE');
+        const sizeText = formatBytes(file.size_bytes);
+
+        item.innerHTML = `
+          <div class="deliverable-meta">
+            <span class="deliverable-type-badge ${badgeClass}">${typeText}</span>
+            <div class="deliverable-details">
+              <span class="deliverable-name" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</span>
+              <span class="deliverable-sub">${sizeText}</span>
+            </div>
+          </div>
+          <button class="btn-download-deliverable" data-filename="${escapeHtml(file.name)}" title="Save deliverable to disk">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Save
+          </button>
+        `;
+
+        const downloadBtn = item.querySelector('.btn-download-deliverable');
+        downloadBtn.addEventListener('click', () => {
+          handleDownloadDeliverable(file.name, downloadBtn);
+        });
+
+        deliverablesList.appendChild(item);
+      });
+    }
+  } catch (err) {
+    console.error("Failed to load deliverables:", err);
+    if (deliverablesError) {
+      deliverablesError.style.display = 'block';
+      deliverablesError.textContent = `Error: ${err.message || 'Cannot reach server'}`;
+    }
+  } finally {
+    if (deliverablesLoading) deliverablesLoading.style.display = 'none';
+  }
+}
+
+async function handleDownloadDeliverable(filename, btn) {
+  const originalHtml = btn ? btn.innerHTML : '';
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+  }
+
+  try {
+    const arrayBuffer = await SovereignAPI.fetchDeliverableBinary(filename);
+    const ext = filename.split('.').pop();
+
+    if (window.__TAURI_INTERNALS__ && tauriDialog && tauriFs) {
+      // Native Tauri Save File Dialog
+      const suggestedPath = await tauriDialog.save({
+        defaultPath: filename,
+        filters: [
+          { name: ext.toUpperCase() + ' Deliverable', extensions: [ext] }
+        ]
+      });
+
+      if (suggestedPath) {
+        await tauriFs.writeFile(suggestedPath, new Uint8Array(arrayBuffer));
+        console.log("💾 Saved deliverable to disk:", suggestedPath);
+        if (btn) btn.textContent = 'Saved! ✅';
+        setTimeout(() => { if (btn) { btn.innerHTML = originalHtml; btn.disabled = false; } }, 2000);
+        return;
+      } else {
+        // User cancelled dialog
+        if (btn) { btn.innerHTML = originalHtml; btn.disabled = false; }
+        return;
+      }
+    }
+
+    // Standard Browser / Dev Server Blob fallback
+    const mime = filename.endsWith('.docx')
+      ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      : (filename.endsWith('.xlsx')
+          ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+          : 'application/octet-stream');
+
+    const blob = new Blob([arrayBuffer], { type: mime });
+    const blobUrl = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
+    a.href = blobUrl;
     a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    return;
+    URL.revokeObjectURL(blobUrl);
+
+    if (btn) {
+      btn.textContent = 'Downloaded! ✅';
+      setTimeout(() => { btn.innerHTML = originalHtml; btn.disabled = false; }, 2000);
+    }
+  } catch (err) {
+    console.error("Deliverable download failed:", err);
+    alert(`Download failed for '${filename}':\n${err.message}`);
+    if (btn) {
+      btn.textContent = 'Failed ❌';
+      setTimeout(() => { btn.innerHTML = originalHtml; btn.disabled = false; }, 2500);
+    }
   }
-  window.open(SovereignAPI.getDownloadUrl(filename), '_blank');
 }
 
 function scrollToBottom() {
@@ -418,6 +621,13 @@ function scrollToBottom() {
 
 function openCustomizeModal() {
   updateBackendUi();
+  const inputServerIp = document.getElementById('inputServerIp');
+  const modalHostPort = document.getElementById('modalHostPort');
+  const modalServerIpBadge = document.getElementById('modalServerIpBadge');
+  const currentIp = getServerIP();
+  if (inputServerIp) inputServerIp.value = currentIp;
+  if (modalHostPort) modalHostPort.textContent = currentIp;
+  if (modalServerIpBadge) modalServerIpBadge.textContent = currentIp;
   customizeModal.style.display = 'flex';
 }
 

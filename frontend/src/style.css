@@ -1234,3 +1234,216 @@ input:checked + .slider:before {
   background: #FF3B53;
   box-shadow: 0 0 20px rgba(239, 35, 60, 0.5);
 }
+
+/* ==========================================================
+   DELIVERABLES SIDEBAR PANEL STYLING
+   ========================================================== */
+.deliverables-sidebar-section {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.deliverables-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.25rem;
+}
+
+.deliverables-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.deliverables-heading {
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+
+.deliverables-count-badge {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--accent-cyan);
+  font-size: 0.68rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+
+.btn-icon-xs {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-icon-xs:hover {
+  color: var(--text-primary);
+  background: var(--bg-surface);
+}
+
+.deliverables-loading {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  padding: 0.5rem 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.spinner-xs {
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--border-subtle);
+  border-top-color: var(--accent-amber);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+.deliverables-error {
+  background: rgba(239, 35, 60, 0.1);
+  border: 1px solid rgba(239, 35, 60, 0.3);
+  color: #FFA5B2;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  word-break: break-word;
+}
+
+.deliverables-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: 240px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.deliverables-empty {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  padding: 0.5rem 0.25rem;
+  font-style: italic;
+}
+
+.deliverable-item {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 0.5rem 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.deliverable-item:hover {
+  border-color: var(--border-medium);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.deliverable-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.deliverable-type-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  padding: 2px 5px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.type-docx {
+  background: rgba(77, 171, 247, 0.15);
+  color: #4DABF7;
+  border: 1px solid rgba(77, 171, 247, 0.3);
+}
+
+.type-xlsx {
+  background: rgba(46, 213, 115, 0.15);
+  color: #2ED573;
+  border: 1px solid rgba(46, 213, 115, 0.3);
+}
+
+.type-default {
+  background: rgba(255, 179, 0, 0.15);
+  color: #FFB300;
+  border: 1px solid rgba(255, 179, 0, 0.3);
+}
+
+.deliverable-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.deliverable-name {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.deliverable-sub {
+  font-size: 0.66rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.btn-download-deliverable {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  border-radius: 4px;
+  padding: 4px 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-download-deliverable:hover {
+  background: var(--accent-amber);
+  color: #000000;
+  border-color: var(--accent-amber);
+}
+
+.btn-download-deliverable:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

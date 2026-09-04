@@ -43,6 +43,26 @@
               </div>
             </div>
           </div>
+
+          <!-- Deliverables & Artifacts Panel -->
+          <div class="deliverables-sidebar-section">
+            <div class="deliverables-sidebar-header">
+              <div class="deliverables-header-left">
+                <span class="deliverables-heading">DELIVERABLES</span>
+                <span id="deliverablesCountBadge" class="deliverables-count-badge">0</span>
+              </div>
+              <button id="btnRefreshDeliverables" class="btn-icon-xs" title="Refresh files">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              </button>
+            </div>
+            <div id="deliverablesLoading" class="deliverables-loading" style="display: none;">
+              <span class="spinner-xs"></span> Loading deliverables...
+            </div>
+            <div id="deliverablesError" class="deliverables-error" style="display: none;"></div>
+            <div id="deliverablesList" class="deliverables-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
         </div>
 
         <!-- Sidebar Bottom: Customize & User Profile -->
@@ -249,6 +269,22 @@
             <button id="btnSimulateBreachInModal" class="btn-danger-outline">
               🔥 Simulate Hotspot Breach (Trigger Kill Switch)
             </button>
+          </div>
+
+          <!-- Server Gateway IP Configuration Card (Wiki Spec) -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <span class="card-title">Server Node Gateway (Wiki IP Spec)</span>
+              <span class="badge-emerald" id="modalServerIpBadge">192.168.1.100:8000</span>
+            </div>
+            <p class="settings-card-desc">
+              Offline Plant Server FastAPI gateway defined in repository wiki (ADR-006 &amp; ADR-007).
+            </p>
+            <div style="display: flex; gap: 8px; margin-top: 10px;">
+              <input type="text" id="inputServerIp" placeholder="192.168.1.100:8000" style="flex: 1; background: var(--bg-surface); border: 1px solid var(--border-subtle); color: var(--text-primary); padding: 8px 12px; border-radius: 6px; font-family: monospace; font-size: 0.85rem;" />
+              <button id="btnSaveServerIp" class="btn-primary" style="padding: 8px 14px; font-size: 0.82rem; cursor: pointer;">Apply IP</button>
+              <button id="btnResetServerIp" class="btn-secondary" style="padding: 8px 10px; font-size: 0.82rem; cursor: pointer;" title="Reset to Repo Wiki Default">Wiki Default</button>
+            </div>
           </div>
 
           <!-- Mock Mode Toggle Card -->

@@ -1,12 +1,16 @@
 // src/api.js - SovereignWorkbench API Client with Full Mock Fallback & Dynamic LAN IP Resolution
+// Server Node static IP configured per MRPL Sovereign Workbench Wiki (WIKI_UPDATED.md, ADR-006 & ADR-007)
 
 export const DEFAULT_LAN_URL = "http://192.168.1.100:8000";   // Node 1: Server Workstation (Wiki Authoritative)
 export const DEFAULT_LOCAL_URL = "http://127.0.0.1:8000";     // Local loopback for single-laptop dev
+export const DEFAULT_SERVER_IP = "192.168.1.100:8000";
 
 export function getInitialBackendUrl() {
   if (typeof window !== "undefined") {
-    const saved = localStorage.getItem("sovereign_backend_url");
-    if (saved) return saved;
+    const saved = localStorage.getItem("sovereign_backend_url") || localStorage.getItem("aquanex_server_ip");
+    if (saved) {
+      return saved.startsWith("http://") || saved.startsWith("https://") ? saved : `http://${saved}`;
+    }
 
     const hostname = window.location.hostname;
     // If accessed directly on the Server Workstation Node 1
@@ -33,11 +37,25 @@ export function getBackendUrl() {
 
 export function setBackendUrl(url) {
   if (!url) return currentBackendUrl;
-  currentBackendUrl = url.trim().replace(/\/+$/, "");
+  let formatted = url.trim().replace(/\/+$/, "");
+  if (!formatted.startsWith("http://") && !formatted.startsWith("https://")) {
+    formatted = `http://${formatted}`;
+  }
+  currentBackendUrl = formatted;
   if (typeof localStorage !== "undefined") {
     localStorage.setItem("sovereign_backend_url", currentBackendUrl);
+    localStorage.setItem("aquanex_server_ip", currentBackendUrl.replace(/^https?:\/\//, ''));
   }
   return currentBackendUrl;
+}
+
+// Backward-compatibility aliases for earlier spec
+export function getServerIP() {
+  return getBackendUrl().replace(/^https?:\/\//, '');
+}
+
+export function setServerIP(ip) {
+  setBackendUrl(ip);
 }
 
 export let USE_MOCK = true; // Toggle to false when connecting to live Python server
@@ -185,13 +203,46 @@ export const SovereignAPI = {
       .catch((err) => { if (onError) onError(err); });
   },
 
-  // 4. Download Deliverable URL
+  // 4. List Files & Deliverables (Dual-Mode)
+  async listFiles() {
+    if (USE_MOCK) {
+      return {
+        deliverables: [
+          { name: "MRPL_Approval_Note_sim-2026.docx", size_bytes: 38553, created_at: Date.now() / 1000 - 1800 },
+          { name: "Cost_Matrix_sim-2026.xlsx", size_bytes: 6183, created_at: Date.now() / 1000 - 1200 }
+        ],
+        uploads: [
+          { name: "CDU_2_UT_Scan_2026.pdf", size_bytes: 1245000, created_at: Date.now() / 1000 - 3600 }
+        ]
+      };
+    }
+    const res = await fetch(`${getBackendUrl()}/api/files/list`);
+    if (!res.ok) {
+      throw new Error(`Cannot reach server at ${getBackendUrl()} (HTTP ${res.status}: ${res.statusText})`);
+    }
+    return await res.json();
+  },
+
+  // 5. Download Deliverable URL & Binary Buffer
   getDownloadUrl(filename) {
     if (USE_MOCK) return `#mock-download-${filename}`;
     return `${getBackendUrl()}/api/files/download/${encodeURIComponent(filename)}`;
   },
 
-  // 5. Network Telemetry Stream
+  async fetchDeliverableBinary(filename) {
+    if (USE_MOCK) {
+      const enc = new TextEncoder();
+      return enc.encode(`Mock deliverable payload for ${filename}`).buffer;
+    }
+    const url = this.getDownloadUrl(filename);
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`Download failed for '${filename}' at ${getBackendUrl()} (HTTP ${res.status}: ${res.statusText})`);
+    }
+    return await res.arrayBuffer();
+  },
+
+  // 6. Network Telemetry Stream
   listenToTelemetry({ onTelemetry, onLockdown }) {
     if (USE_MOCK) {
       const interval = setInterval(() => {
@@ -223,7 +274,7 @@ export const SovereignAPI = {
     return eventSource;
   },
 
-  // 6. Audit Chain
+  // 7. Audit Chain
   async getAuditLedger() {
     if (USE_MOCK) {
       return {

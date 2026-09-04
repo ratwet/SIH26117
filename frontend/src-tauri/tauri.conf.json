@@ -12,6 +12,7 @@
   "app": {
     "windows": [
       {
+        "label": "main",
         "title": "Aquanex — SovereignWorkbench (MRPL)",
         "width": 1320,
         "height": 860,
