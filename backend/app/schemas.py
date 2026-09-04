@@ -46,17 +46,17 @@ class SandboxResult(BaseModel):
 
 class PipeInspectionData(BaseModel):
     """Extracted & calculated inspection metrics for a refinery piping line."""
-    line_tag: str = Field(..., example="CDU-2-04-150-A1A")
+    line_tag: str = Field(..., json_schema_extra={"example": "CDU-2-04-150-A1A"})
     service_description: str = Field(default="Crude Distillation Overhead Vapour")
     material_spec: str = Field(default="ASTM A106 Grade B Carbon Steel")
     design_pressure_psi: float = Field(default=150.0)
     design_temp_celsius: float = Field(default=135.0)
-    nominal_thickness_mm: float = Field(..., example=4.8)
-    actual_thickness_mm: float = Field(..., example=3.2)
+    nominal_thickness_mm: float = Field(..., json_schema_extra={"example": 4.8})
+    actual_thickness_mm: float = Field(..., json_schema_extra={"example": 3.2})
     minimum_required_thickness_mm: float = Field(default=2.1)
     corrosion_rate_mm_year: float = Field(default=0.35)
-    remaining_life_years: float = Field(..., example=3.1)
-    mandatory_action: str = Field(..., example="SCHEDULE SHUTDOWN REPLACEMENT (< 5 YRS)")
+    remaining_life_years: float = Field(..., json_schema_extra={"example": 3.1})
+    mandatory_action: str = Field(..., json_schema_extra={"example": "SCHEDULE SHUTDOWN REPLACEMENT (< 5 YRS)"})
     inspection_date: str = Field(default="September 2026")
     inspector_name: str = Field(default="Chief Plant Inspector, MRPL")
 
@@ -112,10 +112,10 @@ class CostMatrixPayload(BaseModel):
 
 class RagChunk(BaseModel):
     """A retrieved context chunk from refinery SOPs or standards."""
-    doc_name: str = Field(..., example="OISD-STD-118.pdf")
-    clause_reference: str = Field(..., example="Section 4.2: In-service Inspection Frequency")
+    doc_name: str = Field(..., json_schema_extra={"example": "OISD-STD-118.pdf"})
+    clause_reference: str = Field(..., json_schema_extra={"example": "Section 4.2: In-service Inspection Frequency"})
     text_content: str = Field(...)
-    relevance_score: float = Field(..., example=0.89)
+    relevance_score: float = Field(..., json_schema_extra={"example": 0.89})
 
 
 class RagQueryResponse(BaseModel):
@@ -146,9 +146,9 @@ class AuditEvent(BaseModel):
     """A single append-only cryptographic transaction for the audit chain."""
     event_id: Optional[str] = None
     timestamp: Optional[str] = None
-    user_role: str = Field(..., example="senior_engineer")
-    model_id: str = Field(..., example="deepseek-r1:8b")
-    task_type: str = Field(..., example="api_570_calculation")
+    user_role: str = Field(..., json_schema_extra={"example": "senior_engineer"})
+    model_id: str = Field(..., json_schema_extra={"example": "deepseek-r1:8b"})
+    task_type: str = Field(..., json_schema_extra={"example": "api_570_calculation"})
     prompt_hash: str = Field(..., description="SHA-256 hash of input prompt/data.")
     tool_exit_code: int = Field(default=0)
     output_hash: str = Field(..., description="SHA-256 hash of output result.")

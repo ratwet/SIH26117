@@ -55,6 +55,8 @@ deepseek-harness/
 .DS_Store
 Thumbs.db
 *.log
+*.tmp
+.pytest_cache/
 
 # Internal Agent Notes (Kept local, never pushed)
 context.md

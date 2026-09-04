@@ -21,9 +21,9 @@ router = APIRouter(prefix="/api", tags=["Chat"])
 
 class ChatRequest(BaseModel):
     """JSON payload for standard non-streaming or script invocation."""
-    prompt: str = Field(..., example="Audit line CDU-2-04-150-A1A from P&ID drawing")
+    prompt: str = Field(..., json_schema_extra={"example": "Audit line CDU-2-04-150-A1A from P&ID drawing"})
     session_id: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4())[:8])
-    user_role: str = Field(default="senior", example="senior")
+    user_role: str = Field(default="senior", json_schema_extra={"example": "senior"})
     uploaded_files: Optional[List[str]] = Field(default_factory=list)
 
 

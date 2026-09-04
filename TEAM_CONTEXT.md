@@ -230,9 +230,10 @@ SIH/
    * Dual-mode API client (`frontend/src/api.js`) consuming live SSE streams + offline simulation (**COMPLETED & MERGED ✅**)
    * Multi-OS automated CI/CD workflow in `.github/workflows/build-desktop.yml` (**COMPLETED & MERGED ✅**)
 4. **Automated Testing & Integration:**
-   * Full unit test suite (`pytest`): **15 out of 15 tests passing** (**COMPLETED ✅**)
+   * Full unit test suite (`pytest`): **16 out of 16 tests passing (0 warnings)** (**COMPLETED ✅**)
    * End-to-end industrial audit simulation (`test_e2e_simulation.py`): **COMPLETED ✅** (Generates real 38KB Word Approval Note and 6KB Excel Cost Matrix on disk).
    * Frontend production build (`vite build`): **100% SUCCESSFUL (155ms) ✅**
+   * Linux Desktop integration (`aquanex.desktop` & GTK client): **COMPLETED & TESTED ✅**
 5. **Immediate Next Steps:**
-   * Rehearse pitch deck and demo choreography per [`PRESENTATION_MASTER_DOSSIER.md`](PRESENTATION_MASTER_DOSSIER.md).
+   * Rehearse pitch deck and demo choreography per [`docs/presentation/PRESENTATION_MASTER_DOSSIER.md`](docs/presentation/PRESENTATION_MASTER_DOSSIER.md).
    * Final live dry-run connecting Aquanex desktop client to local FastAPI backend on `http://127.0.0.1:8000`.

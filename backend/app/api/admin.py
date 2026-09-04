@@ -41,8 +41,8 @@ RBAC_REGISTRY = {
 
 
 class ModelRegisterRequest(BaseModel):
-    filename: str = Field(..., example="DeepSeek-R1-Distill-Qwen-8B-Q4_K_M.gguf")
-    role: str = Field(default="reasoning", example="reasoning")
+    filename: str = Field(..., json_schema_extra={"example": "DeepSeek-R1-Distill-Qwen-8B-Q4_K_M.gguf"})
+    role: str = Field(default="reasoning", json_schema_extra={"example": "reasoning"})
 
 
 @router.get("/models")

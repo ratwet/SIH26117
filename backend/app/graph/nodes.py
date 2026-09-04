@@ -309,9 +309,8 @@ async def sandbox_execution_node(state: AgentState) -> Dict[str, Any]:
 
     thought = "⚡ Sandbox Runner: Executing calculation script in bwrap isolated namespace (--unshare-net)..."
 
-    # Call execution runner (real or mock) with Anand's exact signature
-    import asyncio
-    if asyncio.iscoroutinefunction(execute_in_sandbox):
+    import inspect
+    if inspect.iscoroutinefunction(execute_in_sandbox):
         res = await execute_in_sandbox(
             code=code,
             timeout=settings.SANDBOX_TIMEOUT_SECONDS,

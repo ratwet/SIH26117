@@ -23,17 +23,33 @@ For the complete technical breakdown, architecture specifications, and evaluatio
 
 ---
 
-## 📂 Repository Structure (Planned)
-```
+## 📂 Repository Structure
+```text
 SIH/
-├── PROBLEM_STATEMENT_117.md   # Master problem specification, technical architecture & strategy
-├── README.md                  # Project overview and documentation entry point
-├── backend/                   # FastAPI backend, LangGraph state engine, and tool registry
-├── frontend/                  # Modern Next.js / Tailwind CSS industrial workbench UI
-├── models/                    # Ollama / vLLM model configuration & quantization scripts
-├── sandbox/                   # Isolated local code execution environment
-├── telemetry/                 # Real-time socket & eBPF air-gap monitoring service
-└── sample_data/               # Public/synthetic P&ID drawings, inspection reports & SOPs
+├── README.md                      # Project overview and documentation entry point
+├── LICENSE.md                     # Proprietary license
+├── PROBLEM_STATEMENT_117.md       # Master problem specification & requirements
+├── PRD.md                         # Product Requirements Document
+├── TEAM_CONTEXT.md                # 3-node LAN physical layout & team context guide
+├── aquanex.desktop                # FreeDesktop GNOME/KDE application launcher
+├── backend/                       # FastAPI gateway, LangGraph state engine & tools
+│   ├── app/                       # Core engine (api, graph, sandbox, compilers, rag, security)
+│   └── tests/                     # Comprehensive test suite (16/16 passing)
+├── frontend/                      # Aquanex UI & cross-platform desktop client
+│   ├── src/                       # Vanilla CSS/JS air-gapped web client (0 CDN dependencies)
+│   └── src-tauri/                 # Tauri v2 native desktop shell (Windows, Linux, macOS)
+├── scripts/                       # Deployment, networking & verification scripts
+│   ├── install_desktop_entry.sh   # Installs launcher to Linux application menu
+│   ├── launch_aquanex.sh          # Native desktop client launcher wrapper
+│   ├── run_linux_desktop.py       # GTK 3.0 + WebKit2 native window runner
+│   ├── setup_lan_nodes.sh         # Offline 3-node Netplan network configuration
+│   ├── start_workbench.sh         # Ollama and backend daemon starter
+│   └── verify_sovereignty.sh      # Zero-egress network verification sniffer
+└── docs/                          # Clean project documentation architecture
+    ├── specs/                     # Developer specifications & AI agent handoff prompts
+    ├── reports/                   # Implementation reports & local wiki drafts
+    ├── presentation/              # SIH pitch dossier & presentation template
+    └── diagrams/                  # System architecture & process flow SVG diagrams
 ```
 
 ---
