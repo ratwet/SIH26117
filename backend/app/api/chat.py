@@ -9,7 +9,7 @@ real-time thought logs and deliverables directly to the desktop UI via Server-Se
 import json
 import uuid
 from typing import Optional, List
-from fastapi import APIRouter, UploadFile, File, Form
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from app.graph.builder import sovereign_graph
@@ -66,7 +66,13 @@ async def chat_sync(request: ChatRequest):
         "error_message": None,
     }
 
-    final_state = await sovereign_graph.ainvoke(initial_state)
+    try:
+        final_state = await sovereign_graph.ainvoke(initial_state)
+    except ConnectionError as e:
+        raise HTTPException(
+            status_code=503,
+            detail=str(e),
+        )
 
     return {
         "session_id": final_state["session_id"],
@@ -158,38 +164,47 @@ async def chat_stream(
         final_state = None
 
         # Stream LangGraph execution node by node
-        async for output in sovereign_graph.astream(initial_state):
-            for node_name, node_state_update in output.items():
-                # Extract new thought stream entries
-                new_thoughts = node_state_update.get("thought_stream", [])
-                if len(new_thoughts) > previous_thoughts_count:
-                    for thought in new_thoughts[previous_thoughts_count:]:
-                        event_payload = {
-                            "node": node_name,
-                            "thought": thought,
-                            "session_id": active_session_id,
+        try:
+            async for output in sovereign_graph.astream(initial_state):
+                for node_name, node_state_update in output.items():
+                    # Extract new thought stream entries
+                    new_thoughts = node_state_update.get("thought_stream", [])
+                    if len(new_thoughts) > previous_thoughts_count:
+                        for thought in new_thoughts[previous_thoughts_count:]:
+                            event_payload = {
+                                "node": node_name,
+                                "thought": thought,
+                                "session_id": active_session_id,
+                            }
+                            yield f"event: thought\ndata: {json.dumps(event_payload)}\n\n"
+                        previous_thoughts_count = len(new_thoughts)
+
+                    # Check if deliverables were generated
+                    if "docx_path" in node_state_update:
+                        deliverable_payload = {
+                            "docx_path": node_state_update.get("docx_path"),
+                            "xlsx_path": node_state_update.get("xlsx_path"),
+                            "pptx_path": node_state_update.get("pptx_path"),
+                            "pdf_path": node_state_update.get("pdf_path"),
+                            "cad_path": node_state_update.get("cad_path"),
+                            "stl_path": node_state_update.get("stl_path"),
+                            "image_path": node_state_update.get("image_path"),
+                            "csv_path": node_state_update.get("csv_path"),
+                            "script_path": node_state_update.get("script_path"),
+                            "manifest_path": node_state_update.get("manifest_path"),
+                            "deliverables": node_state_update.get("deliverables", []),
                         }
-                        yield f"event: thought\ndata: {json.dumps(event_payload)}\n\n"
-                    previous_thoughts_count = len(new_thoughts)
+                        yield f"event: deliverable\ndata: {json.dumps(deliverable_payload)}\n\n"
 
-                # Check if deliverables were generated
-                if "docx_path" in node_state_update:
-                    deliverable_payload = {
-                        "docx_path": node_state_update.get("docx_path"),
-                        "xlsx_path": node_state_update.get("xlsx_path"),
-                        "pptx_path": node_state_update.get("pptx_path"),
-                        "pdf_path": node_state_update.get("pdf_path"),
-                        "cad_path": node_state_update.get("cad_path"),
-                        "stl_path": node_state_update.get("stl_path"),
-                        "image_path": node_state_update.get("image_path"),
-                        "csv_path": node_state_update.get("csv_path"),
-                        "script_path": node_state_update.get("script_path"),
-                        "manifest_path": node_state_update.get("manifest_path"),
-                        "deliverables": node_state_update.get("deliverables", []),
-                    }
-                    yield f"event: deliverable\ndata: {json.dumps(deliverable_payload)}\n\n"
-
-                final_state = node_state_update
+                    final_state = node_state_update
+        except ConnectionError as e:
+            error_payload = {
+                "session_id": active_session_id,
+                "error": str(e),
+                "status": "FAILED_NO_MODEL",
+            }
+            yield f"event: error\ndata: {json.dumps(error_payload)}\n\n"
+            return
 
         # Yield completion event with final markdown response
         completion_payload = {

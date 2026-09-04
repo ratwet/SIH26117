@@ -108,15 +108,27 @@ def test_csv_ndt_survey_compiler(tmp_path, sample_payload):
 
 
 @pytest.mark.asyncio
-async def test_100b_foundation_model_engine():
-    # Test cluster health
+async def test_100b_foundation_model_engine(monkeypatch):
+    # 1. Test cluster health reports accurate hardware target and offline status
     telemetry = await foundation_engine.check_cluster_health()
     assert "target_hardware" in telemetry
     assert "tensor_parallel_size" in telemetry
     assert telemetry["tensor_parallel_size"] == 4
     assert telemetry["max_context_window"] == 131072
+    assert telemetry["mode"] == "DISCONNECTED"
+    assert telemetry["is_connected"] is False
 
-    # Test execution & DeepSeek-R1 CoT emulation
+    # 2. Strict Air-Gapped Contract: Refuse to run when no model is connected
+    monkeypatch.setattr(settings, "ALLOW_EMULATION", False)
+    with pytest.raises(ConnectionError, match="NO LLM MODEL CONNECTED"):
+        await foundation_engine.generate_response(
+            prompt="Audit CDU-2-04-150-A1A ultrasonic log",
+            system_prompt="You are DeepSeek-R1 100B Vision Auditor",
+            model_type="vision",
+        )
+
+    # 3. Explicit test synthetic fallback when ALLOW_EMULATION is enabled
+    monkeypatch.setattr(settings, "ALLOW_EMULATION", True)
     content, thought = await foundation_engine.generate_response(
         prompt="Audit CDU-2-04-150-A1A ultrasonic log",
         system_prompt="You are DeepSeek-R1 100B Vision Auditor",
@@ -211,3 +223,22 @@ async def test_langgraph_full_omni_modal_execution(tmp_path):
     assert len(deliverables) == 10
     types = {d["type"] for d in deliverables}
     assert types == {"docx", "xlsx", "pptx", "pdf", "dxf", "stl", "png", "csv", "py", "json"}
+
+
+def test_chat_refuses_to_run_without_model(monkeypatch):
+    """Verifies that API strictly rejects requests with HTTP 503 when no model is connected."""
+    client = TestClient(app)
+    monkeypatch.setattr(settings, "ALLOW_EMULATION", False)
+
+    # 1. Sync endpoint returns 503 Service Unavailable
+    resp = client.post("/api/chat/sync", json={"prompt": "Audit line CDU-2-04-150-A1A"})
+    assert resp.status_code == 503
+    assert "NO LLM MODEL CONNECTED" in resp.json()["detail"]
+
+    # 2. SSE streaming endpoint emits event: error with FAILED_NO_MODEL
+    stream_resp = client.post("/api/chat", data={"prompt": "Audit line CDU-2-04-150-A1A"})
+    assert stream_resp.status_code == 200
+    body = stream_resp.text
+    assert "event: error" in body
+    assert "FAILED_NO_MODEL" in body
+

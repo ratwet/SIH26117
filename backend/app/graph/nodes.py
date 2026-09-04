@@ -166,18 +166,19 @@ async def vision_extraction_node(state: AgentState) -> Dict[str, Any]:
     thought = "👁️ Vision Extraction: Analyzing P&ID drawing with Qwen2-VL 72B..."
     current_thoughts = state.get("thought_stream", [])
 
-    # Multimodal LLM Extraction using Qwen2-VL 72B
+    # Multimodal LLM Extraction using Qwen2-VL
     llm_prompt = f"Extract piping inspection parameters from the prompt and attached technical drawings: {state.get('user_prompt', '')}"
-    try:
-        content, trace = await call_llm(
-            prompt=llm_prompt,
-            system_prompt="You are Qwen2-VL 72B multimodal vision model specialized in P&ID drawings and NDT inspection reports.",
-            model_type="vision"
-        )
-    except Exception as e:
-        logger.debug(f"LLM vision call fallback: {e}")
+    content, trace = await call_llm(
+        prompt=llm_prompt,
+        system_prompt=(
+            "You are Qwen2-VL multimodal vision model specialized in P&ID drawings and NDT inspection reports. "
+            "Extract parameters as a JSON object with keys: line_tag, service_description, material_spec, "
+            "nominal_thickness_mm, actual_thickness_mm, design_pressure_psi, design_temp_celsius."
+        ),
+        model_type="vision"
+    )
 
-    # Standardized extracted data structure for refinery line
+    # Base extracted data structure for refinery line
     specs = {
         "line_tag": "CDU-2-04-150-A1A",
         "service_description": "Crude Distillation Overhead Vapour",
@@ -187,6 +188,26 @@ async def vision_extraction_node(state: AgentState) -> Dict[str, Any]:
         "design_pressure_psi": 150.0,
         "design_temp_celsius": 135.0,
     }
+
+    if content:
+        try:
+            parsed = json.loads(content)
+            if isinstance(parsed, dict):
+                for k, v in parsed.items():
+                    if k in specs and v is not None:
+                        specs[k] = v
+        except Exception:
+            import re
+            m = re.search(r"\{.*?\}", content, re.DOTALL)
+            if m:
+                try:
+                    parsed = json.loads(m.group(0))
+                    if isinstance(parsed, dict):
+                        for k, v in parsed.items():
+                            if k in specs and v is not None:
+                                specs[k] = v
+                except Exception:
+                    pass
 
     pipe_data = PipeInspectionData(
         line_tag=specs["line_tag"],
@@ -264,14 +285,11 @@ async def math_generation_node(state: AgentState) -> Dict[str, Any]:
         thought = "📐 Reasoning Engine: DeepSeek-R1 generating deterministic API 570 Python calculation script..."
 
     # Call FoundationModelEngine coder gateway
-    try:
-        content, trace = await call_llm(
-            prompt=f"Generate deterministic API 570 remaining life calculation Python script for {state.get('user_prompt', '')}",
-            system_prompt="You are DeepSeek-R1 / Qwen2.5-Coder. Generate executable, isolated Python code that outputs JSON.",
-            model_type="coder"
-        )
-    except Exception as e:
-        logger.debug(f"LLM coder call fallback: {e}")
+    content, trace = await call_llm(
+        prompt=f"Generate deterministic API 570 remaining life calculation Python script for {state.get('user_prompt', '')}",
+        system_prompt="You are DeepSeek-R1 / Qwen2.5-Coder. Generate executable, isolated Python code that outputs JSON.",
+        model_type="coder"
+    )
 
     prompt = state.get("user_prompt", "")
     if "[SIMULATE_ERROR]" in prompt and retry_count == 0:
@@ -610,20 +628,17 @@ async def general_chat_node(state: AgentState) -> Dict[str, Any]:
 """
     else:
         thought = "💬 General Knowledge: Processing query..."
-        try:
-            content, trace = await call_llm(
-                prompt=prompt,
-                system_prompt="You are SovereignWorkbench Assistant, an air-gapped on-premise industrial AI assistant for refinery engineering at Mangalore Refinery and Petrochemicals Limited (MRPL). All data remains strictly within refinery on-premise infrastructure.",
-                model_type="reasoning"
-            )
-            if content:
-                if not content.startswith("SovereignWorkbench Assistant"):
-                    resp = f"SovereignWorkbench Assistant: {content}"
-                else:
-                    resp = content
+        content, trace = await call_llm(
+            prompt=prompt,
+            system_prompt="You are SovereignWorkbench Assistant, an air-gapped on-premise industrial AI assistant for refinery engineering at Mangalore Refinery and Petrochemicals Limited (MRPL). All data remains strictly within refinery on-premise infrastructure.",
+            model_type="reasoning"
+        )
+        if content:
+            if not content.startswith("SovereignWorkbench Assistant"):
+                resp = f"SovereignWorkbench Assistant: {content}"
             else:
-                resp = f"SovereignWorkbench Assistant: Processed query regarding '{prompt[:50]}...'. All data remains strictly within refinery on-premise infrastructure."
-        except Exception:
+                resp = content
+        else:
             resp = f"SovereignWorkbench Assistant: Processed query regarding '{prompt[:50]}...'. All data remains strictly within refinery on-premise infrastructure."
 
     return {

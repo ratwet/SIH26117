@@ -19,7 +19,11 @@ class Settings(BaseSettings):
 
     # --- Ollama & vLLM Model Serving Engine (Strict Loopback Isolation per ADR-007) ---
     OLLAMA_HOST: str = "http://127.0.0.1:11434"
-    VLLM_HOST: str = "http://127.0.0.1:8000/v1"
+    VLLM_HOST: str = "http://127.0.0.1:8001/v1"
+
+    # Strict Air-Gapped / No-Emulation Policy:
+    # When False (default), the system refuses to run if no live model (Ollama / vLLM) is connected.
+    ALLOW_EMULATION: bool = False
 
     # Model Deployment Tier (PS 117 Sizing: ENTERPRISE_100B, WORKSTATION_32B, EDGE_LAPTOP_8B)
     MODEL_TIER: str = "ENTERPRISE_100B"
