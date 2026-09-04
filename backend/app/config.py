@@ -17,14 +17,60 @@ class Settings(BaseSettings):
     ADMIN_NODE_IP: str = "192.168.1.101"
     USER_NODE_IP: str = "192.168.1.102"
 
-    # --- Ollama Model Engine (Bound strictly to local loopback per ADR-007) ---
+    # --- Ollama & vLLM Model Serving Engine (Strict Loopback Isolation per ADR-007) ---
     OLLAMA_HOST: str = "http://127.0.0.1:11434"
+    VLLM_HOST: str = "http://127.0.0.1:8000/v1"
 
-    # Model tags (must match `ollama list` output)
-    MODEL_ROUTER: str = "qwen2.5:3b-instruct-q8_0"
-    MODEL_REASONING: str = "deepseek-r1:8b"
-    MODEL_VISION: str = "qwen2-vl:7b-instruct-q4_K_M"
-    MODEL_CODER: str = "qwen2.5-coder:7b-instruct-q4_K_M"
+    # Model Deployment Tier (PS 117 Sizing: ENTERPRISE_100B, WORKSTATION_32B, EDGE_LAPTOP_8B)
+    MODEL_TIER: str = "ENTERPRISE_100B"
+    TENSOR_PARALLEL_SIZE: int = 4
+    MAX_MODEL_LEN: int = 131072
+
+    # Model tags (Defaults configured for 100B+ Enterprise Refinery Datacenter Tier)
+    MODEL_ROUTER: str = "qwen2.5:72b-instruct"
+    MODEL_REASONING: str = "deepseek-r1:70b-q8_0"
+    MODEL_VISION: str = "qwen2-vl:72b-instruct"
+    MODEL_CODER: str = "qwen2.5-coder:32b-instruct"
+
+    @property
+    def active_model_profile(self) -> dict:
+        """Returns the hardware profile, model tags, and context windows for active tier."""
+        profiles = {
+            "ENTERPRISE_100B": {
+                "tier_name": "Enterprise Refinery Datacenter (100B+)",
+                "hardware_spec": "Dual AMD EPYC 9654 + 4x NVIDIA A100 (80GB SXM4) / H100 NVLink",
+                "router": "qwen2.5:72b-instruct",
+                "reasoning": "deepseek-r1:70b-q8_0",
+                "vision": "qwen2-vl:72b-instruct",
+                "coder": "qwen2.5-coder:32b-instruct",
+                "tensor_parallel_size": 4,
+                "context_window": 131072,
+                "vram_allocation_gb": 320,
+            },
+            "WORKSTATION_32B": {
+                "tier_name": "Departmental Workstation (32B)",
+                "hardware_spec": "Intel i9-14900K + 1x NVIDIA RTX 4090 (24GB) / RTX A5000",
+                "router": "qwen2.5:14b-instruct",
+                "reasoning": "deepseek-r1:32b",
+                "vision": "qwen2-vl:7b-instruct",
+                "coder": "qwen2.5-coder:14b-instruct",
+                "tensor_parallel_size": 1,
+                "context_window": 32768,
+                "vram_allocation_gb": 24,
+            },
+            "EDGE_LAPTOP_8B": {
+                "tier_name": "Hackathon Demo Rig / Field Laptop (8B)",
+                "hardware_spec": "Intel i7 / Ryzen 7, RTX 3060/4060 (6-8GB) or Apple Silicon M-Series",
+                "router": "qwen2.5:3b-instruct-q8_0",
+                "reasoning": "deepseek-r1:8b",
+                "vision": "qwen2-vl:7b-instruct-q4_K_M",
+                "coder": "qwen2.5-coder:7b-instruct-q4_K_M",
+                "tensor_parallel_size": 1,
+                "context_window": 8192,
+                "vram_allocation_gb": 8,
+            },
+        }
+        return profiles.get(self.MODEL_TIER, profiles["ENTERPRISE_100B"])
 
     # --- Paths ---
     DATA_DIR: Path = Path("data")

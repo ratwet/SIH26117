@@ -109,15 +109,16 @@ export const SovereignAPI = {
   },
 
   // 3. Streaming Chat (Supports Real SSE + Realistic Mock SSE)
-  streamChat({ prompt, userRole = "senior", onThought, onDeliverable, onDone, onError }) {
+  // 3. Streaming Chat (Supports Real SSE + Realistic Mock SSE)
+  streamChat({ prompt, userRole = "senior", files = [], onThought, onDeliverable, onDone, onError }) {
     if (USE_MOCK) {
       console.log("[MOCK] Starting simulated SSE thought stream for prompt:", prompt);
       const isErrorScenario = prompt.includes("[SIMULATE_ERROR]");
       
       const steps = [
-        { delay: 400, type: "thought", payload: { node: "route_task_node", thought: "🧭 Intent Router: Classified task as 'VISION_AUDIT' (Model: qwen2-vl:7b)" } },
-        { delay: 1400, type: "thought", payload: { node: "vision_extraction_node", thought: "👁️ Vision Extraction: Found Line Tag 'CDU-2-04-150-A1A' | Actual Thickness = 3.2mm (Nominal = 4.8mm)" } },
-        { delay: 2600, type: "thought", payload: { node: "math_generation_node", thought: "📐 Reasoning Engine: DeepSeek-R1 generating deterministic API 570 Python calculation script..." } },
+        { delay: 400, type: "thought", payload: { node: "route_task_node", thought: "🧭 Intent Router [ENTERPRISE_100B]: Classified task as 'VISION_AUDIT' (Model: qwen2-vl:72b-instruct | Dual AMD EPYC 9654 + 4x NVIDIA A100 80GB)" } },
+        { delay: 1400, type: "thought", payload: { node: "vision_extraction_node", thought: "👁️ Vision Extraction: High-Density OCR on P&ID blueprint -> Found Tag 'CDU-2-04-150-A1A' | Actual Thickness = 3.20mm (Nominal = 4.80mm)" } },
+        { delay: 2600, type: "thought", payload: { node: "math_generation_node", thought: "📐 Reasoning Engine: DeepSeek-R1 (671B MoE / 70B Quantized) generating deterministic ASME B31.3 / API 570 Python calculation script..." } },
       ];
 
       if (isErrorScenario) {
@@ -128,25 +129,45 @@ export const SovereignAPI = {
         );
       } else {
         steps.push(
-          { delay: 3800, type: "thought", payload: { node: "sandbox_execution_node", thought: "⚡ Sandbox: Execution Success (Exit Code 0) | Remaining Life = 3.14 Years" } }
+          { delay: 3800, type: "thought", payload: { node: "sandbox_execution_node", thought: "⚡ Sandbox: Execution Success (Exit Code 0) | Remaining Life = 3.14 Years (API 570 Verified)" } }
         );
       }
 
+      const mockDeliverablesPayload = {
+        docx_path: "MRPL_Approval_Note_sim-2026.docx",
+        xlsx_path: "Cost_Matrix_sim-2026.xlsx",
+        pptx_path: "Executive_Pitch_Deck_sim-2026.pptx",
+        cad_path: "Piping_Spool_CAD_sim-2026.dxf",
+        image_path: "Inspection_Heatmap_sim-2026.png",
+        script_path: "CDU2_API570_Calculation_sim-2026.py",
+        manifest_path: "MRPL_Audit_Manifest_sim-2026.json",
+      };
+
       steps.push(
-        { delay: isErrorScenario ? 6800 : 4800, type: "deliverable", payload: { docx_path: "MRPL_Approval_Note_sim-2026.docx", xlsx_path: "Cost_Matrix_sim-2026.xlsx" } },
-        { delay: isErrorScenario ? 7400 : 5400, type: "done", payload: {
+        { delay: isErrorScenario ? 6800 : 4600, type: "thought", payload: { node: "compile_deliverables_node", thought: "📄 Omni-Modal Compiler: Compiling Word, Excel, PowerPoint, AutoCAD DXF, Heatmap, Python Script, and SHA-256 Manifest..." } },
+        { delay: isErrorScenario ? 7200 : 5000, type: "deliverable", payload: mockDeliverablesPayload },
+        { delay: isErrorScenario ? 7800 : 5600, type: "done", payload: {
             status: "COMPLETED",
-            final_response: `### API 570 Mandatory Inspection Finding
-- **Plant Unit:** Crude Distillation Unit 2 (CDU-2)
-- **Line Tag:** CDU-2-04-150-A1A (Overhead Vapor Line)
-- **Nominal Wall Thickness:** 4.80 mm
-- **Measured Thickness (UTG):** 3.20 mm
-- **Corrosion Rate:** 0.35 mm/year
-- **Remaining Safe Operating Life:** **3.14 Years** (Critical Alert: < 5.0 Years Threshold)
-- **Statutory Regulatory Action:** **MANDATORY SHUTDOWN REPLACEMENT**
-- **Estimated Turnaround Capex Budget:** **INR ₹1,154,400.00**`,
-            docx_path: "MRPL_Approval_Note_sim-2026.docx",
-            xlsx_path: "Cost_Matrix_sim-2026.xlsx"
+            final_response: `### 🛡️ MRPL Technical Audit & Life Assessment Completed
+
+**Line Tag:** \`CDU-2-04-150-A1A\`  
+**Service:** Crude Distillation Overhead Vapour  
+**Nominal Thickness:** 4.80 mm | **Actual Measured (UTG):** 3.20 mm  
+**Corrosion Rate:** 0.35 mm/year  
+**Calculated Remaining Safe Life:** **3.14 Years**  
+
+> 🚨 **Statutory Finding (API 570 / OISD-STD-118):**  
+> Remaining life is below the mandatory 5.0-year threshold. **MANDATORY SHUTDOWN REPLACEMENT REQUIRED (< 5 YRS)**.
+
+**Generated Omni-Modal Deliverables Suite:**
+- 📄 Executive Approval Note: \`MRPL_Approval_Note_sim-2026.docx\` (.docx)
+- 📊 Cost & Procurement Workbook: \`Cost_Matrix_sim-2026.xlsx\` (.xlsx)
+- 📑 Board-Level Pitch Deck: \`Executive_Pitch_Deck_sim-2026.pptx\` (.pptx)
+- 📐 Engineering Piping Spool CAD: \`Piping_Spool_CAD_sim-2026.dxf\` (.dxf)
+- 🖼️ Visual P&ID Corrosion Heatmap: \`Inspection_Heatmap_sim-2026.png\` (.png)
+- 🐍 Standalone Verification Script: \`CDU2_API570_Calculation_sim-2026.py\` (.py)
+- 🔒 Cryptographic Audit Manifest: \`MRPL_Audit_Manifest_sim-2026.json\` (.json)`,
+            ...mockDeliverablesPayload
           }
         }
       );
@@ -165,6 +186,12 @@ export const SovereignAPI = {
     const formData = new FormData();
     formData.append("prompt", prompt);
     formData.append("user_role", userRole);
+
+    if (files && files.length > 0) {
+      for (const f of files) {
+        formData.append("files", f);
+      }
+    }
 
     fetch(`${getBackendUrl()}/api/chat`, { method: "POST", body: formData })
       .then(async (response) => {
@@ -209,10 +236,16 @@ export const SovereignAPI = {
       return {
         deliverables: [
           { name: "MRPL_Approval_Note_sim-2026.docx", size_bytes: 38553, created_at: Date.now() / 1000 - 1800 },
-          { name: "Cost_Matrix_sim-2026.xlsx", size_bytes: 6183, created_at: Date.now() / 1000 - 1200 }
+          { name: "Cost_Matrix_sim-2026.xlsx", size_bytes: 6183, created_at: Date.now() / 1000 - 1200 },
+          { name: "Executive_Pitch_Deck_sim-2026.pptx", size_bytes: 34120, created_at: Date.now() / 1000 - 900 },
+          { name: "Piping_Spool_CAD_sim-2026.dxf", size_bytes: 41250, created_at: Date.now() / 1000 - 600 },
+          { name: "Inspection_Heatmap_sim-2026.png", size_bytes: 42800, created_at: Date.now() / 1000 - 300 },
+          { name: "CDU2_API570_Calculation_sim-2026.py", size_bytes: 1450, created_at: Date.now() / 1000 - 200 },
+          { name: "MRPL_Audit_Manifest_sim-2026.json", size_bytes: 2200, created_at: Date.now() / 1000 - 100 },
         ],
         uploads: [
-          { name: "CDU_2_UT_Scan_2026.pdf", size_bytes: 1245000, created_at: Date.now() / 1000 - 3600 }
+          { name: "CDU_2_UT_Scan_2026.pdf", size_bytes: 1245000, created_at: Date.now() / 1000 - 3600 },
+          { name: "P_and_ID_04_Overhead.dxf", size_bytes: 215000, created_at: Date.now() / 1000 - 3500 }
         ]
       };
     }

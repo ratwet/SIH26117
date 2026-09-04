@@ -83,9 +83,21 @@ let currentUser = {
   role: "Guest User"
 };
 let selectedFile = null;
+let selectedFiles = [];
 let isExecuting = false;
 let currentThinkingBox = null;
 let currentThinkingList = null;
+
+function getFileCategoryBadge(filename) {
+  const ext = filename.split('.').pop().toLowerCase();
+  if (['dxf', 'dwg'].includes(ext)) return { label: 'CAD', cls: 'badge-cad' };
+  if (['step', 'stp', 'blend', 'stl', 'obj', 'iges'].includes(ext)) return { label: '3D', cls: 'badge-3d' };
+  if (['mp4', 'avi', 'mov', 'mkv'].includes(ext)) return { label: 'VIDEO', cls: 'badge-video' };
+  if (['xlsx', 'xls', 'csv'].includes(ext)) return { label: 'SHEET', cls: 'badge-sheet' };
+  if (['pdf', 'docx', 'doc', 'txt'].includes(ext)) return { label: 'DOC', cls: 'badge-doc' };
+  if (['png', 'jpg', 'jpeg', 'tiff', 'bmp'].includes(ext)) return { label: 'IMAGE', cls: 'badge-image' };
+  return { label: 'FILE', cls: 'badge-default' };
+}
 
 // Initialize
 async function init() {
@@ -111,11 +123,28 @@ function setupEventListeners() {
   });
 
   document.querySelectorAll('.model-option').forEach(opt => {
-    opt.addEventListener('click', () => {
+    opt.addEventListener('click', async () => {
       document.querySelectorAll('.model-option').forEach(o => o.classList.remove('active'));
       opt.classList.add('active');
       currentModelBadge.textContent = opt.dataset.model;
       modelMenu.style.display = 'none';
+
+      // Synchronize tier with backend if live
+      if (!USE_MOCK) {
+        let targetTier = "ENTERPRISE_100B";
+        if (opt.dataset.model === "Workstation-32B") targetTier = "WORKSTATION_32B";
+        if (opt.dataset.model === "Edge-8B") targetTier = "EDGE_LAPTOP_8B";
+        try {
+          await fetch(`${getBackendUrl()}/api/admin/model-tier`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tier: targetTier }),
+          });
+          console.log("⚡ Active model tier updated to:", targetTier);
+        } catch (err) {
+          console.warn("Could not set model tier on server:", err);
+        }
+      }
     });
   });
 
@@ -261,17 +290,30 @@ function setupEventListeners() {
     }
   });
 
-  // 7. File Attachment
+  // 7. File Attachment (Omni-Modal Ingestion: CAD DXF, 3D Models, PDF, Video, Sheets)
   btnAttachFile.addEventListener('click', () => workspaceFileInput.click());
   workspaceFileInput.addEventListener('change', (e) => {
-    if (e.target.files && e.target.files[0]) {
-      selectedFile = e.target.files[0];
-      attachedFileName.textContent = selectedFile.name;
+    if (e.target.files && e.target.files.length > 0) {
+      selectedFiles = Array.from(e.target.files);
+      selectedFile = selectedFiles[0];
+      const count = selectedFiles.length;
+      if (count === 1) {
+        const cat = getFileCategoryBadge(selectedFile.name);
+        attachedFileName.innerHTML = `<span class="pill-category-badge ${cat.cls}">[${cat.label}]</span> ${escapeHtml(selectedFile.name)}`;
+        const sizeEl = document.getElementById('attachedFileSize');
+        if (sizeEl) sizeEl.textContent = `(${formatBytes(selectedFile.size)})`;
+      } else {
+        attachedFileName.innerHTML = `<span class="pill-category-badge badge-cad">[MULTI]</span> ${count} industrial files attached`;
+        const totalSize = selectedFiles.reduce((acc, f) => acc + f.size, 0);
+        const sizeEl = document.getElementById('attachedFileSize');
+        if (sizeEl) sizeEl.textContent = `(${formatBytes(totalSize)})`;
+      }
       attachedFilePill.style.display = 'flex';
     }
   });
   btnRemoveAttachment.addEventListener('click', () => {
     selectedFile = null;
+    selectedFiles = [];
     attachedFilePill.style.display = 'none';
     workspaceFileInput.value = '';
   });
@@ -343,6 +385,7 @@ function executeUserPrompt(prompt) {
   SovereignAPI.streamChat({
     prompt: prompt,
     userRole: currentUser.role === 'Admin' ? 'senior' : 'senior',
+    files: selectedFiles,
     onThought: (payload) => {
       appendThoughtStep(payload);
     },
@@ -361,6 +404,12 @@ function executeUserPrompt(prompt) {
       responseContainer.innerHTML = `<p style="color: var(--emergency-crimson); font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.5;">⚠️ Connection failed: Cannot reach server at <strong>${getServerIP()}</strong>.<br><small style="color: var(--text-muted);">Ensure the FastAPI backend is running and reachable on this host/port.</small></p>`;
     }
   });
+
+  // Clear attached files after submitting
+  selectedFiles = [];
+  selectedFile = null;
+  if (attachedFilePill) attachedFilePill.style.display = 'none';
+  if (workspaceFileInput) workspaceFileInput.value = '';
 }
 
 function renderUserMessage(text) {
@@ -402,6 +451,14 @@ function finishAssistantResponse(payload, container) {
     if (badge) badge.textContent = 'Completed (Exit Code 0) ✅';
   }
 
+  const actualDocx = payload.docx_path ? payload.docx_path.split('/').pop() : 'MRPL_Approval_Note_sim-2026.docx';
+  const actualXlsx = payload.xlsx_path ? payload.xlsx_path.split('/').pop() : 'Cost_Matrix_sim-2026.xlsx';
+  const actualPptx = payload.pptx_path ? payload.pptx_path.split('/').pop() : 'Executive_Pitch_Deck_sim-2026.pptx';
+  const actualCad = payload.cad_path ? payload.cad_path.split('/').pop() : 'Piping_Spool_CAD_sim-2026.dxf';
+  const actualImg = payload.image_path ? payload.image_path.split('/').pop() : 'Inspection_Heatmap_sim-2026.png';
+  const actualPy = payload.script_path ? payload.script_path.split('/').pop() : 'CDU2_API570_Calculation_sim-2026.py';
+  const actualJson = payload.manifest_path ? payload.manifest_path.split('/').pop() : 'MRPL_Audit_Manifest_sim-2026.json';
+
   // Render Executive Summary Card
   const summaryCard = document.createElement('div');
   summaryCard.className = 'exec-summary-card';
@@ -432,14 +489,47 @@ function finishAssistantResponse(payload, container) {
 
     <div class="exec-text">${escapeHtml(payload.final_response || '')}</div>
 
-    <div class="deliverables-action-row">
-      <button class="btn-deliverable-gold" id="btnDlDocx">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        Open Approval Note (.docx)
+    <!-- Visual P&ID Heatmap Inspection Preview -->
+    <div class="heatmap-preview-card">
+      <div class="heatmap-preview-header">
+        <span class="heatmap-title">🗺️ Visual P&amp;ID Schematic &amp; Corrosion Heatmap</span>
+        <span class="badge-emerald">ASME B31.3 OVERLAY</span>
+      </div>
+      <div class="heatmap-img-wrap">
+        <img src="${SovereignAPI.getDownloadUrl(actualImg)}" alt="Corrosion Heatmap" class="heatmap-img" onerror="this.parentElement.innerHTML='<div class=\\'heatmap-placeholder\\'>🗺️ Heatmap compiled: ${escapeHtml(actualImg)}</div>'" />
+      </div>
+    </div>
+
+    <!-- 7 Deliverables Action Grid -->
+    <div class="deliverables-grid-title">Generated Omni-Modal Artifacts (7 Files)</div>
+    <div class="deliverables-action-grid">
+      <button class="btn-deliverable-item type-btn-docx" id="btnDlDocx" title="Download Word Approval Note">
+        <span class="deliv-badge badge-docx">DOCX</span>
+        <span class="deliv-label">Approval Note (.docx)</span>
       </button>
-      <button class="btn-deliverable-gold" id="btnDlXlsx">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-        Open Cost Matrix (.xlsx)
+      <button class="btn-deliverable-item type-btn-xlsx" id="btnDlXlsx" title="Download Excel Cost Matrix">
+        <span class="deliv-badge badge-xlsx">XLSX</span>
+        <span class="deliv-label">Cost Matrix (.xlsx)</span>
+      </button>
+      <button class="btn-deliverable-item type-btn-pptx" id="btnDlPptx" title="Download Board Presentation">
+        <span class="deliv-badge badge-pptx">PPTX</span>
+        <span class="deliv-label">Board Deck (.pptx)</span>
+      </button>
+      <button class="btn-deliverable-item type-btn-dxf" id="btnDlCad" title="Download AutoCAD DXF Spool">
+        <span class="deliv-badge badge-dxf">CAD</span>
+        <span class="deliv-label">Spool Drawing (.dxf)</span>
+      </button>
+      <button class="btn-deliverable-item type-btn-png" id="btnDlImg" title="Download High-Res Heatmap">
+        <span class="deliv-badge badge-png">PNG</span>
+        <span class="deliv-label">Inspection Map (.png)</span>
+      </button>
+      <button class="btn-deliverable-item type-btn-py" id="btnDlPy" title="Download Standalone Python Script">
+        <span class="deliv-badge badge-py">CODE</span>
+        <span class="deliv-label">Math Script (.py)</span>
+      </button>
+      <button class="btn-deliverable-item type-btn-json" id="btnDlJson" title="Download SHA-256 Audit Manifest">
+        <span class="deliv-badge badge-json">HASH</span>
+        <span class="deliv-label">Audit Manifest (.json)</span>
       </button>
     </div>
   `;
@@ -449,11 +539,19 @@ function finishAssistantResponse(payload, container) {
   // Wire download buttons
   const btnDocx = summaryCard.querySelector('#btnDlDocx');
   const btnXlsx = summaryCard.querySelector('#btnDlXlsx');
-  const actualDocx = payload.docx_path ? payload.docx_path.split('/').pop() : 'MRPL_Approval_Note_sim-2026.docx';
-  const actualXlsx = payload.xlsx_path ? payload.xlsx_path.split('/').pop() : 'Cost_Matrix_sim-2026.xlsx';
+  const btnPptx = summaryCard.querySelector('#btnDlPptx');
+  const btnCad = summaryCard.querySelector('#btnDlCad');
+  const btnImg = summaryCard.querySelector('#btnDlImg');
+  const btnPy = summaryCard.querySelector('#btnDlPy');
+  const btnJson = summaryCard.querySelector('#btnDlJson');
 
   if (btnDocx) btnDocx.addEventListener('click', () => handleDownloadDeliverable(actualDocx, btnDocx));
   if (btnXlsx) btnXlsx.addEventListener('click', () => handleDownloadDeliverable(actualXlsx, btnXlsx));
+  if (btnPptx) btnPptx.addEventListener('click', () => handleDownloadDeliverable(actualPptx, btnPptx));
+  if (btnCad) btnCad.addEventListener('click', () => handleDownloadDeliverable(actualCad, btnCad));
+  if (btnImg) btnImg.addEventListener('click', () => handleDownloadDeliverable(actualImg, btnImg));
+  if (btnPy) btnPy.addEventListener('click', () => handleDownloadDeliverable(actualPy, btnPy));
+  if (btnJson) btnJson.addEventListener('click', () => handleDownloadDeliverable(actualJson, btnJson));
 
   scrollToBottom();
 }
@@ -514,8 +612,22 @@ async function loadDeliverables() {
         item.className = 'deliverable-item';
         const isDocx = file.name.endsWith('.docx');
         const isXlsx = file.name.endsWith('.xlsx');
-        const badgeClass = isDocx ? 'type-docx' : (isXlsx ? 'type-xlsx' : 'type-default');
-        const typeText = isDocx ? 'DOCX' : (isXlsx ? 'XLSX' : 'FILE');
+        const isPptx = file.name.endsWith('.pptx');
+        const isDxf = file.name.endsWith('.dxf');
+        const isPng = file.name.endsWith('.png');
+        const isPy = file.name.endsWith('.py');
+        const isJson = file.name.endsWith('.json');
+
+        let badgeClass = 'type-default';
+        let typeText = 'FILE';
+
+        if (isDocx) { badgeClass = 'type-docx'; typeText = 'DOCX'; }
+        else if (isXlsx) { badgeClass = 'type-xlsx'; typeText = 'XLSX'; }
+        else if (isPptx) { badgeClass = 'type-pptx'; typeText = 'PPTX'; }
+        else if (isDxf) { badgeClass = 'type-dxf'; typeText = 'CAD'; }
+        else if (isPng) { badgeClass = 'type-png'; typeText = 'HEAT'; }
+        else if (isPy) { badgeClass = 'type-py'; typeText = 'CODE'; }
+        else if (isJson) { badgeClass = 'type-json'; typeText = 'HASH'; }
         const sizeText = formatBytes(file.size_bytes);
 
         item.innerHTML = `
@@ -585,11 +697,14 @@ async function handleDownloadDeliverable(filename, btn) {
     }
 
     // Standard Browser / Dev Server Blob fallback
-    const mime = filename.endsWith('.docx')
-      ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-      : (filename.endsWith('.xlsx')
-          ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-          : 'application/octet-stream');
+    let mime = 'application/octet-stream';
+    if (filename.endsWith('.docx')) mime = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    else if (filename.endsWith('.xlsx')) mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    else if (filename.endsWith('.pptx')) mime = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+    else if (filename.endsWith('.dxf')) mime = 'application/dxf';
+    else if (filename.endsWith('.png')) mime = 'image/png';
+    else if (filename.endsWith('.py')) mime = 'text/x-python';
+    else if (filename.endsWith('.json')) mime = 'application/json';
 
     const blob = new Blob([arrayBuffer], { type: mime });
     const blobUrl = URL.createObjectURL(blob);

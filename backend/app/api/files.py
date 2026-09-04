@@ -19,8 +19,8 @@ router = APIRouter(prefix="/api/files", tags=["Files & Deliverables"])
 @router.post("/upload")
 async def upload_file(file: UploadFile = File(...)) -> Dict[str, Any]:
     """
-    Upload an industrial document (UTG report, P&ID drawing, or standard SOP).
-    Automatically indexes text-based documents into the Sovereign RAG store.
+    Upload any industrial artifact (P&ID drawings, UTG reports, CAD DWG/DXF, 3D models, CCTV videos).
+    Automatically categorizes artifacts and indexes textual/tabular documents into Sovereign RAG.
     """
     if not file.filename:
         raise HTTPException(status_code=400, detail="Missing filename")
@@ -35,18 +35,32 @@ async def upload_file(file: UploadFile = File(...)) -> Dict[str, Any]:
         
     file_size = destination.stat().st_size
     chunks_ingested = 0
-    
-    # Auto-index into RAG if document is text/pdf/docx
     suffix = destination.suffix.lower()
+
+    # Determine artifact category
     if suffix in [".pdf", ".docx", ".txt", ".md"]:
+        category = "DOCUMENT_SPEC"
         try:
             chunks_ingested = ingest_document_to_rag(destination)
-        except Exception as exc:
+        except Exception:
             pass
+    elif suffix in [".png", ".jpg", ".jpeg", ".tiff", ".bmp", ".svg"]:
+        category = "VISION_BLUEPRINT"
+    elif suffix in [".dxf", ".dwg"]:
+        category = "CAD_DRAWING"
+    elif suffix in [".blend", ".step", ".stp", ".iges", ".igs", ".stl", ".obj"]:
+        category = "3D_MODEL"
+    elif suffix in [".mp4", ".avi", ".mov", ".mkv"]:
+        category = "INSPECTION_VIDEO"
+    elif suffix in [".xlsx", ".xls", ".csv"]:
+        category = "DATA_WORKBOOK"
+    else:
+        category = "GENERAL_ARTIFACT"
             
     return {
         "status": "success",
         "filename": safe_filename,
+        "category": category,
         "size_bytes": file_size,
         "chunks_indexed": chunks_ingested,
         "file_path": str(destination)
@@ -56,7 +70,7 @@ async def upload_file(file: UploadFile = File(...)) -> Dict[str, Any]:
 @router.get("/download/{filename}")
 async def download_file(filename: str):
     """
-    Download a compiled deliverable (.docx or .xlsx) from the deliverables directory.
+    Download a compiled deliverable (.docx, .xlsx, .pptx, .dxf, .png) or uploaded document.
     """
     safe_name = Path(filename).name
     deliverables_dir = getattr(settings, "DELIVERABLES_DIR", settings.DATA_DIR / "deliverables")
@@ -77,8 +91,20 @@ async def download_file(filename: str):
         media_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     elif safe_name.endswith(".xlsx"):
         media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    elif safe_name.endswith(".pptx"):
+        media_type = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    elif safe_name.endswith(".dxf"):
+        media_type = "application/dxf"
+    elif safe_name.endswith(".png"):
+        media_type = "image/png"
+    elif safe_name.endswith(".jpg") or safe_name.endswith(".jpeg"):
+        media_type = "image/jpeg"
     elif safe_name.endswith(".pdf"):
         media_type = "application/pdf"
+    elif safe_name.endswith(".py"):
+        media_type = "text/x-python"
+    elif safe_name.endswith(".json"):
+        media_type = "application/json"
         
     return FileResponse(
         path=target_path,

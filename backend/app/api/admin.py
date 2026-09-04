@@ -95,3 +95,83 @@ async def get_rbac_roles():
         "roles": RBAC_REGISTRY,
         "enforcement": "STRICT_ROLE_BASED_ACCESS_CONTROL",
     }
+
+
+class SetModelTierRequest(BaseModel):
+    tier: str = Field(..., json_schema_extra={"example": "ENTERPRISE_100B"})
+
+
+@router.get("/model-tiers")
+async def get_model_tiers():
+    """Returns available hardware deployment tiers and active profile per PS 117 sizing."""
+    return {
+        "active_tier": settings.MODEL_TIER,
+        "active_profile": settings.active_model_profile,
+        "supported_tiers": {
+            "ENTERPRISE_100B": {
+                "name": "Enterprise Refinery Datacenter (100B+)",
+                "hardware": "Dual AMD EPYC 9654 + 4x NVIDIA A100 (80GB SXM4) / H100 NVLink",
+                "models": {
+                    "router": "qwen2.5:72b-instruct",
+                    "reasoning": "deepseek-r1:70b-q8_0",
+                    "vision": "qwen2-vl:72b-instruct",
+                    "coder": "qwen2.5-coder:32b-instruct",
+                },
+                "tensor_parallel_size": 4,
+                "context_window": 131072,
+                "vram_allocation_gb": 320,
+            },
+            "WORKSTATION_32B": {
+                "name": "Departmental Workstation (32B)",
+                "hardware": "Intel i9-14900K + 1x NVIDIA RTX 4090 (24GB) / RTX A5000",
+                "models": {
+                    "router": "qwen2.5:14b-instruct",
+                    "reasoning": "deepseek-r1:32b",
+                    "vision": "qwen2-vl:7b-instruct",
+                    "coder": "qwen2.5-coder:14b-instruct",
+                },
+                "tensor_parallel_size": 1,
+                "context_window": 32768,
+                "vram_allocation_gb": 24,
+            },
+            "EDGE_LAPTOP_8B": {
+                "name": "Hackathon Demo Rig / Field Laptop (8B)",
+                "hardware": "Intel i7 / Ryzen 7, RTX 3060/4060 (6-8GB) or Apple Silicon M-Series",
+                "models": {
+                    "router": "qwen2.5:3b-instruct-q8_0",
+                    "reasoning": "deepseek-r1:8b",
+                    "vision": "qwen2-vl:7b-instruct-q4_K_M",
+                    "coder": "qwen2.5-coder:7b-instruct-q4_K_M",
+                },
+                "tensor_parallel_size": 1,
+                "context_window": 8192,
+                "vram_allocation_gb": 8,
+            },
+        }
+    }
+
+
+@router.post("/model-tier")
+async def set_model_tier(request: SetModelTierRequest):
+    """Sets active model tier (ENTERPRISE_100B, WORKSTATION_32B, EDGE_LAPTOP_8B)."""
+    tier = request.tier.upper()
+    if tier not in ["ENTERPRISE_100B", "WORKSTATION_32B", "EDGE_LAPTOP_8B"]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid tier '{request.tier}'. Must be ENTERPRISE_100B, WORKSTATION_32B, or EDGE_LAPTOP_8B."
+        )
+
+    settings.MODEL_TIER = tier
+    profile = settings.active_model_profile
+    settings.MODEL_ROUTER = profile["router"]
+    settings.MODEL_REASONING = profile["reasoning"]
+    settings.MODEL_VISION = profile["vision"]
+    settings.MODEL_CODER = profile["coder"]
+    settings.TENSOR_PARALLEL_SIZE = profile["tensor_parallel_size"]
+    settings.MAX_MODEL_LEN = profile["context_window"]
+
+    return {
+        "status": "UPDATED",
+        "active_tier": settings.MODEL_TIER,
+        "profile": profile,
+    }

@@ -23,9 +23,10 @@ class AgentState(TypedDict):
     uploaded_files: List[str]                  # Local file paths of uploaded PDFs or drawings
     user_role: Literal["admin", "senior", "junior"]
 
-    # --- 2. Intent Routing ---
+    # --- 2. Intent Routing & Model Architecture ---
     task_type: Optional[str]                   # "VISION_AUDIT", "SOP_LOOKUP", "GENERAL_QUERY"
     active_model: Optional[str]                # Model tag used for current operation
+    model_tier: Optional[str]                  # "ENTERPRISE_100B", "WORKSTATION_32B", "EDGE_LAPTOP_8B"
 
     # --- 3. Multimodal & Vision Extraction ---
     extracted_specs: Optional[Dict[str, Any]]  # Extracted values (line_tag, t_nominal, t_actual, etc.)
@@ -41,9 +42,15 @@ class AgentState(TypedDict):
     retry_count: int                           # Number of self-healing attempts (0..3)
     calc_result: Optional[Dict[str, Any]]      # Parsed JSON metrics from sandbox execution
 
-    # --- 6. Compiled Deliverables ---
+    # --- 6. Compiled Deliverables (Omni-Modal) ---
     docx_path: Optional[str]                   # Path to generated MRPL_Approval_Note.docx
     xlsx_path: Optional[str]                   # Path to generated Cost_Matrix.xlsx
+    pptx_path: Optional[str]                   # Path to generated Executive_Pitch_Deck.pptx
+    cad_path: Optional[str]                    # Path to generated Piping_Spool_Drawing.dxf
+    image_path: Optional[str]                  # Path to generated Inspection_Heatmap.png
+    script_path: Optional[str]                 # Path to generated Standalone_Calculation_Script.py
+    manifest_path: Optional[str]               # Path to generated MRPL_Audit_Manifest.json
+    deliverables: Optional[List[Dict[str, Any]]] # Array of generated deliverable items
 
     # --- 7. Real-Time Telemetry & Chat Response ---
     thought_stream: List[str]                  # Real-time event log for UI streaming

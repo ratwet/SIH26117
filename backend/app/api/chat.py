@@ -33,6 +33,7 @@ async def chat_sync(request: ChatRequest):
     Synchronous / standard JSON endpoint.
     Executes the full LangGraph workflow and returns the final state in a single response.
     """
+    tier = getattr(settings, "MODEL_TIER", "ENTERPRISE_100B")
     initial_state: AgentState = {
         "session_id": request.session_id,
         "user_prompt": request.prompt,
@@ -40,6 +41,7 @@ async def chat_sync(request: ChatRequest):
         "user_role": request.user_role,
         "task_type": None,
         "active_model": None,
+        "model_tier": tier,
         "extracted_specs": None,
         "pipe_data": None,
         "rag_chunks": None,
@@ -50,6 +52,12 @@ async def chat_sync(request: ChatRequest):
         "calc_result": None,
         "docx_path": None,
         "xlsx_path": None,
+        "pptx_path": None,
+        "cad_path": None,
+        "image_path": None,
+        "script_path": None,
+        "manifest_path": None,
+        "deliverables": None,
         "thought_stream": [],
         "final_response": None,
         "error_message": None,
@@ -61,10 +69,17 @@ async def chat_sync(request: ChatRequest):
         "session_id": final_state["session_id"],
         "task_type": final_state.get("task_type"),
         "active_model": final_state.get("active_model"),
+        "model_tier": final_state.get("model_tier"),
         "thought_stream": final_state.get("thought_stream", []),
         "final_response": final_state.get("final_response"),
         "docx_path": final_state.get("docx_path"),
         "xlsx_path": final_state.get("xlsx_path"),
+        "pptx_path": final_state.get("pptx_path"),
+        "cad_path": final_state.get("cad_path"),
+        "image_path": final_state.get("image_path"),
+        "script_path": final_state.get("script_path"),
+        "manifest_path": final_state.get("manifest_path"),
+        "deliverables": final_state.get("deliverables", []),
         "calc_result": final_state.get("calc_result"),
         "retry_count": final_state.get("retry_count", 0),
         "error_message": final_state.get("error_message"),
@@ -96,6 +111,7 @@ async def chat_stream(
             dest.write_bytes(content)
             saved_file_paths.append(str(dest))
 
+    tier = getattr(settings, "MODEL_TIER", "ENTERPRISE_100B")
     initial_state: AgentState = {
         "session_id": active_session_id,
         "user_prompt": prompt,
@@ -103,6 +119,7 @@ async def chat_stream(
         "user_role": user_role,
         "task_type": None,
         "active_model": None,
+        "model_tier": tier,
         "extracted_specs": None,
         "pipe_data": None,
         "rag_chunks": None,
@@ -113,6 +130,12 @@ async def chat_stream(
         "calc_result": None,
         "docx_path": None,
         "xlsx_path": None,
+        "pptx_path": None,
+        "cad_path": None,
+        "image_path": None,
+        "script_path": None,
+        "manifest_path": None,
+        "deliverables": None,
         "thought_stream": [],
         "final_response": None,
         "error_message": None,
@@ -120,7 +143,7 @@ async def chat_stream(
 
     async def event_generator():
         # Yield initial connection event
-        yield f"event: connected\ndata: {json.dumps({'session_id': active_session_id, 'status': 'PROCESSING'})}\n\n"
+        yield f"event: connected\ndata: {json.dumps({'session_id': active_session_id, 'status': 'PROCESSING', 'model_tier': tier})}\n\n"
 
         previous_thoughts_count = 0
         final_state = None
@@ -145,6 +168,12 @@ async def chat_stream(
                     deliverable_payload = {
                         "docx_path": node_state_update.get("docx_path"),
                         "xlsx_path": node_state_update.get("xlsx_path"),
+                        "pptx_path": node_state_update.get("pptx_path"),
+                        "cad_path": node_state_update.get("cad_path"),
+                        "image_path": node_state_update.get("image_path"),
+                        "script_path": node_state_update.get("script_path"),
+                        "manifest_path": node_state_update.get("manifest_path"),
+                        "deliverables": node_state_update.get("deliverables", []),
                     }
                     yield f"event: deliverable\ndata: {json.dumps(deliverable_payload)}\n\n"
 
@@ -156,6 +185,13 @@ async def chat_stream(
             "final_response": final_state.get("final_response") if final_state else "Completed.",
             "docx_path": final_state.get("docx_path") if final_state else None,
             "xlsx_path": final_state.get("xlsx_path") if final_state else None,
+            "pptx_path": final_state.get("pptx_path") if final_state else None,
+            "cad_path": final_state.get("cad_path") if final_state else None,
+            "image_path": final_state.get("image_path") if final_state else None,
+            "script_path": final_state.get("script_path") if final_state else None,
+            "manifest_path": final_state.get("manifest_path") if final_state else None,
+            "deliverables": final_state.get("deliverables") if final_state else None,
+            "model_tier": tier,
             "status": "COMPLETED",
         }
         yield f"event: done\ndata: {json.dumps(completion_payload)}\n\n"
