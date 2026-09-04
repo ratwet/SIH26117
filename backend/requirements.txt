@@ -1,19 +1,32 @@
-fastapi>=0.115.0
-uvicorn[standard]>=0.30.0
-langgraph>=0.2.0
-langchain-core>=0.3.0
-langchain-ollama>=0.2.0
-httpx>=0.27.0
-python-multipart>=0.0.9
-python-docx>=1.1.0
-openpyxl>=3.1.0
-python-pptx>=1.0.0
-ezdxf>=1.4.0
-pillow>=10.0.0
-xlsxwriter>=3.2.0
-chromadb>=0.5.0
-fastembed>=0.3.0
-sse-starlette>=2.0.0
-pydantic>=2.0
-pydantic-settings>=2.0
-aiosqlite>=0.20.0
+# =====================================================================
+# SovereignWorkbench — Pinned Python Dependencies (requirements.txt)
+# Exact versions for deterministic on-premise air-gapped deployment.
+# Generated from working venv on 2026-09-04.
+# =====================================================================
+
+# --- Core Framework ---
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+pydantic==2.13.5
+pydantic-settings==2.15.0
+httpx==0.28.1
+python-multipart==0.0.32
+sse-starlette==3.4.10
+aiosqlite==0.22.1
+
+# --- LangGraph Agentic State Machine ---
+langgraph==1.2.11
+langchain-core==1.6.1
+langchain-ollama==1.1.0
+
+# --- Omni-Modal Deliverable Compilers ---
+python-docx==1.2.0
+openpyxl==3.1.5
+python-pptx==1.0.2
+ezdxf==1.4.4
+pillow==12.2.0
+xlsxwriter==3.2.9
+
+# --- Sovereign RAG (CPU-Only, Air-Gapped) ---
+chromadb==1.5.9
+fastembed==0.8.0
