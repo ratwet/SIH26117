@@ -1,5 +1,5 @@
 // src/main.js - Sovereign AI Workbench (Gemini / Claude Conversational Interface)
-import { SovereignAPI, getBackendUrl, setBackendUrl, getServerIP } from './api.js';
+import { SovereignAPI, getBackendUrl, setBackendUrl, getServerIP, getCurrentUser, setCurrentUser } from './api.js';
 import { renderMarkdown } from './markdown.js';
 
 // DOM Elements
@@ -27,6 +27,18 @@ const lockdownModal = document.getElementById('lockdownModal');
 const modelDropdownBtn = document.getElementById('modelDropdownBtn');
 const modelMenu = document.getElementById('modelMenu');
 const currentModelBadge = document.getElementById('currentModelBadge');
+const juniorLockedBadge = document.getElementById('juniorLockedBadge');
+
+const userProfilePill = document.getElementById('userProfilePill');
+const userAvatarChar = document.getElementById('userAvatarChar');
+const userDisplayName = document.getElementById('userDisplayName');
+const userRoleLabel = document.getElementById('userRoleLabel');
+
+const authModal = document.getElementById('authModal');
+const btnCloseAuth = document.getElementById('btnCloseAuth');
+const authPinInput = document.getElementById('authPinInput');
+const btnPinLogin = document.getElementById('btnPinLogin');
+const authPinError = document.getElementById('authPinError');
 
 const btnCustomize = document.getElementById('btnCustomize');
 const btnOpenCustomizeTop = document.getElementById('btnOpenCustomizeTop');
@@ -43,6 +55,9 @@ const statWanBytes = document.getElementById('statWanBytes');
 const statIsolation = document.getElementById('statIsolation');
 const modalAuditTableBody = document.getElementById('modalAuditTableBody');
 
+const adminGovernanceCard = document.getElementById('adminGovernanceCard');
+const governanceMatrixContainer = document.getElementById('governanceMatrixContainer');
+
 // Application State
 let chatSessions = [];
 let currentSessionId = null;
@@ -57,20 +72,22 @@ async function init() {
   setupEventListeners();
   loadSavedSessions();
   updateGreeting();
+  applyUserPermissions(getCurrentUser());
   await probeNetworkImmediate();
   startTelemetryMonitor();
   loadAuditLedger();
 }
 
-// Set dynamic greeting based on time of day
-function updateGreeting() {
+// Set dynamic greeting based on time of day and active persona
+function updateGreeting(user = null) {
+  const activeUser = user || getCurrentUser();
   const hour = new Date().getHours();
   let timeStr = "Good evening";
   if (hour >= 5 && hour < 12) timeStr = "Good morning";
   else if (hour >= 12 && hour < 17) timeStr = "Good afternoon";
 
   if (greetingTitle) {
-    greetingTitle.textContent = `${timeStr}, Cyanide`;
+    greetingTitle.textContent = `${timeStr}, ${activeUser.name || 'Cyanide'}`;
   }
 }
 
@@ -335,7 +352,7 @@ async function handleSendPrompt() {
 
   await SovereignAPI.streamChat({
     prompt: prompt || "Analyze attached document.",
-    userRole: "senior",
+    userRole: getCurrentUser().role,
     files: userFilesCopy,
     onThought: (payload) => {
       thoughtDrawer.style.display = 'block';
@@ -622,11 +639,23 @@ function setupEventListeners() {
     });
 
     document.querySelectorAll('.model-option').forEach(opt => {
-      opt.addEventListener('click', () => {
+      opt.addEventListener('click', async () => {
         document.querySelectorAll('.model-option').forEach(o => o.classList.remove('active'));
         opt.classList.add('active');
-        if (currentModelBadge) currentModelBadge.textContent = opt.dataset.model;
+        const selectedModel = opt.dataset.model;
+        if (currentModelBadge) currentModelBadge.textContent = selectedModel;
         modelMenu.style.display = 'none';
+
+        // Synchronize with backend model tier
+        let tierKey = 'WORKSTATION_32B';
+        if (selectedModel === 'Enterprise-100B') tierKey = 'ENTERPRISE_100B';
+        else if (selectedModel === 'Edge-8B') tierKey = 'EDGE_LAPTOP_8B';
+
+        try {
+          await SovereignAPI.setModelTier(tierKey);
+        } catch (err) {
+          console.warn("Could not sync model tier with backend:", err);
+        }
       });
     });
 
@@ -641,6 +670,13 @@ function setupEventListeners() {
     if (inputBackendUrl) inputBackendUrl.value = getBackendUrl();
     if (modalBackendHostPort) modalBackendHostPort.textContent = getServerIP();
     loadAuditLedger();
+    const currentUser = getCurrentUser();
+    if (currentUser && currentUser.role === 'admin') {
+      if (adminGovernanceCard) adminGovernanceCard.style.display = 'block';
+      loadAdminGovernanceMatrix();
+    } else {
+      if (adminGovernanceCard) adminGovernanceCard.style.display = 'none';
+    }
   };
 
   if (btnCustomize) btnCustomize.addEventListener('click', openSettings);
@@ -648,6 +684,105 @@ function setupEventListeners() {
   if (btnCloseCustomize) btnCloseCustomize.addEventListener('click', () => {
     if (customizeModal) customizeModal.style.display = 'none';
   });
+
+  // Sovereign Auth & Role Switcher Modal
+  if (userProfilePill && authModal) {
+    userProfilePill.addEventListener('click', () => {
+      authModal.style.display = 'flex';
+      if (authPinError) authPinError.style.display = 'none';
+      if (authPinInput) authPinInput.value = '';
+    });
+  }
+
+  if (btnCloseAuth && authModal) {
+    btnCloseAuth.addEventListener('click', () => {
+      authModal.style.display = 'none';
+    });
+  }
+
+  if (authModal) {
+    authModal.addEventListener('click', (e) => {
+      if (e.target === authModal) {
+        authModal.style.display = 'none';
+      }
+    });
+  }
+
+  // 1-Click Persona Selection
+  document.querySelectorAll('.btn-persona-select').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const username = btn.dataset.username;
+      try {
+        btn.disabled = true;
+        btn.textContent = 'Signing in...';
+        const res = await SovereignAPI.login({ username });
+        applyUserPermissions(res.user);
+        if (authModal) authModal.style.display = 'none';
+      } catch (err) {
+        alert(`Sign-in failed: ${err.message}`);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = `Switch to ${username.charAt(0).toUpperCase() + username.slice(1)}`;
+      }
+    });
+  });
+
+  document.querySelectorAll('.persona-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.persona-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      if (authPinInput) authPinInput.focus();
+    });
+  });
+
+  // Security PIN Verification
+  if (btnPinLogin && authPinInput) {
+    const handlePinLogin = async () => {
+      const pin = authPinInput.value.trim();
+      if (!pin) {
+        if (authPinError) {
+          authPinError.textContent = 'Please enter a 4-digit security PIN.';
+          authPinError.style.display = 'block';
+        }
+        return;
+      }
+
+      let targetUsername = 'senior';
+      const activeCard = document.querySelector('.persona-card.active');
+      if (activeCard && activeCard.dataset.username) {
+        targetUsername = activeCard.dataset.username;
+      } else {
+        if (pin === '1170') targetUsername = 'admin';
+        else if (pin === '5700') targetUsername = 'senior';
+        else if (pin === '2026') targetUsername = 'junior';
+      }
+
+      try {
+        btnPinLogin.disabled = true;
+        btnPinLogin.textContent = 'Verifying...';
+        if (authPinError) authPinError.style.display = 'none';
+
+        const res = await SovereignAPI.login({ username: targetUsername, pin });
+        applyUserPermissions(res.user);
+        if (authModal) authModal.style.display = 'none';
+        authPinInput.value = '';
+      } catch (err) {
+        if (authPinError) {
+          authPinError.textContent = `❌ ${err.message || 'Authentication failed: Invalid PIN.'}`;
+          authPinError.style.display = 'block';
+        }
+      } finally {
+        btnPinLogin.disabled = false;
+        btnPinLogin.textContent = 'Verify & Sign In';
+      }
+    };
+
+    btnPinLogin.addEventListener('click', handlePinLogin);
+    authPinInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handlePinLogin();
+    });
+  }
 
   // Backend URL configuration
   if (btnTestBackendConn) {
@@ -694,6 +829,149 @@ function setupEventListeners() {
       btnPresetLan.classList.add('active');
       if (btnPresetLocal) btnPresetLocal.classList.remove('active');
     });
+  }
+}
+
+// ==========================================================================
+// ROLE-BASED ACCESS CONTROL & MODEL PERMISSIONS
+// ==========================================================================
+
+function applyUserPermissions(user) {
+  if (!user) user = getCurrentUser();
+
+  // 1. Update Sidebar Profile Pill
+  if (userAvatarChar) userAvatarChar.textContent = user.avatar || '👤';
+  if (userDisplayName) userDisplayName.textContent = user.name || 'Engineer';
+  if (userRoleLabel) userRoleLabel.textContent = user.description ? user.description.split('•')[0].trim() : (user.role || 'User');
+
+  // Update dynamic greeting with user's name
+  updateGreeting(user);
+
+  // 2. Role-specific model controls
+  const role = (user.role || 'senior').toLowerCase();
+
+  if (role === 'junior') {
+    // Junior: Pre-configured, locked model, zero dropdown friction
+    if (modelDropdownBtn) modelDropdownBtn.style.display = 'none';
+    if (juniorLockedBadge) juniorLockedBadge.style.display = 'inline-flex';
+    if (modelMenu) modelMenu.style.display = 'none';
+    if (adminGovernanceCard) adminGovernanceCard.style.display = 'none';
+  } else if (role === 'senior') {
+    // Senior: Unlocked model switcher for authorized models
+    if (modelDropdownBtn) modelDropdownBtn.style.display = 'inline-flex';
+    if (juniorLockedBadge) juniorLockedBadge.style.display = 'none';
+    if (adminGovernanceCard) adminGovernanceCard.style.display = 'none';
+
+    // Filter available options
+    const allowed = user.allowed_models || ["Workstation-32B", "Edge-8B"];
+    const isAll = allowed.includes('*');
+    document.querySelectorAll('.model-option').forEach(opt => {
+      const modelName = opt.dataset.model;
+      const isAllowed = isAll || allowed.some(a => a.toLowerCase().replace(/[-_]/g, '') === modelName.toLowerCase().replace(/[-_]/g, ''));
+      opt.style.display = isAllowed ? 'block' : 'none';
+    });
+
+    // Update active badge if current model is not allowed
+    const current = currentModelBadge ? currentModelBadge.textContent : '';
+    if (!isAll && !allowed.some(a => a.toLowerCase().replace(/[-_]/g, '') === current.toLowerCase().replace(/[-_]/g, ''))) {
+      const firstAllowed = allowed[0] || 'Workstation-32B';
+      if (currentModelBadge) currentModelBadge.textContent = firstAllowed;
+      document.querySelectorAll('.model-option').forEach(o => {
+        if (o.dataset.model === firstAllowed) o.classList.add('active');
+        else o.classList.remove('active');
+      });
+    }
+  } else if (role === 'admin') {
+    // Admin: Full model switcher and access governance
+    if (modelDropdownBtn) modelDropdownBtn.style.display = 'inline-flex';
+    if (juniorLockedBadge) juniorLockedBadge.style.display = 'none';
+    document.querySelectorAll('.model-option').forEach(opt => {
+      opt.style.display = 'block';
+    });
+    if (adminGovernanceCard) adminGovernanceCard.style.display = 'block';
+  }
+
+  // Highlight active persona card in Auth Modal
+  document.querySelectorAll('.persona-card').forEach(card => {
+    if (card.dataset.username === role) {
+      card.classList.add('active');
+    } else {
+      card.classList.remove('active');
+    }
+  });
+}
+
+async function loadAdminGovernanceMatrix() {
+  if (!governanceMatrixContainer) return;
+  try {
+    governanceMatrixContainer.innerHTML = '<div style="color:var(--text-muted); font-size:0.8rem;">Loading refinery access matrix...</div>';
+    const res = await SovereignAPI.getAdminUsers();
+    const users = res.users || [];
+    governanceMatrixContainer.innerHTML = '';
+
+    const modelTiers = [
+      { key: "Enterprise-100B", label: "100B Cluster" },
+      { key: "Workstation-32B", label: "32B Local GPU" },
+      { key: "Edge-8B", label: "8B Field Edge" },
+    ];
+
+    // Filter to senior and junior (admin always has all models)
+    const nonAdminUsers = users.filter(u => u.role !== 'admin');
+
+    nonAdminUsers.forEach(u => {
+      const card = document.createElement('div');
+      card.className = 'gov-user-card';
+      const allowed = u.allowed_models || [];
+
+      let checkboxesHtml = modelTiers.map(m => {
+        const isChecked = allowed.includes('*') || allowed.some(a => a.toLowerCase().replace(/[-_]/g, '') === m.key.toLowerCase().replace(/[-_]/g, ''));
+        return `
+          <label class="gov-checkbox-label">
+            <input type="checkbox" class="gov-checkbox" data-user-id="${u.id}" data-model="${m.key}" ${isChecked ? 'checked' : ''} />
+            <span>${escapeHtml(m.label)}</span>
+          </label>
+        `;
+      }).join('');
+
+      card.innerHTML = `
+        <div class="gov-user-header">
+          <div class="gov-user-info">
+            <span>${u.avatar || '👤'}</span>
+            <span>${escapeHtml(u.name)} (${escapeHtml(u.role.toUpperCase())})</span>
+          </div>
+          <span style="font-size:0.7rem; font-family:var(--font-mono); color:var(--text-muted);">${escapeHtml(u.id)}</span>
+        </div>
+        <div style="font-size:0.74rem; color:var(--text-muted);">${escapeHtml(u.description ? u.description.split('•')[0].trim() : '')}</div>
+        <div class="gov-models-grid">
+          ${checkboxesHtml}
+        </div>
+      `;
+
+      // Attach change listeners to checkboxes in this card
+      card.querySelectorAll('.gov-checkbox').forEach(chk => {
+        chk.addEventListener('change', async () => {
+          const userId = chk.dataset.userId;
+          const checkedModels = Array.from(card.querySelectorAll(`.gov-checkbox:checked`)).map(c => c.dataset.model);
+          try {
+            await SovereignAPI.updateUserModelAccess(userId, checkedModels);
+            const currentUser = getCurrentUser();
+            if (currentUser.id === userId) {
+              currentUser.allowed_models = checkedModels;
+              setCurrentUser(currentUser);
+              applyUserPermissions(currentUser);
+            }
+          } catch (err) {
+            console.error("Failed to update user permissions:", err);
+            alert(`Permission update error: ${err.message}`);
+          }
+        });
+      });
+
+      governanceMatrixContainer.appendChild(card);
+    });
+  } catch (err) {
+    console.warn("Governance matrix load error:", err);
+    governanceMatrixContainer.innerHTML = `<div style="color:var(--status-red); font-size:0.8rem;">Could not load governance matrix: ${err.message}</div>`;
   }
 }
 

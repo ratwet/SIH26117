@@ -124,7 +124,11 @@ async def route_task_node(state: AgentState) -> Dict[str, Any]:
     """
     prompt = state.get("user_prompt", "").lower()
     files = state.get("uploaded_files", [])
-    tier = getattr(settings, "MODEL_TIER", "ENTERPRISE_100B")
+    user_role = (state.get("user_role") or "senior").lower()
+    if user_role == "junior":
+        tier = "EDGE_LAPTOP_8B"
+    else:
+        tier = state.get("model_tier") or getattr(settings, "MODEL_TIER", "ENTERPRISE_100B")
     profile = getattr(settings, "active_model_profile", {})
 
     # Disambiguate file attachments from user intent
@@ -566,7 +570,7 @@ if __name__ == "__main__":
     manifest_data = {
         "organization": "Mangalore Refinery and Petrochemicals Limited (MRPL)",
         "session_id": session_tag,
-        "model_tier": getattr(settings, "MODEL_TIER", "ENTERPRISE_100B"),
+        "model_tier": state.get("model_tier") or getattr(settings, "MODEL_TIER", "ENTERPRISE_100B"),
         "hardware_deployment": getattr(settings, "active_model_profile", {}).get("hardware_spec", "Refinery Datacenter"),
         "inspected_asset": {
             "line_tag": pipe_data.line_tag,

@@ -8,6 +8,14 @@ from fastapi import APIRouter, HTTPException, Depends, Header
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from app.config import settings
+from app.security.auth import (
+    get_all_users,
+    get_user_by_id,
+    get_user_by_username,
+    authenticate_user,
+    update_user_allowed_models,
+    UserAccount,
+)
 
 router = APIRouter(prefix="/api/admin", tags=["Admin"])
 
@@ -219,4 +227,100 @@ async def get_llm_cluster_health():
             "error": str(e),
         }
     return telemetry
+
+
+# =========================================================================
+# Three-Tier Sovereign Authentication & Model Access Governance Endpoints
+# =========================================================================
+
+class LoginRequest(BaseModel):
+    username: str = Field(..., json_schema_extra={"example": "senior"})
+    pin: Optional[str] = Field(None, json_schema_extra={"example": "5700"})
+
+
+class UpdatePermissionsRequest(BaseModel):
+    allowed_models: List[str] = Field(..., json_schema_extra={"example": ["Edge-8B", "Workstation-32B"]})
+
+
+@router.post("/auth/login")
+async def login(request: LoginRequest):
+    """
+    Sovereign On-Premise Sign-In:
+    Validates user credentials/role against local refinery registry.
+    Supports both PIN verification and 1-click persona switching.
+    """
+    user = authenticate_user(request.username, request.pin)
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="Authentication failed: Invalid username or security PIN."
+        )
+    return {
+        "status": "AUTHENTICATED",
+        "user": user.model_dump(exclude={"pin"}),
+        "session_token": f"sovereign_token_{user.id}",
+    }
+
+
+@router.get("/auth/users")
+async def list_auth_personas():
+    """
+    Returns public persona metadata for quick 1-click role switching in the prototype.
+    """
+    users = get_all_users()
+    return {
+        "users": [u.model_dump(exclude={"pin"}) for u in users]
+    }
+
+
+@router.get("/auth/me")
+async def get_current_user_profile(
+    x_user_role: Optional[str] = Header(default="senior", alias="X-User-Role"),
+    x_user_id: Optional[str] = Header(default=None, alias="X-User-Id")
+):
+    """
+    Returns current authenticated persona based on request headers.
+    """
+    user = None
+    if x_user_id:
+        user = get_user_by_id(x_user_id)
+    if not user and x_user_role:
+        user = get_user_by_username(x_user_role)
+    if not user:
+        user = get_user_by_username("senior")
+    return {
+        "user": user.model_dump(exclude={"pin"}) if user else None
+    }
+
+
+@router.get("/users", dependencies=[Depends(require_permission("can_manage_rbac"))])
+async def list_users_for_governance():
+    """
+    Admin Endpoint: Returns full user directory with model access matrices.
+    """
+    users = get_all_users()
+    return {
+        "users": [u.model_dump(exclude={"pin"}) for u in users]
+    }
+
+
+@router.post("/users/{user_id}/permissions", dependencies=[Depends(require_permission("can_manage_rbac"))])
+async def update_user_permissions(user_id: str, request: UpdatePermissionsRequest):
+    """
+    Admin Endpoint: Allows IT Administrator to grant/revoke model access for any user or role.
+    """
+    updated = update_user_allowed_models(user_id, request.allowed_models)
+    if not updated:
+        raise HTTPException(
+            status_code=404,
+            detail=f"User '{user_id}' not found in personnel registry."
+        )
+    return {
+        "status": "PERMISSIONS_UPDATED",
+        "user_id": user_id,
+        "allowed_models": updated.allowed_models,
+        "default_model": updated.default_model,
+        "message": f"Updated model access permissions for user '{updated.name}'.",
+    }
+
 

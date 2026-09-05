@@ -246,3 +246,114 @@ async def test_sop_lookup_routes_to_answer_not_cad():
     assert "OISD" in final_state["final_response"] or "API 570" in final_state["final_response"]
     # Does NOT produce pipe CAD deliverables
     assert final_state.get("cad_path") is None
+
+
+# =====================================================================
+# 7. THREE-TIER SOVEREIGN AUTH & MODEL ACCESS GOVERNANCE (Items 1, 2, 3)
+# =====================================================================
+
+def test_sovereign_auth_login_all_personnel():
+    """Verify sovereign authentication for Admin, Senior, and Junior roles."""
+    app = FastAPI()
+    app.include_router(admin_router)
+    client = TestClient(app)
+
+    # 1. Admin login with PIN 1170
+    res_admin = client.post("/api/admin/auth/login", json={"username": "admin", "pin": "1170"})
+    assert res_admin.status_code == 200
+    data_admin = res_admin.json()
+    assert data_admin["status"] == "AUTHENTICATED"
+    assert data_admin["user"]["name"] == "Rajat"
+    assert data_admin["user"]["role"] == "admin"
+    assert "*" in data_admin["user"]["allowed_models"]
+    assert "pin" not in data_admin["user"]
+
+    # 2. Senior login with PIN 5700
+    res_senior = client.post("/api/admin/auth/login", json={"username": "senior", "pin": "5700"})
+    assert res_senior.status_code == 200
+    data_senior = res_senior.json()
+    assert data_senior["user"]["name"] == "Anand"
+    assert data_senior["user"]["role"] == "senior"
+
+    # 3. Junior login with PIN 2026
+    res_junior = client.post("/api/admin/auth/login", json={"username": "junior", "pin": "2026"})
+    assert res_junior.status_code == 200
+    data_junior = res_junior.json()
+    assert data_junior["user"]["name"] == "Naveen"
+    assert data_junior["user"]["role"] == "junior"
+    assert data_junior["user"]["default_model"] == "Edge-8B"
+
+    # 4. Invalid PIN returns 401
+    res_fail = client.post("/api/admin/auth/login", json={"username": "admin", "pin": "9999"})
+    assert res_fail.status_code == 401
+    assert "Invalid username or security PIN" in res_fail.json()["detail"]
+
+    # 5. 1-Click quick persona login (no PIN provided) succeeds for prototype convenience
+    res_quick = client.post("/api/admin/auth/login", json={"username": "senior"})
+    assert res_quick.status_code == 200
+    assert res_quick.json()["user"]["role"] == "senior"
+
+
+def test_sovereign_auth_personas_list_no_pin_leak():
+    """Verify /api/admin/auth/users returns persona cards without leaking private PINs."""
+    app = FastAPI()
+    app.include_router(admin_router)
+    client = TestClient(app)
+
+    res = client.get("/api/admin/auth/users")
+    assert res.status_code == 200
+    users = res.json()["users"]
+    assert len(users) >= 3
+    usernames = [u["username"] for u in users]
+    assert "admin" in usernames
+    assert "senior" in usernames
+    assert "junior" in usernames
+    for u in users:
+        assert "pin" not in u
+
+
+def test_admin_model_access_governance_permissions():
+    """Verify Admin can grant/revoke model access, while Senior/Junior are forbidden."""
+    app = FastAPI()
+    app.include_router(admin_router)
+    client = TestClient(app)
+
+    # 1. Non-admin (Senior) attempting to update permissions -> 403 Forbidden
+    res_unauth = client.post(
+        "/api/admin/users/usr_senior/permissions",
+        json={"allowed_models": ["Edge-8B"]},
+        headers={"X-User-Role": "senior"}
+    )
+    assert res_unauth.status_code == 403
+
+    # 2. Admin successfully updating model access for senior
+    res_auth = client.post(
+        "/api/admin/users/usr_senior/permissions",
+        json={"allowed_models": ["Workstation-32B", "Edge-8B"]},
+        headers={"X-User-Role": "admin"}
+    )
+    assert res_auth.status_code == 200
+    data = res_auth.json()
+    assert data["status"] == "PERMISSIONS_UPDATED"
+    assert data["allowed_models"] == ["Workstation-32B", "Edge-8B"]
+
+
+def test_junior_model_locked_to_edge_tier():
+    """Verify Junior technician is pinned to EDGE_LAPTOP_8B in chat API."""
+    from app.api.chat import router as chat_router
+    app = FastAPI()
+    app.include_router(chat_router)
+    client = TestClient(app)
+
+    # Calling chat_sync with junior role
+    res = client.post(
+        "/api/chat/sync",
+        json={
+            "prompt": "Inspect line CDU-2-04-150-A1A",
+            "user_role": "junior",
+        }
+    )
+    assert res.status_code == 200
+    # Verified: junior execution was pinned to EDGE_LAPTOP_8B
+    assert res.json()["model_tier"] == "EDGE_LAPTOP_8B"
+

@@ -48,6 +48,36 @@ export function getServerIP() {
   return getBackendUrl().replace(/^https?:\/\//, '');
 }
 
+export const DEFAULT_SENIOR_USER = {
+  id: "usr_senior",
+  username: "senior",
+  name: "Anand",
+  role: "senior",
+  avatar: "📐",
+  allowed_models: ["Enterprise-100B", "Workstation-32B", "Edge-8B"],
+  default_model: "Workstation-32B",
+  description: "Senior Reliability Lead • Level 2 Statutory Approval & Model Switcher"
+};
+
+export function getCurrentUser() {
+  if (typeof localStorage !== "undefined") {
+    const saved = localStorage.getItem("aquanex_user");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (_) {}
+    }
+  }
+  return DEFAULT_SENIOR_USER;
+}
+
+export function setCurrentUser(user) {
+  if (typeof localStorage !== "undefined") {
+    localStorage.setItem("aquanex_user", JSON.stringify(user));
+  }
+  return user;
+}
+
 export const USE_MOCK = false;
 
 export const SovereignAPI = {
@@ -83,10 +113,13 @@ export const SovereignAPI = {
   },
 
   // 4. Streaming Chat with Live SSE
-  async streamChat({ prompt, userRole = "senior", files = [], onConnected, onThought, onDeliverable, onDone, onError }) {
+  async streamChat({ prompt, userRole = null, files = [], onConnected, onThought, onDeliverable, onDone, onError }) {
+    const activeUser = getCurrentUser();
+    const effectiveRole = userRole || activeUser.role || "senior";
     const formData = new FormData();
     formData.append("prompt", prompt);
-    formData.append("user_role", userRole);
+    formData.append("user_role", effectiveRole);
+    formData.append("user_id", activeUser.id || "usr_senior");
 
     if (files && files.length > 0) {
       for (const f of files) {
@@ -193,6 +226,80 @@ export const SovereignAPI = {
     const res = await fetch(`${getBackendUrl()}/api/telemetry/audit`);
     if (!res.ok) {
       throw new Error(`Cannot fetch audit ledger: HTTP ${res.status}`);
+    }
+    return await res.json();
+  },
+
+  // 9. Sovereign Authentication & Personas
+  async getAuthUsers() {
+    const res = await fetch(`${getBackendUrl()}/api/admin/auth/users`);
+    if (!res.ok) {
+      throw new Error(`Cannot fetch personas: HTTP ${res.status}`);
+    }
+    return await res.json();
+  },
+
+  async login({ username, pin = null }) {
+    const res = await fetch(`${getBackendUrl()}/api/admin/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, pin }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Sign-in failed: HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    if (data.user) {
+      setCurrentUser(data.user);
+    }
+    return data;
+  },
+
+  // 10. Admin Model Governance
+  async getAdminUsers() {
+    const active = getCurrentUser();
+    const res = await fetch(`${getBackendUrl()}/api/admin/users`, {
+      headers: { "X-User-Role": active.role || "admin", "X-User-Id": active.id || "usr_admin" },
+    });
+    if (!res.ok) {
+      throw new Error(`Cannot fetch users for governance: HTTP ${res.status}`);
+    }
+    return await res.json();
+  },
+
+  async updateUserModelAccess(userId, allowedModels) {
+    const active = getCurrentUser();
+    const res = await fetch(`${getBackendUrl()}/api/admin/users/${encodeURIComponent(userId)}/permissions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-User-Role": active.role || "admin",
+        "X-User-Id": active.id || "usr_admin",
+      },
+      body: JSON.stringify({ allowed_models: allowedModels }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Permission update failed: HTTP ${res.status}`);
+    }
+    return await res.json();
+  },
+
+  async setModelTier(tier) {
+    const active = getCurrentUser();
+    const res = await fetch(`${getBackendUrl()}/api/admin/model-tier`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-User-Role": active.role || "admin",
+        "X-User-Id": active.id || "usr_admin",
+      },
+      body: JSON.stringify({ tier }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Model tier update failed: HTTP ${res.status}`);
     }
     return await res.json();
   }

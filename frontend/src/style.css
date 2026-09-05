@@ -1386,3 +1386,284 @@ html, body {
 .audit-table th {
   color: var(--text-muted);
 }
+
+/* ==========================================================================
+   SOVEREIGN ACCESS CONTROL & PERSONA SWITCHER STYLES
+   ========================================================================== */
+
+.user-profile-pill.clickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.user-profile-pill.clickable:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent-blue);
+}
+
+.profile-switch-indicator {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-left: auto;
+  padding-left: 6px;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.user-profile-pill.clickable:hover .profile-switch-indicator {
+  color: var(--text-primary);
+  transform: rotate(180deg);
+}
+
+/* Junior Locked Badge */
+.junior-locked-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #34d399;
+  user-select: none;
+}
+
+/* Auth Modal Box */
+.auth-modal-box {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  width: 92%;
+  max-width: 680px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+  animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.auth-modal-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.auth-personas-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+@media (max-width: 600px) {
+  .auth-personas-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.persona-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.persona-card:hover {
+  border-color: var(--border-color);
+  background: var(--bg-hover);
+  transform: translateY(-2px);
+}
+
+.persona-card.active {
+  border-color: var(--accent-blue);
+  background: rgba(59, 130, 246, 0.05);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
+}
+
+.persona-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.persona-badge.admin {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.persona-badge.senior {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.persona-badge.junior {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.persona-avatar {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.persona-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.persona-title {
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.persona-desc {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-bottom: 12px;
+  flex-grow: 1;
+}
+
+.persona-models-tag {
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  padding: 4px 8px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  width: 100%;
+}
+
+.btn-persona-select {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  transition: all 0.15s ease;
+}
+
+.btn-persona-select:hover {
+  background: var(--accent-blue);
+  border-color: var(--accent-blue);
+  color: #ffffff;
+}
+
+.persona-card.active .btn-persona-select {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: var(--accent-blue);
+  color: #60a5fa;
+}
+
+/* PIN Authentication Section */
+.auth-pin-section {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 16px;
+}
+
+.pin-input-group label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.pin-row {
+  display: flex;
+  gap: 10px;
+}
+
+.auth-pin-error {
+  margin-top: 8px;
+  font-size: 0.78rem;
+  color: #ef4444;
+}
+
+/* Model Governance Panel in Settings Modal */
+.governance-matrix-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.gov-user-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gov-user-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gov-user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.gov-models-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.gov-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  background: var(--bg-surface);
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  transition: all 0.15s ease;
+}
+
+.gov-checkbox-label:hover {
+  border-color: var(--accent-blue);
+  color: var(--text-primary);
+}
+
+.gov-checkbox-label input[type="checkbox"] {
+  accent-color: var(--accent-blue);
+}
+

@@ -16,6 +16,7 @@ from app.graph.builder import sovereign_graph
 from app.graph.state import AgentState
 from app.config import settings
 from app.security.network_monitor import read_network_stats
+from app.security.auth import get_user_by_username
 
 router = APIRouter(prefix="/api", tags=["Chat"])
 
@@ -41,7 +42,11 @@ async def chat_sync(request: ChatRequest):
             detail="AIR-GAP SECURITY VIOLATION: Active external Internet connection detected. Operations halted."
         )
 
-    tier = getattr(settings, "MODEL_TIER", "ENTERPRISE_100B")
+    user_obj = get_user_by_username(request.user_role)
+    if user_obj and user_obj.role == "junior":
+        tier = "EDGE_LAPTOP_8B"
+    else:
+        tier = getattr(settings, "MODEL_TIER", "ENTERPRISE_100B")
     initial_state: AgentState = {
         "session_id": request.session_id,
         "user_prompt": request.prompt,
@@ -147,7 +152,11 @@ async def chat_stream(
             dest.write_bytes(content)
             saved_file_paths.append(str(dest))
 
-    tier = getattr(settings, "MODEL_TIER", "ENTERPRISE_100B")
+    user_obj = get_user_by_username(user_role or "senior")
+    if user_obj and user_obj.role == "junior":
+        tier = "EDGE_LAPTOP_8B"
+    else:
+        tier = getattr(settings, "MODEL_TIER", "ENTERPRISE_100B")
     initial_state: AgentState = {
         "session_id": active_session_id,
         "user_prompt": prompt,

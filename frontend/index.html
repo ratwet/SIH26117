@@ -51,12 +51,13 @@
             <span>Settings</span>
           </button>
 
-          <div class="user-profile-pill" id="userProfilePill">
-            <div class="user-avatar" id="userAvatarChar">C</div>
+          <div class="user-profile-pill clickable" id="userProfilePill" title="Click to Switch User Persona / Sign In">
+            <div class="user-avatar" id="userAvatarChar">📐</div>
             <div class="user-info-text">
-              <div class="user-display-name" id="userDisplayName">Cyanide</div>
-              <div class="user-role-label" id="userRoleLabel">Inspection Lead</div>
+              <div class="user-display-name" id="userDisplayName">Anand</div>
+              <div class="user-role-label" id="userRoleLabel">Senior Reliability Lead</div>
             </div>
+            <span class="profile-switch-indicator" title="Switch User">⇄</span>
           </div>
         </div>
       </aside>
@@ -72,21 +73,25 @@
             <div class="model-dropdown-wrapper">
               <button id="modelDropdownBtn" class="model-dropdown-btn">
                 <span class="model-name-text">Aquanex Sovereign</span>
-                <span class="model-tier-badge" id="currentModelBadge">Auto Tier</span>
+                <span class="model-tier-badge" id="currentModelBadge">Workstation 32B</span>
                 <svg class="chevron-down" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
+              <div id="juniorLockedBadge" class="junior-locked-badge" style="display: none;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <span>Standard Inspection Model (Pre-configured)</span>
+              </div>
               <div id="modelMenu" class="model-menu" style="display: none;">
-                <div class="model-option active" data-model="Enterprise-100B">
+                <div class="model-option" data-model="Enterprise-100B">
                   <div class="model-opt-title">Enterprise 100B+ Cluster</div>
-                  <div class="model-opt-sub">DeepSeek-R1 (671B MoE) • Qwen-72B • vLLM Server</div>
+                  <div class="model-opt-sub">Heavy Structural Reasoning • vLLM Server</div>
                 </div>
-                <div class="model-option" data-model="Workstation-32B">
+                <div class="model-option active" data-model="Workstation-32B">
                   <div class="model-opt-title">Departmental Workstation 32B</div>
-                  <div class="model-opt-sub">DeepSeek-R1 32B • Qwen-Coder 14B • Local GPU</div>
+                  <div class="model-opt-sub">Standard Line Analysis • Local GPU</div>
                 </div>
                 <div class="model-option" data-model="Edge-8B">
                   <div class="model-opt-title">Field Laptop 8B (Ollama)</div>
-                  <div class="model-opt-sub">DeepSeek-R1 8B • Qwen2.5 3B • Laptop CPU/GPU</div>
+                  <div class="model-opt-sub">Lightweight Fast Checks • Edge CPU/GPU</div>
                 </div>
               </div>
             </div>
@@ -278,6 +283,20 @@
             </div>
           </div>
 
+          <!-- Admin Model Access Governance Card (Admin only) -->
+          <div class="settings-card" id="adminGovernanceCard" style="display: none;">
+            <div class="settings-card-header">
+              <span class="card-title">Model Access &amp; RBAC Governance</span>
+              <span class="badge-emerald">ADMIN GATEKEEPER</span>
+            </div>
+            <p class="settings-card-desc">
+              Control which models Senior Engineers and Junior Technicians are permitted to invoke.
+            </p>
+            <div id="governanceMatrixContainer" class="governance-matrix-wrap">
+              <!-- Dynamically populated via getAdminUsers -->
+            </div>
+          </div>
+
           <!-- Audit Ledger Card -->
           <div class="settings-card">
             <div class="settings-card-header">
@@ -298,6 +317,69 @@
                   <!-- Rendered dynamically -->
                 </tbody>
               </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================================
+         SOVEREIGN SIGN-IN & ROLE SWITCHER MODAL
+         ========================================================== -->
+    <div id="authModal" class="modal-overlay" style="display: none;">
+      <div class="auth-modal-box">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <h3 class="modal-title">Sovereign Access Control</h3>
+            <p class="modal-subtitle">Refinery Personnel Sign-In &amp; Role-Based Model Clearance</p>
+          </div>
+          <button id="btnCloseAuth" class="btn-close-modal">✕</button>
+        </div>
+
+        <div class="auth-modal-body">
+          <div class="auth-personas-grid" id="authPersonasGrid">
+            <!-- Persona Card: Admin -->
+            <div class="persona-card" data-username="admin">
+              <div class="persona-badge admin">LEVEL 1</div>
+              <div class="persona-avatar">👑</div>
+              <div class="persona-name">Rajat</div>
+              <div class="persona-title">IT Systems Admin</div>
+              <div class="persona-desc">Full governance over compute clusters, model access &amp; RBAC.</div>
+              <div class="persona-models-tag">Allowed: All Models (*)</div>
+              <button class="btn-persona-select" data-username="admin" type="button">Switch to Admin</button>
+            </div>
+
+            <!-- Persona Card: Senior -->
+            <div class="persona-card active" data-username="senior">
+              <div class="persona-badge senior">LEVEL 2</div>
+              <div class="persona-avatar">📐</div>
+              <div class="persona-name">Anand</div>
+              <div class="persona-title">Senior Reliability Lead</div>
+              <div class="persona-desc">Statutory sign-off, deep reasoning &amp; model switching.</div>
+              <div class="persona-models-tag" id="seniorAllowedTag">Allowed: 100B, 32B, 8B</div>
+              <button class="btn-persona-select" data-username="senior" type="button">Switch to Senior</button>
+            </div>
+
+            <!-- Persona Card: Junior -->
+            <div class="persona-card" data-username="junior">
+              <div class="persona-badge junior">LEVEL 3</div>
+              <div class="persona-avatar">👷</div>
+              <div class="persona-name">Naveen</div>
+              <div class="persona-title">Field Technician</div>
+              <div class="persona-desc">Rapid inspection workflow with zero model configuration.</div>
+              <div class="persona-models-tag" id="juniorAllowedTag">Allowed: Pre-configured (8B)</div>
+              <button class="btn-persona-select" data-username="junior" type="button">Switch to Junior</button>
+            </div>
+          </div>
+
+          <div class="auth-pin-section">
+            <div class="pin-input-group">
+              <label for="authPinInput">Security PIN Authentication (Optional Verification):</label>
+              <div class="pin-row">
+                <input type="password" id="authPinInput" class="custom-network-input" placeholder="Enter PIN (e.g. 1170, 5700, 2026)" maxlength="6" />
+                <button id="btnPinLogin" class="btn-network-action" type="button">Verify &amp; Sign In</button>
+              </div>
+              <div id="authPinError" class="auth-pin-error" style="display: none;"></div>
             </div>
           </div>
         </div>
