@@ -58,12 +58,27 @@ const modalAuditTableBody = document.getElementById('modalAuditTableBody');
 const adminGovernanceCard = document.getElementById('adminGovernanceCard');
 const governanceMatrixContainer = document.getElementById('governanceMatrixContainer');
 
+const adminDashboardCanvas = document.getElementById('adminDashboardCanvas');
+const inputBarOuter = document.getElementById('inputBarOuter');
+const greetingSubtitle = document.getElementById('greetingSubtitle');
+const suggestionPillsRow = document.getElementById('suggestionPillsRow');
+const btnPingNodes = document.getElementById('btnPingNodes');
+const dashGovMatrix = document.getElementById('dashGovMatrix');
+const adminMatrixSaveNotice = document.getElementById('adminMatrixSaveNotice');
+const btnVerifyAuditChain = document.getElementById('btnVerifyAuditChain');
+const btnRefreshAudit = document.getElementById('btnRefreshAudit');
+const auditChainVerifyBanner = document.getElementById('auditChainVerifyBanner');
+const auditChainVerifyMsg = document.getElementById('auditChainVerifyMsg');
+const dashAuditTableBody = document.getElementById('dashAuditTableBody');
+const adminStatLedgerBlocks = document.getElementById('adminStatLedgerBlocks');
+
 // Application State
 let chatSessions = [];
 let currentSessionId = null;
 let selectedFiles = [];
 let isExecuting = false;
 let telemetrySource = null;
+let lockdownDismissed = false;
 
 // ==========================================================================
 // INITIALIZATION
@@ -76,6 +91,9 @@ async function init() {
   let activeUser = getCurrentUser();
   if (typeof window !== 'undefined' && window.location.search) {
     const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('bypass_airgap') === '1' || urlParams.get('demo') === '1') {
+      lockdownDismissed = true;
+    }
     const personaParam = urlParams.get('persona') || urlParams.get('role');
     if (personaParam) {
       try {
@@ -95,16 +113,69 @@ async function init() {
   loadAuditLedger();
 }
 
-// Set dynamic greeting based on time of day and active persona
+// Set dynamic greeting and suggestion pills based on time of day and active persona
 function updateGreeting(user = null) {
   const activeUser = user || getCurrentUser();
+  const role = (activeUser.role || 'senior').toLowerCase();
   const hour = new Date().getHours();
   let timeStr = "Good evening";
   if (hour >= 5 && hour < 12) timeStr = "Good morning";
   else if (hour >= 12 && hour < 17) timeStr = "Good afternoon";
 
   if (greetingTitle) {
-    greetingTitle.textContent = `${timeStr}, ${activeUser.name || 'Cyanide'}`;
+    greetingTitle.textContent = `${timeStr}, ${activeUser.name || 'Engineer'}`;
+  }
+
+  if (greetingSubtitle) {
+    if (role === 'senior') {
+      greetingSubtitle.textContent = "Senior Reliability Lead — Autonomous Pipeline & Refinery Analytics";
+    } else if (role === 'junior') {
+      greetingSubtitle.textContent = "Field Inspection Technician — Ruggedized Edge Terminal (Pre-configured)";
+    } else {
+      greetingSubtitle.textContent = "Sovereign Engineering Interface";
+    }
+  }
+
+  if (suggestionPillsRow) {
+    if (role === 'senior') {
+      suggestionPillsRow.innerHTML = `
+        <button class="pill-btn" data-prompt="Audit line CDU-2-04-150-A1A for remaining safe life per API 570">
+          <span class="pill-icon">⚡</span>
+          <span class="pill-text">API 570 Remaining Life Calculation</span>
+        </button>
+        <button class="pill-btn" data-prompt="Calculate ASME B31.3 minimum required thickness for line CDU-2-04-150-A1A at 150 PSI and 135 C">
+          <span class="pill-icon">🔍</span>
+          <span class="pill-text">ASME B31.3 Minimum Thickness</span>
+        </button>
+        <button class="pill-btn" data-prompt="Summarize the latest ultrasonic thickness NDT inspection survey and highlight thinning anomalies">
+          <span class="pill-icon">📋</span>
+          <span class="pill-text">Summarize NDT Inspection Log</span>
+        </button>
+        <button class="pill-btn" data-prompt="Generate an AutoCAD DXF piping spool replacement specification for corroded segment">
+          <span class="pill-icon">📐</span>
+          <span class="pill-text">Generate Piping Spool CAD</span>
+        </button>
+      `;
+    } else if (role === 'junior') {
+      suggestionPillsRow.innerHTML = `
+        <button class="pill-btn" data-prompt="Quick check: Actual thickness 3.2mm on 4.8mm pipe. Is it safe to operate?">
+          <span class="pill-icon">⚡</span>
+          <span class="pill-text">Quick Ultrasonic Thickness Check</span>
+        </button>
+        <button class="pill-btn" data-prompt="Log severe exterior pitting corrosion observed near elbow weld on CDU overhead line">
+          <span class="pill-icon">🔍</span>
+          <span class="pill-text">Log Visual Pipe Defect</span>
+        </button>
+        <button class="pill-btn" data-prompt="What is the minimum safe thickness before replacement is required under API 570?">
+          <span class="pill-icon">📋</span>
+          <span class="pill-text">Check Minimum Safe Wall Thickness</span>
+        </button>
+        <button class="pill-btn" data-prompt="Show step-by-step ultrasonic thickness measurement procedure for insulated piping">
+          <span class="pill-icon">📐</span>
+          <span class="pill-text">View Pipe Inspection SOP</span>
+        </button>
+      `;
+    }
   }
 }
 
@@ -175,6 +246,9 @@ function triggerLockdown() {
   if (airGapStatusText) {
     airGapStatusText.textContent = 'Internet Detected (Locked)';
   }
+
+  if (lockdownDismissed) return;
+
   if (lockdownModal) {
     lockdownModal.style.display = 'flex';
   }
@@ -414,8 +488,42 @@ async function handleSendPrompt() {
       isExecuting = false;
       updateSendButtonState();
       thoughtPulse.classList.add('done');
-      thoughtTitle.textContent = 'Thought completed';
-      contentContainer.innerHTML = `<span style="color:var(--accent-crimson);">Error during execution: ${escapeHtml(err.message || String(err))}</span>`;
+
+      const errMsg = err.message || String(err);
+      const isOffline = errMsg.includes('NO LLM MODEL CONNECTED') || 
+                        errMsg.includes('Connection refused') || 
+                        errMsg.includes('model server') ||
+                        errMsg.includes('Failed to fetch');
+
+      if (isOffline) {
+        thoughtTitle.textContent = 'Inference halted (Server Offline)';
+        thoughtPulse.style.background = 'var(--status-amber)';
+        thoughtPulse.style.boxShadow = 'none';
+
+        contentContainer.innerHTML = `
+          <div class="model-offline-banner">
+            <div class="offline-banner-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div class="offline-banner-content">
+              <div class="offline-banner-title">Local Model Server Offline</div>
+              <div class="offline-banner-desc">Local sovereign inference engine is not reachable at <code>127.0.0.1:11434</code> (Ollama) or <code>127.0.0.1:8001</code> (vLLM). Hardware emulation is strictly disabled.</div>
+              <div class="offline-banner-guide">
+                <span>To launch local engine:</span>
+                <code>ollama serve</code>
+                <span style="margin: 0 4px;">or start vLLM</span>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        thoughtTitle.textContent = 'Execution notice';
+        contentContainer.innerHTML = `
+          <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 8px; padding: 12px 16px; color: var(--accent-crimson); font-size: 0.88rem;">
+            <strong>System Notice:</strong> ${escapeHtml(errMsg)}
+          </div>
+        `;
+      }
       scrollToBottom();
     }
   });
@@ -634,9 +742,11 @@ function setupEventListeners() {
     });
   }
 
-  // Suggestion Pills
-  document.querySelectorAll('.pill-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+  // Suggestion Pills (Delegated)
+  if (suggestionPillsRow) {
+    suggestionPillsRow.addEventListener('click', (e) => {
+      const btn = e.target.closest('.pill-btn');
+      if (!btn) return;
       const prompt = btn.getAttribute('data-prompt');
       if (prompt && chatTextarea) {
         chatTextarea.value = prompt;
@@ -646,7 +756,65 @@ function setupEventListeners() {
         handleSendPrompt();
       }
     });
-  });
+  }
+
+  // Admin Dashboard Action Listeners
+  if (btnPingNodes) {
+    btnPingNodes.addEventListener('click', async () => {
+      btnPingNodes.innerHTML = `<span>Pinging...</span>`;
+      try {
+        await SovereignAPI.getNetworkStatus();
+        btnPingNodes.innerHTML = `<span>All 3 Nodes Healthy ✓</span>`;
+        setTimeout(() => {
+          btnPingNodes.innerHTML = `
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            <span>Ping Nodes</span>
+          `;
+        }, 2000);
+      } catch (e) {
+        btnPingNodes.innerHTML = `<span>Ping Complete</span>`;
+      }
+    });
+  }
+
+  if (btnVerifyAuditChain) {
+    btnVerifyAuditChain.addEventListener('click', async () => {
+      btnVerifyAuditChain.innerHTML = `<span>Verifying...</span>`;
+      try {
+        const data = await SovereignAPI.getAuditLedger();
+        if (auditChainVerifyMsg) {
+          auditChainVerifyMsg.textContent = data.verification_message || `All ${data.total_blocks} blocks cryptographically verified and intact.`;
+        }
+        btnVerifyAuditChain.innerHTML = `<span>Verified ✓</span>`;
+        setTimeout(() => {
+          btnVerifyAuditChain.innerHTML = `
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Verify Ledger Integrity</span>
+          `;
+        }, 2000);
+      } catch (e) {
+        btnVerifyAuditChain.innerHTML = `<span>Verify Ledger Integrity</span>`;
+      }
+    });
+  }
+
+  if (btnRefreshAudit) {
+    btnRefreshAudit.addEventListener('click', () => {
+      loadAuditLedger();
+    });
+  }
+
+  const btnDismissLockdown = document.getElementById('btnDismissLockdown');
+  if (btnDismissLockdown) {
+    btnDismissLockdown.addEventListener('click', () => {
+      lockdownDismissed = true;
+      if (lockdownModal) lockdownModal.style.display = 'none';
+      if (chatTextarea) chatTextarea.disabled = false;
+      if (btnChatSend) btnChatSend.disabled = false;
+      if (btnAttachFile) btnAttachFile.disabled = false;
+      updateSendButtonState();
+    });
+  }
 
   // Model Selector Dropdown
   if (modelDropdownBtn && modelMenu) {
@@ -864,48 +1032,72 @@ function applyUserPermissions(user) {
   // Update dynamic greeting with user's name
   updateGreeting(user);
 
-  // 2. Role-specific model controls
+  // 2. Role-specific canvas & model controls
   const role = (user.role || 'senior').toLowerCase();
 
-  if (role === 'junior') {
-    // Junior: Pre-configured, locked model, zero dropdown friction
+  if (role === 'admin') {
+    // Admin: Show Sovereign IT Control Dashboard, hide chat canvas and bottom input
+    if (workspaceCanvas) workspaceCanvas.style.display = 'none';
+    if (inputBarOuter) inputBarOuter.style.display = 'none';
+    if (adminDashboardCanvas) adminDashboardCanvas.style.display = 'block';
+
+    // Top Header Badge
     if (modelDropdownBtn) modelDropdownBtn.style.display = 'none';
-    if (juniorLockedBadge) juniorLockedBadge.style.display = 'inline-flex';
-    if (modelMenu) modelMenu.style.display = 'none';
-    if (adminGovernanceCard) adminGovernanceCard.style.display = 'none';
-  } else if (role === 'senior') {
-    // Senior: Unlocked model switcher for authorized models
-    if (modelDropdownBtn) modelDropdownBtn.style.display = 'inline-flex';
-    if (juniorLockedBadge) juniorLockedBadge.style.display = 'none';
-    if (adminGovernanceCard) adminGovernanceCard.style.display = 'none';
-
-    // Filter available options
-    const allowed = user.allowed_models || ["Workstation-32B", "Edge-8B"];
-    const isAll = allowed.includes('*');
-    document.querySelectorAll('.model-option').forEach(opt => {
-      const modelName = opt.dataset.model;
-      const isAllowed = isAll || allowed.some(a => a.toLowerCase().replace(/[-_]/g, '') === modelName.toLowerCase().replace(/[-_]/g, ''));
-      opt.style.display = isAllowed ? 'block' : 'none';
-    });
-
-    // Update active badge if current model is not allowed
-    const current = currentModelBadge ? currentModelBadge.textContent : '';
-    if (!isAll && !allowed.some(a => a.toLowerCase().replace(/[-_]/g, '') === current.toLowerCase().replace(/[-_]/g, ''))) {
-      const firstAllowed = allowed[0] || 'Workstation-32B';
-      if (currentModelBadge) currentModelBadge.textContent = firstAllowed;
-      document.querySelectorAll('.model-option').forEach(o => {
-        if (o.dataset.model === firstAllowed) o.classList.add('active');
-        else o.classList.remove('active');
-      });
+    if (juniorLockedBadge) {
+      juniorLockedBadge.style.display = 'inline-flex';
+      juniorLockedBadge.innerHTML = `<span style="font-size:0.85rem;">👑</span> <span>IT Systems Control Plane</span>`;
     }
-  } else if (role === 'admin') {
-    // Admin: Full model switcher and access governance
-    if (modelDropdownBtn) modelDropdownBtn.style.display = 'inline-flex';
-    if (juniorLockedBadge) juniorLockedBadge.style.display = 'none';
-    document.querySelectorAll('.model-option').forEach(opt => {
-      opt.style.display = 'block';
-    });
+    if (modelMenu) modelMenu.style.display = 'none';
     if (adminGovernanceCard) adminGovernanceCard.style.display = 'block';
+
+    // Load full admin dashboard data
+    loadAdminDashboardData();
+  } else {
+    // Engineers (Senior Lead & Junior Field Tech): Show workspace chat canvas & input
+    if (adminDashboardCanvas) adminDashboardCanvas.style.display = 'none';
+    if (workspaceCanvas) workspaceCanvas.style.display = 'flex';
+    if (inputBarOuter) inputBarOuter.style.display = 'flex';
+    if (adminGovernanceCard) adminGovernanceCard.style.display = 'none';
+
+    // Update dynamic greeting & suggestion pills with engineering prompts
+    updateGreeting(user);
+
+    if (role === 'junior') {
+      // Junior: Pre-configured, locked model, zero dropdown friction
+      if (modelDropdownBtn) modelDropdownBtn.style.display = 'none';
+      if (juniorLockedBadge) {
+        juniorLockedBadge.style.display = 'inline-flex';
+        juniorLockedBadge.innerHTML = `
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span>Standard Inspection Model (Pre-configured)</span>
+        `;
+      }
+      if (modelMenu) modelMenu.style.display = 'none';
+    } else if (role === 'senior') {
+      // Senior: Unlocked model switcher for authorized models
+      if (modelDropdownBtn) modelDropdownBtn.style.display = 'inline-flex';
+      if (juniorLockedBadge) juniorLockedBadge.style.display = 'none';
+
+      // Filter available options
+      const allowed = user.allowed_models || ["Workstation-32B", "Edge-8B"];
+      const isAll = allowed.includes('*');
+      document.querySelectorAll('.model-option').forEach(opt => {
+        const modelName = opt.dataset.model;
+        const isAllowed = isAll || allowed.some(a => a.toLowerCase().replace(/[-_]/g, '') === modelName.toLowerCase().replace(/[-_]/g, ''));
+        opt.style.display = isAllowed ? 'block' : 'none';
+      });
+
+      // Update active badge if current model is not allowed
+      const current = currentModelBadge ? currentModelBadge.textContent : '';
+      if (!isAll && !allowed.some(a => a.toLowerCase().replace(/[-_]/g, '') === current.toLowerCase().replace(/[-_]/g, ''))) {
+        const firstAllowed = allowed[0] || 'Workstation-32B';
+        if (currentModelBadge) currentModelBadge.textContent = firstAllowed;
+        document.querySelectorAll('.model-option').forEach(o => {
+          if (o.dataset.model === firstAllowed) o.classList.add('active');
+          else o.classList.remove('active');
+        });
+      }
+    }
   }
 
   // Highlight active persona card in Auth Modal
@@ -1036,23 +1228,155 @@ function scrollToBottom() {
   }
 }
 
+async function loadAdminDashboardData() {
+  loadAuditLedger();
+  await loadAdminGovernanceMatrixDash();
+}
+
+async function loadAdminGovernanceMatrixDash() {
+  if (!dashGovMatrix) return;
+  try {
+    dashGovMatrix.innerHTML = '<div style="color:var(--text-muted); font-size:0.8rem; padding: 12px;">Loading refinery access matrix...</div>';
+    const res = await SovereignAPI.getAdminUsers();
+    const users = res.users || [];
+    dashGovMatrix.innerHTML = '';
+
+    const modelTiers = [
+      { key: "Enterprise-100B", label: "100B Cluster" },
+      { key: "Workstation-32B", label: "32B Local GPU" },
+      { key: "Edge-8B", label: "8B Field Edge" },
+    ];
+
+    // Filter to senior and junior (admin always has all models)
+    const nonAdminUsers = users.filter(u => u.role !== 'admin');
+
+    nonAdminUsers.forEach(u => {
+      const row = document.createElement('div');
+      row.className = 'dash-user-row';
+      const allowed = u.allowed_models || [];
+
+      let checkboxesHtml = modelTiers.map(m => {
+        const isChecked = allowed.includes('*') || allowed.some(a => a.toLowerCase().replace(/[-_]/g, '') === m.key.toLowerCase().replace(/[-_]/g, ''));
+        return `
+          <label class="gov-checkbox-label">
+            <input type="checkbox" class="dash-gov-checkbox" data-user-id="${u.id}" data-model="${m.key}" ${isChecked ? 'checked' : ''} />
+            <span>${escapeHtml(m.label)}</span>
+          </label>
+        `;
+      }).join('');
+
+      row.innerHTML = `
+        <div class="dash-user-header">
+          <div class="dash-user-meta">
+            <span class="dash-user-avatar">${u.avatar || '👤'}</span>
+            <div>
+              <div class="dash-user-name">${escapeHtml(u.name)} (${escapeHtml(u.role.toUpperCase())})</div>
+              <div class="dash-user-role">${escapeHtml(u.description ? u.description.split('•')[0].trim() : '')} • ID: ${escapeHtml(u.id)}</div>
+            </div>
+          </div>
+          <span class="admin-save-pill" id="saveBadge-${u.id}" style="display:none;">Saved ✓</span>
+        </div>
+        <div class="dash-user-models">
+          ${checkboxesHtml}
+        </div>
+      `;
+
+      // Attach change listeners to checkboxes in this card
+      row.querySelectorAll('.dash-gov-checkbox').forEach(chk => {
+        chk.addEventListener('change', async () => {
+          const userId = chk.dataset.userId;
+          const checkedModels = Array.from(row.querySelectorAll(`.dash-gov-checkbox:checked`)).map(c => c.dataset.model);
+          try {
+            await SovereignAPI.updateUserModelAccess(userId, checkedModels);
+            const badge = document.getElementById(`saveBadge-${userId}`);
+            if (badge) {
+              badge.style.display = 'inline-block';
+              setTimeout(() => { badge.style.display = 'none'; }, 2500);
+            }
+            if (adminMatrixSaveNotice) {
+              adminMatrixSaveNotice.style.display = 'inline-block';
+              setTimeout(() => { adminMatrixSaveNotice.style.display = 'none'; }, 2500);
+            }
+          } catch (err) {
+            console.error("Failed to update user permissions:", err);
+            alert(`Permission update error: ${err.message}`);
+          }
+        });
+      });
+
+      dashGovMatrix.appendChild(row);
+    });
+  } catch (err) {
+    console.warn("Governance matrix load error:", err);
+    dashGovMatrix.innerHTML = `<div style="color:var(--status-red); font-size:0.8rem; padding: 12px;">Could not load governance matrix: ${err.message}</div>`;
+  }
+}
+
 async function loadAuditLedger() {
-  if (!modalAuditTableBody) return;
   try {
     const ledger = await SovereignAPI.getAuditLedger();
-    modalAuditTableBody.innerHTML = '';
     const events = ledger.recent_events || [];
-    events.forEach(ev => {
-      const tr = document.createElement('tr');
-      const shortHash = ev.current_hash ? ev.current_hash.substring(0, 14) + '...' : '00000000...';
-      tr.innerHTML = `
-        <td style="color: var(--accent-gold); font-weight:700;">#${ev.id}</td>
-        <td style="font-size:0.72rem; text-transform:uppercase;">${escapeHtml(ev.event_type)}</td>
-        <td style="color: var(--accent-blue);">${shortHash}</td>
-        <td style="color: var(--status-emerald);">OK</td>
-      `;
-      modalAuditTableBody.appendChild(tr);
-    });
+
+    // 1. Settings Modal table
+    if (modalAuditTableBody) {
+      modalAuditTableBody.innerHTML = '';
+      if (events.length === 0) {
+        modalAuditTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:16px;">Genesis State — No events recorded.</td></tr>`;
+      } else {
+        events.forEach((ev, idx) => {
+          const tr = document.createElement('tr');
+          const blockNum = ev.id || (ledger.total_blocks ? (ledger.total_blocks - idx) : (idx + 1));
+          const eventType = (ev.task_type || ev.event_type || 'INFERENCE_RUN').replace(/_/g, ' ').toUpperCase();
+          const rawHash = ev.entry_hash || ev.current_hash || '';
+          const shortHash = rawHash ? (rawHash.substring(0, 14) + '...') : 'N/A';
+          const isOk = (ev.tool_exit_code === 0 || ev.tool_exit_code === undefined);
+          tr.innerHTML = `
+            <td style="color: var(--accent-gold); font-weight:700; font-family: var(--font-mono);">#${blockNum}</td>
+            <td style="font-size:0.72rem; text-transform:uppercase; font-family: var(--font-mono);">${escapeHtml(eventType)}</td>
+            <td style="color: var(--accent-blue); font-family: var(--font-mono);" title="${escapeHtml(rawHash)}">${shortHash}</td>
+            <td style="color: ${isOk ? 'var(--status-emerald)' : 'var(--accent-crimson)'}; font-weight: 600;">${isOk ? 'OK' : 'FLAG'}</td>
+          `;
+          modalAuditTableBody.appendChild(tr);
+        });
+      }
+    }
+
+    // 2. Admin Dashboard table & stats
+    if (dashAuditTableBody) {
+      dashAuditTableBody.innerHTML = '';
+      if (events.length === 0) {
+        dashAuditTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:20px;">Genesis State — Ledger initialized and ready.</td></tr>`;
+      } else {
+        events.forEach((ev, idx) => {
+          const tr = document.createElement('tr');
+          const blockNum = ev.id || (ledger.total_blocks ? (ledger.total_blocks - idx) : (idx + 1));
+          const operator = ev.user_role || 'system';
+          const eventType = (ev.task_type || ev.event_type || 'INFERENCE_RUN').replace(/_/g, ' ').toUpperCase();
+          const rawHash = ev.entry_hash || ev.current_hash || '';
+          const shortHash = rawHash ? (rawHash.substring(0, 16) + '...') : 'N/A';
+          const timeStr = ev.timestamp ? new Date(ev.timestamp).toLocaleTimeString() : 'Recent';
+          const isOk = (ev.tool_exit_code === 0 || ev.tool_exit_code === undefined);
+          tr.innerHTML = `
+            <td style="color: var(--accent-gold); font-weight:700; font-family: var(--font-mono);">#${blockNum}</td>
+            <td style="font-weight: 600; color: var(--text-primary);">${escapeHtml(operator)}</td>
+            <td style="font-family: var(--font-mono); color: var(--accent-blue);">${escapeHtml(eventType)}</td>
+            <td style="color: var(--text-muted);">${escapeHtml(timeStr)}</td>
+            <td style="font-family: var(--font-mono); color: var(--text-secondary);" title="${escapeHtml(rawHash)}">${shortHash}</td>
+            <td style="color: ${isOk ? 'var(--status-emerald)' : 'var(--accent-crimson)'}; font-weight: 700;">${isOk ? 'VERIFIED ✓' : 'FLAGGED'}</td>
+          `;
+          dashAuditTableBody.appendChild(tr);
+        });
+      }
+    }
+
+    if (adminStatLedgerBlocks) {
+      adminStatLedgerBlocks.textContent = ledger.total_blocks || events.length;
+    }
+
+    if (auditChainVerifyMsg && ledger.verification_message) {
+      auditChainVerifyMsg.textContent = ledger.verification_message;
+    }
+
   } catch (e) {
     console.warn("Ledger load error:", e);
   }

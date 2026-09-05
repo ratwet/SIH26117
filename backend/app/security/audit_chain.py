@@ -17,10 +17,23 @@ from app.schemas import AuditEvent
 GENESIS_HASH = "0" * 64
 
 
+def _resolve_db_path() -> Path:
+    if settings.AUDIT_DB_PATH.exists():
+        return settings.AUDIT_DB_PATH
+    alt1 = Path(__file__).resolve().parent.parent.parent / "data" / "mrpl_audit.db"
+    if alt1.exists():
+        return alt1
+    alt2 = Path(__file__).resolve().parent.parent / "data" / "mrpl_audit.db"
+    if alt2.exists():
+        return alt2
+    return settings.AUDIT_DB_PATH
+
+
 def _get_db_connection() -> sqlite3.Connection:
     """Get SQLite connection and ensure table exists."""
-    settings.AUDIT_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(str(settings.AUDIT_DB_PATH))
+    db_path = _resolve_db_path()
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(str(db_path))
     conn.row_factory = sqlite3.Row
     with conn:
         conn.execute("""
@@ -154,6 +167,7 @@ def get_audit_ledger(limit: int = 50) -> List[AuditEvent]:
         records = []
         for r in rows:
             records.append(AuditEvent(
+                id=r["id"],
                 event_id=r["event_id"],
                 timestamp=r["timestamp"],
                 user_role=r["user_role"],

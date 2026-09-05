@@ -350,6 +350,8 @@ def run_gtk_webkit_app(target_url: str, title: str, wm_class: str, snapshot_path
                     GLib.timeout_add(500, self.trigger_settings_action)
                 elif self.action == "audit":
                     GLib.timeout_add(500, self.trigger_audit_action)
+                elif self.action == "offline-chat":
+                    GLib.timeout_add(800, self.trigger_offline_chat_action)
                 elif self.snapshot_path:
                     GLib.timeout_add(1000, self.capture_snapshot)
 
@@ -367,10 +369,33 @@ def run_gtk_webkit_app(target_url: str, title: str, wm_class: str, snapshot_path
             return False
 
         def trigger_audit_action(self):
-            js = "document.getElementById('pillAudit').click();"
+            js = """
+            const adm = document.getElementById('adminDashboardCanvas');
+            if (adm) {
+                adm.scrollTop = 550;
+            } else {
+                const p = document.getElementById('pillAudit');
+                if (p) p.click();
+            }
+            """
             self.webview.run_javascript(js, None, None, None)
             if self.snapshot_path:
-                GLib.timeout_add(6200, self.capture_snapshot)
+                GLib.timeout_add(1000, self.capture_snapshot)
+            return False
+
+        def trigger_offline_chat_action(self):
+            js = """
+            const ta = document.getElementById('chatTextarea');
+            const btn = document.getElementById('btnChatSend');
+            if (ta && btn) {
+                ta.value = 'Check corrosion rate on line CDU-01';
+                btn.disabled = false;
+                btn.click();
+            }
+            """
+            self.webview.run_javascript(js, None, None, None)
+            if self.snapshot_path:
+                GLib.timeout_add(3000, self.capture_snapshot)
             return False
 
         def capture_snapshot(self):
@@ -404,8 +429,9 @@ def main():
     parser.add_argument("--persona", choices=["admin", "senior", "junior", "field"], default=None, help="Refinery Persona / Access Level")
     parser.add_argument("--snapshot", dest="snapshot", default=None, help="Save screenshot to file path")
     parser.add_argument("--quit-after-snapshot", action="store_true", help="Close app after taking screenshot")
-    parser.add_argument("--action", choices=["settings", "audit"], default=None, help="Trigger UI action before capture")
+    parser.add_argument("--action", choices=["settings", "audit", "offline-chat"], default=None, help="Trigger UI action before capture")
     parser.add_argument("--browser", action="store_true", help="Force launch in standalone browser app mode")
+    parser.add_argument("--demo", action="store_true", help="Launch in demo exhibition mode (bypass WAN lockdown)")
     args = parser.parse_args()
 
     # Determine persona configuration
@@ -432,6 +458,10 @@ def main():
         delim = "&" if "?" in target_url else "?"
         if f"persona={target_persona}" not in target_url:
             target_url = f"{target_url}{delim}persona={target_persona}"
+
+    if args.demo or args.snapshot:
+        delim = "&" if "?" in target_url else "?"
+        target_url = f"{target_url}{delim}demo=1"
 
     print("=" * 68)
     print(f"🛡️  {window_title.upper()}")

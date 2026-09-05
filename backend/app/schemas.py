@@ -160,6 +160,7 @@ class NetworkStats(BaseModel):
 
 class AuditEvent(BaseModel):
     """A single append-only cryptographic transaction for the audit chain."""
+    id: Optional[int] = None
     event_id: Optional[str] = None
     timestamp: Optional[str] = None
     user_role: str = Field(..., json_schema_extra={"example": "senior_engineer"})
@@ -170,3 +171,4 @@ class AuditEvent(BaseModel):
     output_hash: str = Field(..., description="SHA-256 hash of output result.")
     previous_hash: Optional[str] = Field(default=None, description="SHA-256 hash of previous audit log row.")
     entry_hash: Optional[str] = Field(default=None, description="SHA-256 hash of this complete row.")
+

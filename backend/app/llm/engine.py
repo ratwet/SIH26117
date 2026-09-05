@@ -184,13 +184,8 @@ class FoundationModelEngine:
 
         # STRICT INDUSTRIAL POLICY: No fake outputs. If no model is connected, the system DOES NOT RUN.
         raise ConnectionError(
-            f"NO LLM MODEL CONNECTED: System execution halted.\n"
-            f"SovereignWorkbench requires an active model server.\n"
-            f"Attempted connections:\n"
-            f"  - vLLM Datacenter Cluster: {self.vllm_url}\n"
-            f"  - Ollama Local/Workstation: {self.ollama_url}\n"
-            f"Neither server is reachable (Last error: {last_error}).\n"
-            f"Hardware-agnostic emulation is strictly disabled. Please start Ollama or vLLM to run."
+            "NO LLM MODEL CONNECTED: Local model server is offline. "
+            "Please start Ollama (http://127.0.0.1:11434) or vLLM (http://127.0.0.1:8001) to begin sovereign inference."
         )
 
     def _extract_deepseek_r1_thought(self, text: str) -> Tuple[Optional[str], str]:

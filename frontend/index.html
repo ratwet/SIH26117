@@ -116,11 +116,11 @@
             <div class="greeting-logo-wrap">
               <img src="/aquanex-logo.png" alt="Aquanex Logo" class="greeting-logo-img" />
             </div>
-            <h2 class="greeting-title" id="greetingTitle">Good evening, Cyanide</h2>
-            <p class="greeting-subtitle">How can Sovereign AI assist your inspection analysis today?</p>
+            <h2 class="greeting-title" id="greetingTitle">Good evening, Anand</h2>
+            <p class="greeting-subtitle" id="greetingSubtitle">How can Sovereign AI assist your inspection analysis today?</p>
 
             <!-- Suggestion Chips -->
-            <div class="suggestion-pills-row">
+            <div class="suggestion-pills-row" id="suggestionPillsRow">
               <button class="pill-btn" data-prompt="Audit line CDU-2-04-150-A1A for remaining safe life per API 570">
                 <span class="pill-icon">⚡</span>
                 <span class="pill-text">API 570 Remaining Life Calculation</span>
@@ -144,8 +144,252 @@
           <div class="messages-feed" id="messagesFeed" style="display: none;"></div>
         </div>
 
+        <!-- ==========================================================
+             SOVEREIGN IT CONTROL & GOVERNANCE DASHBOARD
+             (Dedicated for IT Systems Administrator — Rajat)
+             ========================================================== -->
+        <div class="admin-dashboard-canvas" id="adminDashboardCanvas" style="display: none;">
+          <div class="admin-dash-header">
+            <div class="admin-badge-strip">
+              <span class="admin-pill-badge">LEVEL 1 CONTROL PLANE</span>
+              <span class="admin-status-pill green">
+                <span class="live-pulse"></span>
+                <span>AIR-GAP ENFORCED (0 WAN BYTES)</span>
+              </span>
+              <span class="admin-status-pill blue">
+                <span>SANDBOX: BUBBLEWRAP ACTIVE</span>
+              </span>
+            </div>
+            <h1 class="admin-dash-title">Sovereign Cluster Control Center</h1>
+            <p class="admin-dash-sub">Hardware Compute Node Governance, Model Access Control (RBAC) &amp; Cryptographic Audit Chaining</p>
+          </div>
+
+          <!-- Quick Stat Counters Row -->
+          <div class="admin-stats-grid">
+            <div class="admin-stat-card">
+              <div class="stat-top">
+                <span class="stat-label">LOCAL INFERENCE NODES</span>
+                <span class="stat-icon">🖥️</span>
+              </div>
+              <div class="stat-main">
+                <span class="stat-val" id="adminNodeCountVal">3</span>
+                <span class="stat-unit">CLUSTERS</span>
+              </div>
+              <div class="stat-foot green">● Local Sockets Reachable</div>
+            </div>
+
+            <div class="admin-stat-card">
+              <div class="stat-top">
+                <span class="stat-label">ACTIVE PERSONNEL RBAC</span>
+                <span class="stat-icon">👥</span>
+              </div>
+              <div class="stat-main">
+                <span class="stat-val">3</span>
+                <span class="stat-unit">ROLES</span>
+              </div>
+              <div class="stat-foot">Admin • Senior Lead • Field Tech</div>
+            </div>
+
+            <div class="admin-stat-card">
+              <div class="stat-top">
+                <span class="stat-label">AUDIT LEDGER BLOCKS</span>
+                <span class="stat-icon">⛓️</span>
+              </div>
+              <div class="stat-main">
+                <span class="stat-val" id="adminStatLedgerBlocks">175</span>
+                <span class="stat-unit">SHA-256 BLOCKS</span>
+              </div>
+              <div class="stat-foot green">● Cryptographically Intact</div>
+            </div>
+
+            <div class="admin-stat-card">
+              <div class="stat-top">
+                <span class="stat-label">NETWORK OUTBOUND WAN</span>
+                <span class="stat-icon">🛡️</span>
+              </div>
+              <div class="stat-main">
+                <span class="stat-val">0</span>
+                <span class="stat-unit">BYTES</span>
+              </div>
+              <div class="stat-foot green">● Air-Gap Drop Enforced</div>
+            </div>
+          </div>
+
+          <!-- Main Grid of Admin Control Panels -->
+          <div class="admin-sections-grid">
+            
+            <!-- Panel 1: Model Compute Nodes & Hardware Health -->
+            <div class="admin-panel-card">
+              <div class="panel-card-header">
+                <div class="panel-header-left">
+                  <span class="panel-title-icon">⚡</span>
+                  <div>
+                    <h3 class="panel-title">Model Inference Runtime Nodes</h3>
+                    <p class="panel-desc">Hardware compute nodes available for sovereign local inference</p>
+                  </div>
+                </div>
+                <button id="btnPingNodes" class="btn-admin-action" type="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                  <span>Ping Nodes</span>
+                </button>
+              </div>
+
+              <div class="node-cards-list">
+                <div class="node-card">
+                  <div class="node-status-dot online"></div>
+                  <div class="node-info">
+                    <div class="node-name-row">
+                      <span class="node-name">Enterprise 100B+ Omni-Modal Cluster</span>
+                      <span class="node-badge vllm">vLLM Cluster</span>
+                    </div>
+                    <div class="node-sub">Heavy Structural Reasoning • 8x H100 SXM5 / NVLink Tensor Parallel</div>
+                    <div class="node-meta">
+                      <span>Endpoint: <code>http://127.0.0.1:8001/v1</code></span>
+                      <span>• VRAM: 640 GB</span>
+                    </div>
+                  </div>
+                  <div class="node-health-tag green">STANDBY / READY</div>
+                </div>
+
+                <div class="node-card">
+                  <div class="node-status-dot online"></div>
+                  <div class="node-info">
+                    <div class="node-name-row">
+                      <span class="node-name">Departmental Workstation 32B</span>
+                      <span class="node-badge gpu">Local GPU</span>
+                    </div>
+                    <div class="node-sub">Standard Line Analysis &amp; CAD • RTX 4090 24GB On-Premise</div>
+                    <div class="node-meta">
+                      <span>Endpoint: <code>http://127.0.0.1:11434/v1</code></span>
+                      <span>• VRAM: 24 GB</span>
+                    </div>
+                  </div>
+                  <div class="node-health-tag green">LOCAL GPU ACTIVE</div>
+                </div>
+
+                <div class="node-card">
+                  <div class="node-status-dot online"></div>
+                  <div class="node-info">
+                    <div class="node-name-row">
+                      <span class="node-name">Field Laptop 8B Ruggedized</span>
+                      <span class="node-badge edge">Edge NPU</span>
+                    </div>
+                    <div class="node-sub">Ruggedized Field Checks • Intel Meteor Lake NPU + CPU AVX-512</div>
+                    <div class="node-meta">
+                      <span>Endpoint: <code>http://127.0.0.1:11434/v1</code></span>
+                      <span>• Ultra-low latency</span>
+                    </div>
+                  </div>
+                  <div class="node-health-tag green">EDGE READY</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Panel 2: Model Access & RBAC Governance Matrix -->
+            <div class="admin-panel-card">
+              <div class="panel-card-header">
+                <div class="panel-header-left">
+                  <span class="panel-title-icon">🔒</span>
+                  <div>
+                    <h3 class="panel-title">Model Access &amp; RBAC Governance</h3>
+                    <p class="panel-desc">Directly grant or revoke model execution rights for engineering personnel</p>
+                  </div>
+                </div>
+                <div id="adminMatrixSaveNotice" class="admin-save-pill" style="display:none;">Saved to Registry ✓</div>
+              </div>
+
+              <div class="dash-gov-matrix" id="dashGovMatrix">
+                <!-- Dynamically populated from /api/admin/auth/users -->
+              </div>
+            </div>
+
+            <!-- Panel 3: Live Cryptographic Audit Stream -->
+            <div class="admin-panel-card full-width">
+              <div class="panel-card-header">
+                <div class="panel-header-left">
+                  <span class="panel-title-icon">⛓️</span>
+                  <div>
+                    <h3 class="panel-title">Live Cryptographic Audit Stream (mrpl_audit.db)</h3>
+                    <p class="panel-desc">Immutable append-only SHA-256 hash ledger for statutory refinery compliance</p>
+                  </div>
+                </div>
+                <div class="panel-actions">
+                  <button id="btnVerifyAuditChain" class="btn-admin-action" type="button">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>Verify Ledger Integrity</span>
+                  </button>
+                  <button id="btnRefreshAudit" class="btn-admin-action secondary" type="button">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                    <span>Refresh</span>
+                  </button>
+                </div>
+              </div>
+
+              <div id="auditChainVerifyBanner" class="audit-verify-status-banner">
+                <span class="verify-icon">🛡️</span>
+                <span id="auditChainVerifyMsg">Ledger Verified: All blocks intact. Genesis Hash linked.</span>
+              </div>
+
+              <div class="admin-audit-table-wrap">
+                <table class="admin-audit-table">
+                  <thead>
+                    <tr>
+                      <th>BLOCK</th>
+                      <th>OPERATOR</th>
+                      <th>TASK / REASONING ACTION</th>
+                      <th>TIMESTAMP</th>
+                      <th>CRYPTOGRAPHIC DIGEST (SHA-256)</th>
+                      <th>STATUS</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashAuditTableBody">
+                    <!-- Loaded dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Panel 4: Air-Gap & Kernel Sandbox Isolation -->
+            <div class="admin-panel-card full-width">
+              <div class="panel-card-header">
+                <div class="panel-header-left">
+                  <span class="panel-title-icon">🛡️</span>
+                  <div>
+                    <h3 class="panel-title">Sovereign Air-Gap &amp; Kernel Sandbox Telemetry</h3>
+                    <p class="panel-desc">Kernel-level enforcement of local process execution and zero-leakage networking</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="air-gap-telemetry-grid">
+                <div class="telemetry-item">
+                  <span class="telemetry-label">OUTBOUND WAN BYTES</span>
+                  <span class="telemetry-val green">0 BYTES</span>
+                  <span class="telemetry-sub">Hardware Air-Gap Verified</span>
+                </div>
+                <div class="telemetry-item">
+                  <span class="telemetry-label">ROUTING ENFORCEMENT</span>
+                  <span class="telemetry-val">AIR-GAP DROP</span>
+                  <span class="telemetry-sub">Kernel /proc/net/route Monitor</span>
+                </div>
+                <div class="telemetry-item">
+                  <span class="telemetry-label">EXECUTION SANDBOX</span>
+                  <span class="telemetry-val green">BUBBLEWRAP (bwrap)</span>
+                  <span class="telemetry-sub">Isolated Namespaces, Cap: 256MB</span>
+                </div>
+                <div class="telemetry-item">
+                  <span class="telemetry-label">LOCAL API GATEWAY</span>
+                  <span class="telemetry-val blue">127.0.0.1:8000</span>
+                  <span class="telemetry-sub">FastAPI Sovereign Gateway</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
         <!-- Floating Bottom Input Area (Gemini / Claude Style) -->
-        <div class="input-bar-outer">
+        <div class="input-bar-outer" id="inputBarOuter">
           <!-- Attached File Previews -->
           <div id="attachedFilesContainer" class="attached-files-row" style="display: none;"></div>
 
@@ -219,6 +463,12 @@
         <div class="lockdown-status-bar">
           <div class="pulsing-red-dot"></div>
           <span>Monitoring kernel route table... Disconnect Internet to resume.</span>
+        </div>
+
+        <div style="text-align: center; margin-top: 14px;">
+          <button id="btnDismissLockdown" type="button" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); color: var(--text-secondary); border-radius: 6px; padding: 7px 16px; font-size: 0.76rem; cursor: pointer; transition: all 0.2s ease;">
+            Acknowledge Security Notice (Continue in Demo Mode)
+          </button>
         </div>
       </div>
     </div>
