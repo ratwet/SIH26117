@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Aquanex Field
+GenericName=Ultrasonic Inspection Operator (Level 3)
+Comment=Sovereign AI Field Technician Pre-configured Inspection Operator (MRPL PS 117)
+Exec=/home/cyanide/SIH/scripts/launch_junior.sh
+Icon=/home/cyanide/SIH/frontend/public/aquanex-logo.png
+Terminal=false
+Categories=Development;Engineering;
+Keywords=aquanex;field;junior;naveen;inspection;ultrasonic;cdu;mrpl;sovereign;ai;
+StartupWMClass=aquanex-field
+StartupNotify=true

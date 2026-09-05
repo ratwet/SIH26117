@@ -71,8 +71,25 @@ let telemetrySource = null;
 async function init() {
   setupEventListeners();
   loadSavedSessions();
-  updateGreeting();
-  applyUserPermissions(getCurrentUser());
+
+  // Check URL query parameters for persona auto-login (e.g. ?persona=admin / senior / junior)
+  let activeUser = getCurrentUser();
+  if (typeof window !== 'undefined' && window.location.search) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const personaParam = urlParams.get('persona') || urlParams.get('role');
+    if (personaParam) {
+      try {
+        const res = await SovereignAPI.login({ username: personaParam.toLowerCase() });
+        if (res.user) {
+          activeUser = res.user;
+        }
+      } catch (err) {
+        console.warn("Could not auto-login with URL persona:", err);
+      }
+    }
+  }
+
+  applyUserPermissions(activeUser);
   await probeNetworkImmediate();
   startTelemetryMonitor();
   loadAuditLedger();

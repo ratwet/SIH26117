@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Aquanex Senior
+GenericName=Reliability Engineering Lead (Level 2)
+Comment=Sovereign AI Senior Reliability Lead with Model Switcher (MRPL PS 117)
+Exec=/home/cyanide/SIH/scripts/launch_senior.sh
+Icon=/home/cyanide/SIH/frontend/public/aquanex-logo.png
+Terminal=false
+Categories=Development;Engineering;
+Keywords=aquanex;senior;anand;inspection;api570;mrpl;sovereign;ai;
+StartupWMClass=aquanex-senior
+StartupNotify=true

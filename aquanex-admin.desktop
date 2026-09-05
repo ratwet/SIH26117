@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Aquanex Admin
+GenericName=IT Systems & Model Governance (Level 1)
+Comment=Sovereign AI IT Systems Administrator & Model Access Gatekeeper (MRPL PS 117)
+Exec=/home/cyanide/SIH/scripts/launch_admin.sh
+Icon=/home/cyanide/SIH/frontend/public/aquanex-logo.png
+Terminal=false
+Categories=System;Development;Engineering;
+Keywords=aquanex;admin;rajat;governance;model;rbac;mrpl;sovereign;ai;
+StartupWMClass=aquanex-admin
+StartupNotify=true
