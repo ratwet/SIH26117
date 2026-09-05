@@ -10,6 +10,7 @@ Bubblewrap sandbox runner with resource limits, and Omni-Modal deliverable compi
 import asyncio
 import json
 import logging
+import re
 from pathlib import Path
 from typing import Dict, Any, Tuple, Optional
 
@@ -147,7 +148,7 @@ async def route_task_node(state: AgentState) -> Dict[str, Any]:
         task_type = "GENERAL_QUERY"
         model = settings.MODEL_ROUTER
 
-    thought = f"🧭 Intent Router [{tier}]: Classified task as '{task_type}' (Assigned Model: {model} | {profile.get('hardware_spec', 'Local GPU')})"
+    thought = "Understanding your request and planning the next steps..."
     current_thoughts = state.get("thought_stream", [])
 
     return {
@@ -161,24 +162,24 @@ async def route_task_node(state: AgentState) -> Dict[str, Any]:
 async def vision_extraction_node(state: AgentState) -> Dict[str, Any]:
     """
     Node 2: Multimodal P&ID Blueprint & NDT Report Extraction.
-    Uses Qwen2-VL 72B to extract piping specs from technical drawings.
+    Extracts piping specs from technical drawings and inspection reports.
     """
-    thought = "👁️ Vision Extraction: Analyzing P&ID drawing with Qwen2-VL 72B..."
+    thought = "Looking over the uploaded drawing and inspection notes..."
     current_thoughts = state.get("thought_stream", [])
 
-    # Multimodal LLM Extraction using Qwen2-VL
+    # Multimodal LLM Extraction
     llm_prompt = f"Extract piping inspection parameters from the prompt and attached technical drawings: {state.get('user_prompt', '')}"
     content, trace = await call_llm(
         prompt=llm_prompt,
         system_prompt=(
-            "You are Qwen2-VL multimodal vision model specialized in P&ID drawings and NDT inspection reports. "
+            "You are an expert industrial engineering vision assistant specialized in P&ID drawings and NDT inspection reports. "
             "Extract parameters as a JSON object with keys: line_tag, service_description, material_spec, "
             "nominal_thickness_mm, actual_thickness_mm, design_pressure_psi, design_temp_celsius."
         ),
         model_type="vision"
     )
 
-    # Base extracted data structure for refinery line
+    # Base extracted data structure for refinery line (MRPL CDU-2 benchmark baseline)
     specs = {
         "line_tag": "CDU-2-04-150-A1A",
         "service_description": "Crude Distillation Overhead Vapour",
@@ -189,15 +190,37 @@ async def vision_extraction_node(state: AgentState) -> Dict[str, Any]:
         "design_temp_celsius": 135.0,
     }
 
+    # Dynamic parameter extraction from user prompt if custom asset details are provided
+    prompt_text = state.get("user_prompt", "")
+    tag_match = re.search(r'\b([A-Z]{2,4}-\d{1,2}-\d{2,3}-[A-Z0-9\-]+)\b', prompt_text)
+    user_tag = tag_match.group(1) if tag_match else None
+
+    nom_match = re.search(r'(?:nominal|t_nom|nominal_thickness)[\s:=]+([0-9]+(?:\.[0-9]+)?)\s*(?:mm)?', prompt_text, re.IGNORECASE)
+    user_nom = float(nom_match.group(1)) if nom_match else None
+
+    act_match = re.search(r'(?:actual|measured|t_act|actual_thickness)[\s:=]+([0-9]+(?:\.[0-9]+)?)\s*(?:mm)?', prompt_text, re.IGNORECASE)
+    user_act = float(act_match.group(1)) if act_match else None
+
+    press_match = re.search(r'([0-9]+(?:\.[0-9]+)?)\s*(?:psi|psig)', prompt_text, re.IGNORECASE)
+    user_press = float(press_match.group(1)) if press_match else None
+
+    temp_match = re.search(r'([0-9]+(?:\.[0-9]+)?)\s*(?:°C|deg\s*c|celsius)', prompt_text, re.IGNORECASE)
+    user_temp = float(temp_match.group(1)) if temp_match else None
+
     if content:
         try:
             parsed = json.loads(content)
             if isinstance(parsed, dict):
                 for k, v in parsed.items():
                     if k in specs and v is not None:
-                        specs[k] = v
+                        if k in ("nominal_thickness_mm", "actual_thickness_mm", "design_pressure_psi", "design_temp_celsius"):
+                            try:
+                                specs[k] = float(v)
+                            except (ValueError, TypeError):
+                                pass
+                        else:
+                            specs[k] = v
         except Exception:
-            import re
             m = re.search(r"\{.*?\}", content, re.DOTALL)
             if m:
                 try:
@@ -205,9 +228,35 @@ async def vision_extraction_node(state: AgentState) -> Dict[str, Any]:
                     if isinstance(parsed, dict):
                         for k, v in parsed.items():
                             if k in specs and v is not None:
-                                specs[k] = v
+                                if k in ("nominal_thickness_mm", "actual_thickness_mm", "design_pressure_psi", "design_temp_celsius"):
+                                    try:
+                                        specs[k] = float(v)
+                                    except (ValueError, TypeError):
+                                        pass
+                                else:
+                                    specs[k] = v
                 except Exception:
                     pass
+
+    # Explicit user parameters from prompt override generic fallback defaults
+    if user_tag:
+        specs["line_tag"] = user_tag
+    if user_nom is not None:
+        specs["nominal_thickness_mm"] = user_nom
+    if user_act is not None:
+        specs["actual_thickness_mm"] = user_act
+    if user_press is not None:
+        specs["design_pressure_psi"] = user_press
+    if user_temp is not None:
+        specs["design_temp_celsius"] = user_temp
+
+    t_nom = specs["nominal_thickness_mm"]
+    t_act = specs["actual_thickness_mm"]
+    t_min = 2.1
+    years = 4.57
+    corrosion_rate = round(max((t_nom - t_act) / years, 0.001), 3) if t_nom > t_act else 0.05
+    remaining_life = round(max((t_act - t_min) / corrosion_rate, 0.0), 2) if corrosion_rate > 0 else 25.0
+    action = "MANDATORY SHUTDOWN REPLACEMENT REQUIRED (< 5 YRS)" if remaining_life < 5.0 else "NORMAL IN-SERVICE MONITORING"
 
     pipe_data = PipeInspectionData(
         line_tag=specs["line_tag"],
@@ -215,15 +264,15 @@ async def vision_extraction_node(state: AgentState) -> Dict[str, Any]:
         material_spec=specs["material_spec"],
         design_pressure_psi=specs["design_pressure_psi"],
         design_temp_celsius=specs["design_temp_celsius"],
-        nominal_thickness_mm=specs["nominal_thickness_mm"],
-        actual_thickness_mm=specs["actual_thickness_mm"],
-        minimum_required_thickness_mm=2.1,
-        corrosion_rate_mm_year=0.35,
-        remaining_life_years=3.14,
-        mandatory_action="MANDATORY SHUTDOWN REPLACEMENT REQUIRED (< 5 YRS)",
+        nominal_thickness_mm=t_nom,
+        actual_thickness_mm=t_act,
+        minimum_required_thickness_mm=t_min,
+        corrosion_rate_mm_year=corrosion_rate,
+        remaining_life_years=remaining_life,
+        mandatory_action=action,
     )
 
-    thought_done = f"✅ Vision Extraction: Found Line Tag '{specs['line_tag']}' | Actual Thickness = {specs['actual_thickness_mm']}mm (Nominal = {specs['nominal_thickness_mm']}mm)"
+    thought_done = f"Extracted line tag '{specs['line_tag']}' ({specs['nominal_thickness_mm']}mm nominal / {specs['actual_thickness_mm']}mm actual)."
 
     return {
         "extracted_specs": specs,
@@ -239,7 +288,7 @@ async def rag_retrieval_node(state: AgentState) -> Dict[str, Any]:
     """
     current_thoughts = state.get("thought_stream", [])
     query = state.get("user_prompt", "") or "API 570 OISD piping inspection and corrosion limits"
-    thought = f"📚 Sovereign RAG: Searching plant manuals and OISD standards for: '{query[:60]}...' via FastEmbed CPU..."
+    thought = "Checking refinery safety standards and statutory guidelines..."
 
     # Call production retriever asynchronously off-thread
     try:
@@ -260,7 +309,7 @@ async def rag_retrieval_node(state: AgentState) -> Dict[str, Any]:
 
     first_doc = chunks[0].doc_name if chunks else "Standards"
     first_clause = chunks[0].clause_reference if chunks else "Section 7.1"
-    thought_done = f"✅ RAG Context: Grounded against {first_doc} ({first_clause})"
+    thought_done = f"Referenced {first_doc} ({first_clause})."
 
     return {
         "rag_chunks": chunks,
@@ -272,7 +321,7 @@ async def rag_retrieval_node(state: AgentState) -> Dict[str, Any]:
 async def math_generation_node(state: AgentState) -> Dict[str, Any]:
     """
     Node 4: Mathematical Calculation Code Generator.
-    Prompts DeepSeek-R1 / Qwen-Coder to generate an isolated, deterministic Python calculation script.
+    Generates an isolated, deterministic Python calculation script.
     If recovering from an error, incorporates the distilled error for self-healing.
     """
     current_thoughts = state.get("thought_stream", [])
@@ -280,14 +329,14 @@ async def math_generation_node(state: AgentState) -> Dict[str, Any]:
     sandbox_result = state.get("sandbox_result")
 
     if retry_count > 0 and sandbox_result and sandbox_result.distilled_error:
-        thought = f"🔄 Self-Healing Cycle (Attempt {retry_count}/3): DeepSeek-R1 correcting code based on distilled error: '{sandbox_result.distilled_error}'"
+        thought = f"Self-Healing: Found a calculation issue — adjusting formula and re-checking (attempt {retry_count} of 3)..."
     else:
-        thought = "📐 Reasoning Engine: DeepSeek-R1 generating deterministic API 570 Python calculation script..."
+        thought = "Calculating the corrosion rate and remaining life..."
 
     # Call FoundationModelEngine coder gateway
     content, trace = await call_llm(
         prompt=f"Generate deterministic API 570 remaining life calculation Python script for {state.get('user_prompt', '')}",
-        system_prompt="You are DeepSeek-R1 / Qwen2.5-Coder. Generate executable, isolated Python code that outputs JSON.",
+        system_prompt="You are an expert industrial calculation assistant. Generate executable, isolated Python code that outputs JSON.",
         model_type="coder"
     )
 
@@ -302,23 +351,38 @@ remaining_life = 1.1 / corrosion_rate
 print(json.dumps({"remaining_life": remaining_life}))
 """
     else:
-        # Correct deterministic Python code generated for sandbox execution
-        python_code = """
-import json
+        python_code = None
+        # 1. Attempt to extract valid executable Python script from LLM output
+        if content:
+            code_match = re.search(r"```(?:python)?\s*\n(.*?)```", content, re.DOTALL)
+            candidate_code = code_match.group(1).strip() if code_match else content.strip()
+            if "import json" in candidate_code and "print(" in candidate_code and "remaining_life" in candidate_code:
+                python_code = candidate_code
 
-line_tag = "CDU-2-04-150-A1A"
-t_nominal = 4.8      # mm
-t_actual = 3.2       # mm
-t_minimum = 2.1      # mm (calculated per ASME B31.3)
-operating_years = 4.57  # years in service
+        # 2. Dynamic parametric synthesis using state pipe_data
+        if not python_code:
+            pipe = state.get("pipe_data")
+            tag = pipe.line_tag if pipe else "CDU-2-04-150-A1A"
+            nom = pipe.nominal_thickness_mm if pipe else 4.8
+            act = pipe.actual_thickness_mm if pipe else 3.2
+            t_min = pipe.minimum_required_thickness_mm if pipe else 2.1
+            operating_years = 4.57
+
+            python_code = f"""import json
+
+line_tag = "{tag}"
+t_nominal = {nom}      # mm
+t_actual = {act}       # mm
+t_minimum = {t_min}      # mm (calculated per ASME B31.3)
+operating_years = {operating_years}  # years in service
 
 # API 570 Rate Calculation
-corrosion_rate = (t_nominal - t_actual) / operating_years  # 0.35 mm/yr
-remaining_life = (t_actual - t_minimum) / corrosion_rate    # 3.14 years
+corrosion_rate = (t_nominal - t_actual) / operating_years if operating_years > 0 else 0.05
+remaining_life = (t_actual - t_minimum) / corrosion_rate if corrosion_rate > 0 else 99.0
 
-action = "SCHEDULE SHUTDOWN REPLACEMENT" if remaining_life < 5.0 else "NORMAL MONITORING"
+action = "MANDATORY SHUTDOWN REPLACEMENT REQUIRED (< 5 YRS)" if remaining_life < 5.0 else "NORMAL MONITORING"
 
-result = {
+result = {{
     "line_tag": line_tag,
     "t_nominal": t_nominal,
     "t_actual": t_actual,
@@ -327,7 +391,7 @@ result = {
     "remaining_life_years": round(remaining_life, 2),
     "mandatory_action": action,
     "replacement_cost_inr": 1154400.0
-}
+}}
 print(json.dumps(result))
 """
 
@@ -347,7 +411,7 @@ async def sandbox_execution_node(state: AgentState) -> Dict[str, Any]:
     code = state.get("generated_code", "")
     retry_count = state.get("retry_count", 0)
 
-    thought = "⚡ Sandbox Runner: Executing calculation script in bwrap isolated namespace (--unshare-net)..."
+    thought = "Verifying the calculations in a secure environment..."
 
     # Offload blocking sandbox execution to worker thread
     res = await asyncio.to_thread(
@@ -359,10 +423,10 @@ async def sandbox_execution_node(state: AgentState) -> Dict[str, Any]:
 
     if res.success:
         rem_life = res.parsed_output.get("remaining_life_years") if res.parsed_output else "N/A"
-        thought_done = f"✅ Sandbox: Execution Success (Exit Code 0) | Remaining Life = {rem_life} Years"
+        thought_done = f"Calculations verified (Remaining Life: {rem_life} years)."
         calc_result = res.parsed_output
     else:
-        thought_done = f"⚠️ Sandbox: Execution Error (Exit Code {res.exit_code}) | Captured: {res.distilled_error}"
+        thought_done = f"Calculation encountered an issue: {res.distilled_error}"
         calc_result = None
 
     return {
@@ -389,7 +453,7 @@ async def distill_error_node(state: AgentState) -> Dict[str, Any]:
     else:
         error_summary = "Unknown execution failure"
 
-    thought = f"🔧 Error Distiller: Extracted root cause -> '{error_summary}'. Routing back to Math Node (Retry #{retry_count})..."
+    thought = f"Self-Healing: Reviewing the calculation error ({error_summary}) to make corrections..."
 
     return {
         "retry_count": retry_count,
@@ -403,7 +467,7 @@ async def compile_deliverables_node(state: AgentState) -> Dict[str, Any]:
     Generates signable executive Word Note, dynamic Excel Cost Matrix, and omni-modal artifacts.
     """
     current_thoughts = state.get("thought_stream", [])
-    thought = "📄 Deliverable Compiler: Compiling Omni-Modal artifacts (Word, Excel, PowerPoint, PDF, CAD DXF, 3D STL, Heatmap, NDT CSV)..."
+    thought = "Putting together your report, spreadsheet, and CAD drawing..."
 
     deliverables_dir = settings.DATA_DIR / "deliverables"
     deliverables_dir.mkdir(parents=True, exist_ok=True)
@@ -426,6 +490,22 @@ async def compile_deliverables_node(state: AgentState) -> Dict[str, Any]:
         mandatory_action="MANDATORY SHUTDOWN REPLACEMENT REQUIRED (< 5 YRS)",
     )
 
+    # Sync with verified sandbox calculation output if available
+    calc_res = state.get("calc_result")
+    if calc_res and isinstance(calc_res, dict):
+        if "corrosion_rate" in calc_res:
+            try:
+                pipe_data.corrosion_rate_mm_year = float(calc_res["corrosion_rate"])
+            except (ValueError, TypeError):
+                pass
+        if "remaining_life_years" in calc_res:
+            try:
+                pipe_data.remaining_life_years = float(calc_res["remaining_life_years"])
+            except (ValueError, TypeError):
+                pass
+        if "mandatory_action" in calc_res:
+            pipe_data.mandatory_action = str(calc_res["mandatory_action"])
+
     approval_payload = ApprovalNotePayload(inspection_data=pipe_data)
     cost_payload = CostMatrixPayload(
         line_tag=pipe_data.line_tag,
@@ -447,7 +527,7 @@ async def compile_deliverables_node(state: AgentState) -> Dict[str, Any]:
 \"\"\"
 MRPL Refinery Technical Services — Standalone API 570 Calculation Script
 Asset Line Tag: {pipe_data.line_tag}
-Generated by SovereignWorkbench (Pure 100B Model Architecture)
+Generated by Aquanex
 \"\"\"
 
 def verify_api570_compliance(t_nominal={pipe_data.nominal_thickness_mm}, t_actual={pipe_data.actual_thickness_mm}, years_in_service=10.0, t_min=2.1):
@@ -512,19 +592,7 @@ if __name__ == "__main__":
     }
     manifest_path.write_text(json.dumps(manifest_data, indent=2), encoding="utf-8")
 
-    thought_done = (
-        f"✅ Omni-Modal Compiler: Successfully generated 10 enterprise artifacts:\n"
-        f"  • {saved_docx.name} (Word Dossier)\n"
-        f"  • {saved_xlsx.name} (Excel Matrix)\n"
-        f"  • {saved_pptx.name} (PowerPoint Deck)\n"
-        f"  • {saved_pdf.name} (Statutory Inspection Certificate PDF)\n"
-        f"  • {saved_cad.name} (AutoCAD DXF Spool)\n"
-        f"  • {saved_stl.name} (3D Printable CAD Mesh STL)\n"
-        f"  • {saved_img.name} (P&ID Corrosion Heatmap)\n"
-        f"  • {saved_csv.name} (Ultrasonic NDT Survey CSV)\n"
-        f"  • {script_path.name} (Verified Python Script)\n"
-        f"  • {manifest_path.name} (SHA-256 Audit Manifest)"
-    )
+    thought_done = f"Successfully generated engineering dossier, spreadsheets, and CAD spools for {pipe_data.line_tag}."
 
     final_msg = f"""### 🛡️ MRPL Technical Audit & Life Assessment Completed
 
@@ -607,7 +675,7 @@ async def general_chat_node(state: AgentState) -> Dict[str, Any]:
     task_type = state.get("task_type", "GENERAL_QUERY")
 
     if task_type == "SOP_LOOKUP" or rag_context:
-        thought = "📋 SOP Synthesizer: Formulating statutory engineering guidance grounded on retrieved clauses..."
+        thought = "Reviewing plant guidelines to answer your question..."
         chunks = state.get("rag_chunks") or []
         doc_refs = [f"• **{c.doc_name}** ({c.clause_reference})" for c in chunks[:3]]
         refs_str = "\n".join(doc_refs) if doc_refs else "• API-570 Piping Inspection Standard (Section 7.1)"
@@ -627,19 +695,19 @@ async def general_chat_node(state: AgentState) -> Dict[str, Any]:
 > If thickness falls below statutory design tolerance, mandatory shutdown procurement is triggered.
 """
     else:
-        thought = "💬 General Knowledge: Processing query..."
+        thought = "Thinking through your question..."
         content, trace = await call_llm(
             prompt=prompt,
-            system_prompt="You are SovereignWorkbench Assistant, an air-gapped on-premise industrial AI assistant for refinery engineering at Mangalore Refinery and Petrochemicals Limited (MRPL). All data remains strictly within refinery on-premise infrastructure.",
+            system_prompt="You are Aquanex SovereignWorkbench Assistant, an on-premise industrial AI assistant for refinery engineering at Mangalore Refinery and Petrochemicals Limited (MRPL). All data remains strictly within refinery on-premise infrastructure.",
             model_type="reasoning"
         )
         if content:
-            if not content.startswith("SovereignWorkbench Assistant"):
-                resp = f"SovereignWorkbench Assistant: {content}"
+            if not content.startswith("Aquanex SovereignWorkbench Assistant"):
+                resp = f"Aquanex SovereignWorkbench Assistant: {content}"
             else:
                 resp = content
         else:
-            resp = f"SovereignWorkbench Assistant: Processed query regarding '{prompt[:50]}...'. All data remains strictly within refinery on-premise infrastructure."
+            resp = f"Aquanex SovereignWorkbench Assistant: Processed query regarding '{prompt[:50]}...'. All data remains strictly within refinery on-premise infrastructure."
 
     return {
         "final_response": resp,

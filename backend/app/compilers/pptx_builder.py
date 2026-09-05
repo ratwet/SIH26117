@@ -94,7 +94,7 @@ def build_executive_presentation_pptx(
     p.font.color.rgb = COLOR_WHITE
 
     p = tf_meta.add_paragraph()
-    p.text = f"• Design Envelope: {data.design_pressure_psi} psig @ {data.design_temp_celsius} °C | Status: AIR-GAP SOVEREIGN VERIFIED"
+    p.text = f"• Design Envelope: {data.design_pressure_psi} psig @ {data.design_temp_celsius} °C | Status: AIR-GAP AQUANEX VERIFIED"
     p.font.size = Pt(14)
     p.font.color.rgb = COLOR_CYAN_ACCENT
 

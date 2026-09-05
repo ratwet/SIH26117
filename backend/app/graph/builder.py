@@ -98,3 +98,5 @@ def build_sovereign_graph():
 
 # Singleton compiled graph instance for application import
 sovereign_graph = build_sovereign_graph()
+aquanex_graph = sovereign_graph
+build_aquanex_graph = build_sovereign_graph

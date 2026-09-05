@@ -18,7 +18,7 @@ Modern process refineries such as **Mangalore Refinery and Petrochemicals Limite
 
 ### 1. Modern Conversational Interface (Gemini & Claude Style)
 - **Minimalist Dark Theme:** Sleek, high-performance interface with zero third-party CDN dependencies.
-- **Collapsible Reasoning Drawer:** LangGraph cyclic state machine node transitions and DeepSeek-R1 reasoning steps are presented in a clean, collapsible thought drawer (`<details class="thought-drawer">`) with an animated pulse dot.
+- **Collapsible Reasoning Drawer:** LangGraph cyclic state machine node transitions and foundation model reasoning steps are presented in a clean, collapsible thought drawer (`<details class="thought-drawer">`) with an animated pulse dot.
 - **Floating Pill Input Bar:** Centered floating container with auto-expanding textarea, industrial artifact attachment support, and circular send button.
 - **Real Session Management:** Real `localStorage`-backed conversation management (`+ New chat`, persistent history, delete on hover), with zero fake dummy items.
 - **Artifacts on Demand:** Download chips for generated deliverables render only when actual files are compiled.
@@ -95,6 +95,8 @@ The system autonomously compiles a full suite of statutory inspection deliverabl
 ```text
 SIH/
 ├── README.md                      # Authoritative project overview & execution guide
+├── DOCUMENTATION_PROOF_BENCHMARKS.md # Statutory, technical & empirical verification dossier
+├── RESEARCH_AND_ANALYSIS.md       # Literature survey, benchmarks & competitive analysis
 ├── LICENSE.md                     # License information
 ├── PROBLEM_STATEMENT_117.md       # Master MRPL problem statement specification
 ├── PRD.md                         # Product Requirements Document (Functional & Non-Functional)

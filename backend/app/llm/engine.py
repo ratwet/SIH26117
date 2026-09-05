@@ -239,7 +239,7 @@ class FoundationModelEngine:
 
         elif model_type == "coder" or "CODE" in s_upper or "SANDBOX" in s_upper:
             thought = (
-                "Qwen-2.5-Coder-72B Execution:\n"
+                "Code Execution Preparation:\n"
                 "Synthesizing deterministic Python verification script for API 570 remaining life calculation."
             )
             content = (
@@ -251,12 +251,12 @@ class FoundationModelEngine:
             return content, thought
 
         elif "ROUTER" in s_upper:
-            thought = "DeepSeek-R1 100B Router: Classifying industrial refinery query intent."
+            thought = "Task Router: Classifying industrial refinery query intent."
             return "VISION_AUDIT", thought
 
         # General industrial query
         thought = (
-            "DeepSeek-R1 (671B MoE) General Engineering Query:\n"
+            "Engineering Query Analysis:\n"
             "Retrieving MRPL Refinery Operations & Engineering Manual standard operating limits."
         )
         content = (

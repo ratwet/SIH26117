@@ -180,7 +180,7 @@ def build_piping_spool_cad_dxf(
     ).set_placement((tb_x + 10, tb_y + 68))
 
     msp.add_text(
-        f"DESIGNED BY: SOVEREIGN AGENTIC WORKBENCH",
+        f"DESIGNED BY: AQUANEX WORKBENCH",
         dxfattribs={"layer": "TITLE_BLOCK", "height": 8.0}
     ).set_placement((tb_x + 10, tb_y + 35))
 

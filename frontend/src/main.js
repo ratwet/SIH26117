@@ -327,7 +327,7 @@ async function handleSendPrompt() {
   updateSendButtonState();
 
   // Create Assistant Message Row
-  const { row, thoughtDrawer, thoughtList, thoughtBadge, thoughtPulse, contentContainer } = createAssistantRow();
+  const { row, thoughtDrawer, thoughtList, thoughtTitle, thoughtBadge, thoughtPulse, contentContainer } = createAssistantRow();
   messagesFeed.appendChild(row);
   scrollToBottom();
 
@@ -346,6 +346,7 @@ async function handleSendPrompt() {
       item.className = 'thought-step-line';
       item.innerHTML = `<span>▶</span> <span>${escapeHtml(thoughtText)}</span>`;
       thoughtList.appendChild(item);
+      thoughtTitle.textContent = 'Thinking...';
       thoughtBadge.textContent = `${currentThoughts.length} steps`;
       scrollToBottom();
     },
@@ -354,7 +355,8 @@ async function handleSendPrompt() {
       updateSendButtonState();
 
       thoughtPulse.classList.add('done');
-      thoughtBadge.textContent = `Completed (${currentThoughts.length} steps)`;
+      thoughtTitle.textContent = 'Thought for a few seconds';
+      thoughtBadge.textContent = `(${currentThoughts.length} steps)`;
 
       const finalResponse = payload.final_response || "Analysis completed.";
       contentContainer.innerHTML = renderMarkdown(finalResponse);
@@ -377,23 +379,9 @@ async function handleSendPrompt() {
     onError: (err) => {
       isExecuting = false;
       updateSendButtonState();
-
       thoughtPulse.classList.add('done');
-      const errMessage = err.message || "Connection failed";
-
-      const errCard = document.createElement('div');
-      errCard.className = 'model-error-card';
-      errCard.innerHTML = `
-        <h4>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          Sovereign Engine Message
-        </h4>
-        <p>${escapeHtml(errMessage)}</p>
-        <p style="margin-top: 8px; font-size: 0.8rem; color: #cbd5e1;">
-          Ensure your local LLM is running via <code>ollama run qwen2.5:3b</code> or your vLLM server is reachable at <code>http://127.0.0.1:8001/v1</code>.
-        </p>
-      `;
-      contentContainer.appendChild(errCard);
+      thoughtTitle.textContent = 'Thought completed';
+      contentContainer.innerHTML = `<span style="color:var(--accent-crimson);">Error during execution: ${escapeHtml(err.message || String(err))}</span>`;
       scrollToBottom();
     }
   });
@@ -420,19 +408,20 @@ function createAssistantRow() {
   thoughtDrawer.innerHTML = `
     <summary class="thought-summary">
       <span class="thought-pulse"></span>
-      <span>Thinking Process</span>
+      <span class="thought-title">Thinking...</span>
       <span class="thought-badge">0 steps</span>
     </summary>
     <div class="thought-steps-list"></div>
   `;
 
   const thoughtList = thoughtDrawer.querySelector('.thought-steps-list');
+  const thoughtTitle = thoughtDrawer.querySelector('.thought-title');
   const thoughtBadge = thoughtDrawer.querySelector('.thought-badge');
   const thoughtPulse = thoughtDrawer.querySelector('.thought-pulse');
 
   const contentContainer = document.createElement('div');
   contentContainer.className = 'md-content';
-  contentContainer.innerHTML = '<span style="color: var(--text-muted); font-size: 0.9rem;">Connecting to Sovereign engine...</span>';
+  contentContainer.innerHTML = '<span style="color: var(--text-muted); font-size: 0.9rem;">Thinking...</span>';
 
   body.appendChild(thoughtDrawer);
   body.appendChild(contentContainer);
@@ -440,7 +429,7 @@ function createAssistantRow() {
   wrap.appendChild(body);
   row.appendChild(wrap);
 
-  return { row, thoughtDrawer, thoughtList, thoughtBadge, thoughtPulse, contentContainer };
+  return { row, thoughtDrawer, thoughtList, thoughtTitle, thoughtBadge, thoughtPulse, contentContainer };
 }
 
 function renderUserMessageBubble(text, files = []) {
@@ -474,12 +463,13 @@ function renderUserMessageBubble(text, files = []) {
 }
 
 function renderAssistantMessageBubble(text, thoughts = [], deliverables = []) {
-  const { row, thoughtDrawer, thoughtList, thoughtBadge, thoughtPulse, contentContainer } = createAssistantRow();
+  const { row, thoughtDrawer, thoughtList, thoughtTitle, thoughtBadge, thoughtPulse, contentContainer } = createAssistantRow();
   
   if (thoughts && thoughts.length > 0) {
     thoughtDrawer.style.display = 'block';
     thoughtPulse.classList.add('done');
-    thoughtBadge.textContent = `${thoughts.length} steps`;
+    thoughtTitle.textContent = 'Thought for a few seconds';
+    thoughtBadge.textContent = `(${thoughts.length} steps)`;
     thoughts.forEach(t => {
       const item = document.createElement('div');
       item.className = 'thought-step-line';

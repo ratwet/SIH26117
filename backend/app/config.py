@@ -99,7 +99,7 @@ class Settings(BaseSettings):
     AIR_GAP_STRICT: bool = True
     SIMULATE_AIR_GAP_BREACH: bool = False
     WAN_INTERFACE_OVERRIDE: str = ""
-    ALLOW_UNSANDBOXED_FALLBACK: bool = True
+    ALLOW_UNSANDBOXED_FALLBACK: bool = False
 
     # --- Server ---
     HOST: str = "0.0.0.0"

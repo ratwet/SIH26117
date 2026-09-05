@@ -28,7 +28,7 @@ async def lifespan(app: FastAPI):
     settings.MODELS_DIR.mkdir(parents=True, exist_ok=True)
 
     print("=" * 65)
-    print(f"🛡️  SOVEREIGNWORKBENCH — NODE 1: SERVER WORKSTATION ({settings.SERVER_NODE_IP})")
+    print(f"🛡️  AQUANEX AGENTIC WORKBENCH — NODE 1: SERVER WORKSTATION ({settings.SERVER_NODE_IP})")
     print("   Air-Gap Operational Mode: STRICT ZERO-WAN ISOLATION")
     print(f"   Listening on: http://{settings.HOST}:{settings.PORT} (LAN Target: http://{settings.SERVER_NODE_IP}:{settings.PORT})")
     print(f"   Ollama Host:  {settings.OLLAMA_HOST} (Strict Loopback Isolation)")
@@ -36,13 +36,13 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    print("\n🛑 SovereignWorkbench backend shutting down gracefully.")
+    print("\n🛑 Aquanex backend shutting down gracefully.")
 
 
 # Create FastAPI application
 app = FastAPI(
-    title="SovereignWorkbench Backend",
-    description="Sovereign On-Premise Agentic AI Workbench for Confidential Industrial Work (MRPL PS 117)",
+    title="Aquanex Backend",
+    description="Aquanex: Sovereign On-Premise Agentic AI Workbench for Industrial Plants (MRPL PS 117)",
     version="1.0.0",
     lifespan=lifespan,
 )

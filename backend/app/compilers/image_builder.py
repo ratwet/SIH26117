@@ -37,7 +37,7 @@ def build_inspection_heatmap_image(
     draw.rectangle([(40, 30), (width - 40, 100)], fill=(30, 41, 59), outline=(6, 182, 212), width=2)
     draw.text((60, 42), "MANGALORE REFINERY AND PETROCHEMICALS LIMITED (MRPL)", fill=(6, 182, 212))
     draw.text((60, 68), f"AUTONOMOUS P&ID VISION AUDIT & CORROSION HEATMAP • {payload.unit_name}", fill=(248, 250, 252))
-    draw.text((width - 320, 55), "AIR-GAP SOVEREIGN VERIFIED", fill=(16, 185, 129))
+    draw.text((width - 320, 55), "AIR-GAP AQUANEX VERIFIED", fill=(16, 185, 129))
 
     # 3. Schematic Vessels
     # Crude Distillation Column (Left)
