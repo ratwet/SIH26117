@@ -2,7 +2,8 @@
 
 > **Sovereign On-Premise Agentic AI Workbench using Open-Weight Multimodal LLMs for Confidential Industrial Work**  
 > **Problem Statement ID:** SIH26117 | **Organization:** Mangalore Refinery and Petrochemicals Limited (MRPL / ONGC)  
-> **Theme:** Smart Automation | **Category:** Software | **Status:** Production Delivery Ready (40/40 Tests Passing)
+> **Theme:** Smart Automation | **Category:** Software | **Status:** Production Delivery Ready (40/40 Tests Passing)  
+> 📖 **Official Documentation Wiki:** [https://github.com/ratwet/SIH26117/wiki](https://github.com/ratwet/SIH26117/wiki)
 
 ---
 
