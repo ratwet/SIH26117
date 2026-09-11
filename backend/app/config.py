@@ -93,6 +93,13 @@ class Settings(BaseSettings):
     RAG_CHUNK_OVERLAP: int = 50
     RAG_TOP_K: int = 5
 
+    # --- CoWork Scoped Vaults & Connectors ---
+    VAULT_INPUT_DIR: Path = Path("data/vault")
+    VAULT_STAGING_DIR: Path = Path("data/staging")
+    INTERNAL_MAIL_DOMAIN: str = "mrpl.co.in"
+    APPROVAL_TOKEN_SECRET: str = "mrpl_sovereign_approval_secret_2026"
+    APPROVAL_TOKEN_TTL_SECONDS: int = 300
+
     # --- Security ---
     AUDIT_DB_PATH: Path = Path("data/mrpl_audit.db")
     NETWORK_POLL_INTERVAL_SECONDS: float = 2.0
@@ -136,3 +143,5 @@ settings.DATA_DIR.mkdir(parents=True, exist_ok=True)
 settings.CHROMA_PERSIST_DIR.mkdir(parents=True, exist_ok=True)
 settings.MODELS_DIR.mkdir(parents=True, exist_ok=True)
 settings.RAG_DOCS_DIR.mkdir(parents=True, exist_ok=True)
+settings.VAULT_INPUT_DIR.mkdir(parents=True, exist_ok=True)
+settings.VAULT_STAGING_DIR.mkdir(parents=True, exist_ok=True)

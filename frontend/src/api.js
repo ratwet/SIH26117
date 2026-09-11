@@ -302,5 +302,87 @@ export const SovereignAPI = {
       throw new Error(err.detail || `Model tier update failed: HTTP ${res.status}`);
     }
     return await res.json();
+  },
+
+  // 11. Local Voice Sentinel (Zero Cloud, RAM only)
+  async getVoiceStatus() {
+    const res = await fetch(`${getBackendUrl()}/api/voice/status`);
+    if (!res.ok) throw new Error(`Cannot fetch voice status: HTTP ${res.status}`);
+    return await res.json();
+  },
+
+  async transcribeAudio(audioBlob = null, mockPrompt = null) {
+    const formData = new FormData();
+    if (audioBlob) {
+      formData.append("file", audioBlob, "recording.wav");
+    }
+    if (mockPrompt) {
+      formData.append("mock_prompt", mockPrompt);
+    }
+    const res = await fetch(`${getBackendUrl()}/api/voice/transcribe`, {
+      method: "POST",
+      body: formData,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Transcription failed: HTTP ${res.status}`);
+    }
+    return await res.json();
+  },
+
+  async synthesizeSpeech(text) {
+    const res = await fetch(`${getBackendUrl()}/api/voice/synthesize`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+    if (!res.ok) throw new Error(`Speech synthesis failed: HTTP ${res.status}`);
+    return await res.blob();
+  },
+
+  // 12. Human Gate Action Approvals & CoWork Connectors
+  async requestActionApproval({ action_type, target, payload_summary, payload_hash, user_id, user_role }) {
+    const res = await fetch(`${getBackendUrl()}/api/actions/approve`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action_type, target, payload_summary, payload_hash, user_id, user_role }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Approval request rejected: HTTP ${res.status}`);
+    }
+    return await res.json();
+  },
+
+  async createEmailDraft({ pipe_data, recipient = "inspection.lead@mrpl.co.in", attachments = [] }) {
+    const res = await fetch(`${getBackendUrl()}/api/actions/email/draft`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pipe_data, recipient, attachments }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Email draft creation failed: HTTP ${res.status}`);
+    }
+    return await res.json();
+  },
+
+  async dispatchEmail({ draft_id, approval_token, user_role = "senior" }) {
+    const res = await fetch(`${getBackendUrl()}/api/actions/email/dispatch`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ draft_id, approval_token, user_role }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Email dispatch failed: HTTP ${res.status}`);
+    }
+    return await res.json();
+  },
+
+  async getVaultList() {
+    const res = await fetch(`${getBackendUrl()}/api/actions/vault/list`);
+    if (!res.ok) throw new Error(`Cannot fetch vault listing: HTTP ${res.status}`);
+    return await res.json();
   }
 };

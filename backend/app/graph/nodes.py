@@ -294,9 +294,12 @@ async def rag_retrieval_node(state: AgentState) -> Dict[str, Any]:
     query = state.get("user_prompt", "") or "API 570 OISD piping inspection and corrosion limits"
     thought = "Checking refinery safety standards and statutory guidelines..."
 
+    user_role = state.get("user_role", "senior") or "senior"
+    clearance = "CONFIDENTIAL" if user_role in ("senior", "admin") else "INTERNAL"
+
     # Call production retriever asynchronously off-thread
     try:
-        res = await asyncio.to_thread(query_sovereign_rag, query, 5)
+        res = await asyncio.to_thread(query_sovereign_rag, query, 5, user_role, "Reliability", clearance)
         chunks = res.chunks
         context = res.combined_context
     except Exception as exc:

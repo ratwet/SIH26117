@@ -47,7 +47,9 @@ backend/rag_docs/*.pdf
 
 # External references
 deepseek-harness/
+needle/
 .~lock.*
+*.bak
 
 # IDE & OS
 .idea/

@@ -115,11 +115,14 @@ class CostMatrixPayload(BaseModel):
 # =====================================================================
 
 class RagChunk(BaseModel):
-    """A retrieved context chunk from refinery SOPs or standards."""
+    """A retrieved context chunk from refinery SOPs or standards with ABAC metadata."""
     doc_name: str = Field(..., json_schema_extra={"example": "OISD-STD-118.pdf"})
     clause_reference: str = Field(..., json_schema_extra={"example": "Section 4.2: In-service Inspection Frequency"})
     text_content: str = Field(...)
     relevance_score: float = Field(..., json_schema_extra={"example": 0.89})
+    classification: str = Field(default="INTERNAL", description="UNCLASSIFIED, INTERNAL, CONFIDENTIAL, RESTRICTED")
+    department: str = Field(default="Reliability", description="Departmental scope")
+    authorized_roles: List[str] = Field(default_factory=lambda: ["senior", "admin", "junior"])
 
 
 class RagQueryResponse(BaseModel):
@@ -171,4 +174,75 @@ class AuditEvent(BaseModel):
     output_hash: str = Field(..., description="SHA-256 hash of output result.")
     previous_hash: Optional[str] = Field(default=None, description="SHA-256 hash of previous audit log row.")
     entry_hash: Optional[str] = Field(default=None, description="SHA-256 hash of this complete row.")
+
+
+# =====================================================================
+# 5. ACTION APPROVAL & GOVERNANCE SCHEMAS (CoWork Human Gate)
+# =====================================================================
+
+class ActionApprovalRequest(BaseModel):
+    """Payload to request an approval token for consequential actions."""
+    action_type: str = Field(..., json_schema_extra={"example": "DISPATCH_INSPECTION_EMAIL"})
+    target: str = Field(..., json_schema_extra={"example": "inspection.manager@mrpl.co.in"})
+    payload_summary: str = Field(..., json_schema_extra={"example": "CDU-2 Overhead Turnaround Replacement Brief"})
+    payload_hash: str = Field(..., description="SHA-256 hash of the exact message body and attached deliverables.")
+    user_id: str = Field(..., json_schema_extra={"example": "USR-SNR-02"})
+    user_role: str = Field(..., json_schema_extra={"example": "senior"})
+
+
+class ActionApprovalReceipt(BaseModel):
+    """Cryptographic approval receipt binding consent to exact action."""
+    approval_token: str
+    action_type: str
+    target: str
+    payload_hash: str
+    status: str = "APPROVED"
+    issued_at: str
+    expires_at: str
+
+
+# =====================================================================
+# 6. COWORK CONNECTOR SCHEMAS (Internal Email, Vault, Office)
+# =====================================================================
+
+class EmailDraftPayload(BaseModel):
+    """Frozen email draft awaiting human approval."""
+    draft_id: str
+    recipient: str
+    subject: str
+    body: str
+    attachments: List[str] = Field(default_factory=list)
+    attachment_hashes: Dict[str, str] = Field(default_factory=dict)
+    classification: str = Field(default="CONFIDENTIAL")
+    status: str = Field(default="DRAFT_AWAITING_APPROVAL")
+    approval_token: Optional[str] = None
+
+
+class EmailSendRequest(BaseModel):
+    """Request to dispatch approved email draft."""
+    draft_id: str
+    approval_token: str
+    user_role: str = "senior"
+
+
+# =====================================================================
+# 7. VOICE SENTINEL SCHEMAS (Local Audio Subsystem)
+# =====================================================================
+
+class VoiceTranscriptionResponse(BaseModel):
+    """Local STT transcription result (RAM-only, zero audio retained)."""
+    text: str
+    detected_language: str = "en"
+    duration_seconds: float
+    confidence: float
+    status: str = "SUCCESS"
+
+
+class VoiceStatusResponse(BaseModel):
+    """Local Voice Sentinel health check."""
+    status: str
+    engine_stt: str
+    engine_tts: str
+    privacy_policy: str = "ZERO_RAW_AUDIO_RETENTION"
+    is_air_gapped: bool = True
 

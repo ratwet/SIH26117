@@ -83,14 +83,62 @@ def compile_approval_note(payload: ApprovalNotePayload, output_path: Path) -> Pa
     
     doc = Document()
     
-    # Page setup: Standard margins (0.75 in)
-    sections = doc.sections
-    for section in sections:
+    # Page setup: Standard margins (0.75 in) with running headers & footers
+    for section in doc.sections:
         section.top_margin = Inches(0.75)
         section.bottom_margin = Inches(0.75)
         section.left_margin = Inches(0.75)
         section.right_margin = Inches(0.75)
         
+        # Running Header
+        header = section.header
+        header_p = header.paragraphs[0]
+        header_p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+        hrun = header_p.add_run("CONFIDENTIAL // MRPL TECHNICAL SERVICES   |   AI-GENERATED DRAFT — STATUTORY HUMAN REVIEW REQUIRED")
+        hrun.font.name = "Arial"
+        hrun.font.size = Pt(7.5)
+        hrun.font.bold = True
+        hrun.font.color.rgb = MUTED_GRAY
+
+        # Running Footer
+        footer = section.footer
+        footer_p = footer.paragraphs[0]
+        footer_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        frun = footer_p.add_run("AI-GENERATED DRAFT — STATUTORY HUMAN REVIEW REQUIRED — NOT VALID FOR CAPITAL PROCUREMENT WITHOUT PHYSICAL SIGN-OFF")
+        frun.font.name = "Arial"
+        frun.font.size = Pt(7.5)
+        frun.font.bold = True
+        frun.font.color.rgb = CRITICAL_RED
+        
+    # -------------------------------------------------------------
+    # 0. Statutory Draft Watermark & Security Banner
+    # -------------------------------------------------------------
+    class_p = doc.add_paragraph()
+    class_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    class_p.paragraph_format.space_after = Pt(2)
+    run_class = class_p.add_run("CONFIDENTIAL // MRPL TECHNICAL SERVICES")
+    run_class.font.name = "Arial"
+    run_class.font.size = Pt(8.5)
+    run_class.font.bold = True
+    run_class.font.color.rgb = MRPL_NAVY
+
+    watermark_table = doc.add_table(rows=1, cols=1)
+    watermark_table.alignment = WD_TABLE_ALIGNMENT.CENTER
+    w_cell = watermark_table.rows[0].cells[0]
+    _set_cell_background(w_cell, "FEE2E2")
+    _set_cell_margins(w_cell, top=80, bottom=80, left=150, right=150)
+    w_p = w_cell.paragraphs[0]
+    w_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    w_p.paragraph_format.space_after = Pt(0)
+    w_run = w_p.add_run("⚠ AI-GENERATED DRAFT — STATUTORY HUMAN REVIEW REQUIRED")
+    w_run.font.name = "Arial"
+    w_run.font.size = Pt(9.5)
+    w_run.font.bold = True
+    w_run.font.color.rgb = CRITICAL_RED
+
+    spacer_p = doc.add_paragraph()
+    spacer_p.paragraph_format.space_after = Pt(2)
+
     # -------------------------------------------------------------
     # 1. Header / Letterhead
     # -------------------------------------------------------------

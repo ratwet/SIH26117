@@ -101,7 +101,43 @@ def compile_inspection_certificate_pdf(
         alignment=1,
     )
 
+    class_style = ParagraphStyle(
+        "CertClassification",
+        parent=styles["Normal"],
+        fontName="Helvetica-Bold",
+        fontSize=8,
+        leading=10,
+        textColor=colors.HexColor("#475569"),
+        alignment=1,
+    )
+
+    watermark_style = ParagraphStyle(
+        "CertWatermark",
+        parent=styles["Normal"],
+        fontName="Helvetica-Bold",
+        fontSize=8.5,
+        leading=11,
+        textColor=colors.HexColor("#991B1B"),
+        alignment=1,
+    )
+
     story = []
+
+    # 0. Statutory Draft Watermark & Security Classification
+    story.append(Paragraph("CONFIDENTIAL // MRPL TECHNICAL SERVICES", class_style))
+    story.append(Spacer(1, 2))
+    watermark_box = [
+        [Paragraph("⚠ AI-GENERATED DRAFT — STATUTORY HUMAN REVIEW REQUIRED", watermark_style)]
+    ]
+    w_table = Table(watermark_box, colWidths=[540])
+    w_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#FEE2E2")),
+        ("BOX", (0, 0), (-1, -1), 0.75, colors.HexColor("#EF4444")),
+        ("TOPPADDING", (0, 0), (-1, -1), 3),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+    ]))
+    story.append(w_table)
+    story.append(Spacer(1, 6))
 
     # 1. Official Header
     story.append(Paragraph("MANGALORE REFINERY AND PETROCHEMICALS LIMITED", title_style))
@@ -202,6 +238,12 @@ def compile_inspection_certificate_pdf(
         ("RIGHTPADDING", (0, 0), (-1, -1), 8),
     ]))
     story.append(s_table)
+    story.append(Spacer(1, 8))
+    story.append(Paragraph(
+        "<i>NOTICE: This document is an AI-assisted diagnostic draft compiled by SovereignWorkbench. "
+        "Statutory compliance under OISD-118 and ASME B31.3 requires human wet-ink sign-off above prior to procurement.</i>",
+        ParagraphStyle("CertNotice", parent=body_style, fontSize=7, leading=9, textColor=colors.HexColor("#64748B"), alignment=1)
+    ))
 
     doc.build(story)
     return output_path

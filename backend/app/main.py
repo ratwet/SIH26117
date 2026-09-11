@@ -15,6 +15,8 @@ from app.api.admin import router as admin_router
 from app.api.chat import router as chat_router
 from app.api.files import router as files_router
 from app.api.telemetry import router as telemetry_router
+from app.api.voice import router as voice_router
+from app.api.actions import router as actions_router
 
 
 @asynccontextmanager
@@ -63,6 +65,8 @@ app.include_router(admin_router)
 app.include_router(chat_router)
 app.include_router(files_router)
 app.include_router(telemetry_router)
+app.include_router(voice_router)
+app.include_router(actions_router)
 
 # Mount Aquanex Frontend SPA if built in frontend/dist
 from fastapi.staticfiles import StaticFiles
