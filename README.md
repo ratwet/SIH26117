@@ -4,7 +4,6 @@
 
 **Sovereign On-Premise AI Workbench for Confidential Industrial Operations**
 
-[![Tests](https://img.shields.io/badge/tests-58%2F58%20passing-brightgreen?style=flat-square)](backend/tests/)
 [![Python](https://img.shields.io/badge/python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE.md)
