@@ -8,7 +8,10 @@ set -e
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 APP_DIR="$HOME/.local/share/applications"
-DESKTOP_SRC="$ROOT_DIR/aquanex.desktop"
+DESKTOP_SRC="$ROOT_DIR/deploy/desktop/aquanex.desktop"
+if [ ! -f "$DESKTOP_SRC" ] && [ -f "$ROOT_DIR/aquanex.desktop" ]; then
+    DESKTOP_SRC="$ROOT_DIR/aquanex.desktop"
+fi
 DESKTOP_DEST="$APP_DIR/aquanex.desktop"
 ICONS_DIR="$HOME/.icons"
 

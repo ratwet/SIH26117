@@ -1,10 +1,16 @@
-# Python
+# =====================================================================
+# SovereignWorkbench / Aquanex — Git Ignore Configuration
+# Clean, Industry-Standard Rules for Production & SIH Evaluators
+# =====================================================================
+
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-env/
+
+# Distribution / packaging
 build/
 develop-eggs/
 dist/
@@ -20,53 +26,61 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-.venv/
+
+# Virtual environments
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+env/
 venv/
 ENV/
+.venv/
 
-# Node / Frontend
+# Node & Frontend
 node_modules/
-frontend/dist/
 frontend/node_modules/
+frontend/dist/
 frontend/src-tauri/target/
 src-tauri/target/
 
-
-# Runtime data
+# Local databases, models & runtime deliverables (Zero Leakage)
 data/
-
-# Data & Models (Do not commit models or runtime data)
 backend/data/
 backend/models_storage/
 backend/rag_docs/*.pdf
+models_storage/
 *.gguf
 *.bin
 *.tar.gz
 *.zip
-1bug.md
+*.db
+*.sqlite
+*.sqlite3
 
-# External references
+# External references & scratch folders
 deepseek-harness/
 needle/
+outputs/
+scratch/
 .~lock.*
 *.bak
+*.tmp
+*.log
 
-# IDE & OS
+# IDE & OS Specific
 .idea/
 .vscode/
 *.swp
 *.swo
 .DS_Store
 Thumbs.db
-*.log
-*.tmp
 .pytest_cache/
+backend/.pytest_cache/
 
-# Internal Agent Notes & Developer Specs (Kept local, never pushed)
+# Local Agent Workspace Notes
 context.md
 memory.md
-docs/specs/
-docs/reports/
-SIH2026*
-scripts/generate_sih_presentation.py
-
+1bug.md

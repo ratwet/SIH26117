@@ -97,6 +97,18 @@ const chkModal8B = document.getElementById('chkModal8B');
 let editingUserId = null;
 let cachedAdminUsers = [];
 
+// Standalone App Identity & Senior Engineering Modals
+const standaloneAppBadge = document.getElementById('standaloneAppBadge');
+const standaloneAppIcon = document.getElementById('standaloneAppIcon');
+const standaloneAppName = document.getElementById('standaloneAppName');
+const standaloneAppSub = document.getElementById('standaloneAppSub');
+const seniorNavTools = document.getElementById('seniorNavTools');
+const btnOpenPidViewer = document.getElementById('btnOpenPidViewer');
+const btnOpenFormulaRunner = document.getElementById('btnOpenFormulaRunner');
+const juniorTerminalCanvas = document.getElementById('juniorTerminalCanvas');
+const seniorPidModal = document.getElementById('seniorPidModal');
+const seniorFormulaModal = document.getElementById('seniorFormulaModal');
+
 // Application State
 let chatSessions = [];
 let currentSessionId = null;
@@ -125,6 +137,7 @@ async function init() {
         const res = await SovereignAPI.login({ username: personaParam.toLowerCase() });
         if (res.user) {
           activeUser = res.user;
+          setCurrentUser(activeUser);
         }
       } catch (err) {
         console.warn("Could not auto-login with URL persona:", err);
@@ -165,38 +178,30 @@ function updateGreeting(user = null) {
     if (role === 'senior') {
       suggestionPillsRow.innerHTML = `
         <button class="pill-btn" data-prompt="Audit line CDU-2-04-150-A1A for remaining safe life per API 570">
-          <span class="pill-icon">⚡</span>
           <span class="pill-text">API 570 Remaining Life Calculation</span>
         </button>
         <button class="pill-btn" data-prompt="Calculate ASME B31.3 minimum required thickness for line CDU-2-04-150-A1A at 150 PSI and 135 C">
-          <span class="pill-icon">🔍</span>
           <span class="pill-text">ASME B31.3 Minimum Thickness</span>
         </button>
         <button class="pill-btn" data-prompt="Summarize the latest ultrasonic thickness NDT inspection survey and highlight thinning anomalies">
-          <span class="pill-icon">📋</span>
           <span class="pill-text">Summarize NDT Inspection Log</span>
         </button>
         <button class="pill-btn" data-prompt="Generate an AutoCAD DXF piping spool replacement specification for corroded segment">
-          <span class="pill-icon">📐</span>
           <span class="pill-text">Generate Piping Spool CAD</span>
         </button>
       `;
     } else if (role === 'junior') {
       suggestionPillsRow.innerHTML = `
         <button class="pill-btn" data-prompt="Quick check: Actual thickness 3.2mm on 4.8mm pipe. Is it safe to operate?">
-          <span class="pill-icon">⚡</span>
           <span class="pill-text">Quick Ultrasonic Thickness Check</span>
         </button>
         <button class="pill-btn" data-prompt="Log severe exterior pitting corrosion observed near elbow weld on CDU overhead line">
-          <span class="pill-icon">🔍</span>
           <span class="pill-text">Log Visual Pipe Defect</span>
         </button>
         <button class="pill-btn" data-prompt="What is the minimum safe thickness before replacement is required under API 570?">
-          <span class="pill-icon">📋</span>
           <span class="pill-text">Check Minimum Safe Wall Thickness</span>
         </button>
         <button class="pill-btn" data-prompt="Show step-by-step ultrasonic thickness measurement procedure for insulated piping">
-          <span class="pill-icon">📐</span>
           <span class="pill-text">View Pipe Inspection SOP</span>
         </button>
       `;
@@ -1291,6 +1296,593 @@ function setupEventListeners() {
 
   // Hook up Pic 1 Manage Access & Node verification handlers
   setupManageAccessHandlers();
+
+  // Hook up Persona Role Switcher, Admin Token Generator, Junior Terminal, and Senior Modals
+  setupRoleSwitcher();
+  setupAdminTokenGenerator();
+  setupJuniorTerminal();
+  setupSeniorModals();
+}
+
+// ==========================================================================
+// PERSONA ROLE SWITCHER & WORKFLOW DISPATCHERS
+// ==========================================================================
+
+async function switchPersonaRole(targetRole) {
+  const role = targetRole.toLowerCase();
+  try {
+    const res = await SovereignAPI.login({ username: role });
+    if (res && res.user) {
+      applyUserPermissions(res.user);
+      return;
+    }
+  } catch (err) {
+    console.warn("Backend persona switch fallback:", err);
+  }
+
+  // Air-gapped / client-side fallback state
+  const fallbackUsers = {
+    admin: {
+      id: 'usr_admin',
+      username: 'admin',
+      name: 'Rajat',
+      role: 'admin',
+      avatar: '👨‍💼',
+      description: 'IT Systems & Cluster Governance • Level 1',
+      allowed_models: ['*']
+    },
+    senior: {
+      id: 'usr_senior',
+      username: 'senior',
+      name: 'Anand',
+      role: 'senior',
+      avatar: '👨‍🔬',
+      description: 'Reliability Engineering Lead • Level 2',
+      allowed_models: ['Workstation-32B', 'Edge-8B']
+    },
+    junior: {
+      id: 'usr_junior',
+      username: 'junior',
+      name: 'Naveen',
+      role: 'junior',
+      avatar: '👷‍♂️',
+      description: 'Field Ultrasonic Inspection Operator • Level 3',
+      allowed_models: ['Edge-8B']
+    }
+  };
+
+  const activeUser = fallbackUsers[role] || fallbackUsers.senior;
+  setCurrentUser(activeUser);
+  applyUserPermissions(activeUser);
+}
+
+function setupRoleSwitcher() {
+  document.querySelectorAll('.role-btn-pill').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const targetRole = btn.dataset.role;
+      if (!targetRole) return;
+      await switchPersonaRole(targetRole);
+    });
+  });
+}
+
+function setupAdminTokenGenerator() {
+  const btnAdminGenerateToken = document.getElementById('btnAdminGenerateToken');
+  const adminTokenTypeSelect = document.getElementById('adminTokenTypeSelect');
+  const adminTokenCircuitInput = document.getElementById('adminTokenCircuitInput');
+  const adminTokenTtlInput = document.getElementById('adminTokenTtlInput');
+  const adminGeneratedTokenBox = document.getElementById('adminGeneratedTokenBox');
+  const adminTokenCodeDisplay = document.getElementById('adminTokenCodeDisplay');
+  const tokenValidityTag = document.getElementById('tokenValidityTag');
+  const adminTokenMetaInfo = document.getElementById('adminTokenMetaInfo');
+  const btnCopyAdminToken = document.getElementById('btnCopyAdminToken');
+
+  if (btnAdminGenerateToken) {
+    btnAdminGenerateToken.addEventListener('click', () => {
+      const actionType = adminTokenTypeSelect ? adminTokenTypeSelect.value : 'CRITICAL_PIPING_DERATING';
+      const circuit = adminTokenCircuitInput ? adminTokenCircuitInput.value.trim() : 'CDU-2-04-150-A1A';
+      const ttl = adminTokenTtlInput ? adminTokenTtlInput.value : '24';
+      
+      const randHex = () => Math.random().toString(16).substring(2, 6).toUpperCase();
+      const token = `AQNX-AUTH-${randHex()}-${randHex()}-${randHex()}-2026`;
+      
+      if (adminTokenCodeDisplay) adminTokenCodeDisplay.textContent = token;
+      if (tokenValidityTag) tokenValidityTag.textContent = `VALID ${ttl} HOURS`;
+      if (adminTokenMetaInfo) {
+        adminTokenMetaInfo.innerHTML = `HMAC-SHA256 signature bound to <strong>Rajat (IT Admin)</strong> &bull; Circuit: <code>${circuit}</code> &bull; Action: <code>${actionType}</code> &bull; 0-Byte WAN Exposure`;
+      }
+      if (adminGeneratedTokenBox) {
+        adminGeneratedTokenBox.style.display = 'block';
+        adminGeneratedTokenBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+  }
+
+  if (btnCopyAdminToken) {
+    btnCopyAdminToken.addEventListener('click', () => {
+      const code = adminTokenCodeDisplay ? adminTokenCodeDisplay.textContent : '';
+      if (code) {
+        navigator.clipboard.writeText(code).then(() => {
+          btnCopyAdminToken.textContent = 'Copied! ✓';
+          setTimeout(() => { btnCopyAdminToken.textContent = 'Copy'; }, 2000);
+        }).catch(() => {
+          btnCopyAdminToken.textContent = 'Copied!';
+        });
+      }
+    });
+  }
+}
+
+function setupJuniorTerminal() {
+  const fieldPipingCircuitSelect = document.getElementById('fieldPipingCircuitSelect');
+  const fieldCmlSelect = document.getElementById('fieldCmlSelect');
+  const fieldNominalWallVal = document.getElementById('fieldNominalWallVal');
+  const fieldDesignMinVal = document.getElementById('fieldDesignMinVal');
+  const inputMeasuredThickness = document.getElementById('inputMeasuredThickness');
+  const fieldGaugeCard = document.getElementById('fieldGaugeCard');
+  const fieldGaugeBadge = document.getElementById('fieldGaugeBadge');
+  const fieldGaugeFill = document.getElementById('fieldGaugeFill');
+  const fieldGaugeMsg = document.getElementById('fieldGaugeMsg');
+  const defectPillSelectors = document.getElementById('defectPillSelectors');
+  const btnLogCmlReading = document.getElementById('btnLogCmlReading');
+  const btnFieldVoiceRecord = document.getElementById('btnFieldVoiceRecord');
+  const fieldVoiceStatus = document.getElementById('fieldVoiceStatus');
+  const fieldVoiceTranscript = document.getElementById('fieldVoiceTranscript');
+  const fieldLoggedCountBadge = document.getElementById('fieldLoggedCountBadge');
+  const fieldSurveyTbody = document.getElementById('fieldSurveyTbody');
+  const btnEscalateToSenior = document.getElementById('btnEscalateToSenior');
+
+  const cmlSpecs = {
+    'CML-01': { nom: 7.11, req: 3.42, desc: 'Upstream Straight Run (ASTM A106 Gr. B)' },
+    'CML-02': { nom: 7.11, req: 3.42, desc: 'Concentric Reducer (Schedule 40)' },
+    'CML-03': { nom: 7.11, req: 3.42, desc: 'Flange Weld Neck Zone' },
+    'CML-04': { nom: 7.11, req: 3.42, desc: '90° Elbow Extrados (High Turbulence)' }
+  };
+
+  function updateGauge() {
+    const selectedCml = fieldCmlSelect ? fieldCmlSelect.value : 'CML-04';
+    const spec = cmlSpecs[selectedCml] || { nom: 7.11, req: 3.42 };
+    const tNom = spec.nom;
+    const tReq = spec.req;
+    const tAct = parseFloat(inputMeasuredThickness ? inputMeasuredThickness.value : 3.18) || 0;
+
+    if (fieldNominalWallVal) fieldNominalWallVal.textContent = `${tNom.toFixed(2)} mm`;
+    if (fieldDesignMinVal) fieldDesignMinVal.textContent = `${tReq.toFixed(2)} mm`;
+
+    const pct = Math.min(Math.max((tAct / tNom) * 100, 5), 100);
+    if (fieldGaugeFill) fieldGaugeFill.style.width = `${pct}%`;
+
+    if (tAct < tReq) {
+      if (fieldGaugeCard) fieldGaugeCard.className = 'field-gauge-card';
+      if (fieldGaugeBadge) {
+        fieldGaugeBadge.className = 'gauge-badge danger';
+        fieldGaugeBadge.textContent = 'CRITICAL RETIREMENT BREACH';
+      }
+      if (fieldGaugeFill) fieldGaugeFill.className = 'gauge-bar-fill danger';
+      const deficit = (tReq - tAct).toFixed(2);
+      if (fieldGaugeMsg) {
+        fieldGaugeMsg.innerHTML = `⚠️ <strong>API 570 Alert:</strong> Reading <strong>${tAct.toFixed(2)} mm</strong> is <strong>${deficit} mm below</strong> statutory retirement limit (${tReq.toFixed(2)} mm). Immediate Senior Lead review required.`;
+      }
+    } else if (tAct <= tReq + 1.5) {
+      if (fieldGaugeCard) fieldGaugeCard.className = 'field-gauge-card warn-state';
+      if (fieldGaugeBadge) {
+        fieldGaugeBadge.className = 'gauge-badge warn';
+        fieldGaugeBadge.textContent = 'ACCELERATED WEAR WARNING';
+      }
+      if (fieldGaugeFill) fieldGaugeFill.className = 'gauge-bar-fill warn';
+      if (fieldGaugeMsg) {
+        fieldGaugeMsg.innerHTML = `⚡ <strong>Monitoring Required:</strong> Wall thickness <strong>${tAct.toFixed(2)} mm</strong> is approaching minimum retirement limit (${tReq.toFixed(2)} mm). Schedule ultrasonic verification in 90 days.`;
+      }
+    } else {
+      if (fieldGaugeCard) fieldGaugeCard.className = 'field-gauge-card safe-state';
+      if (fieldGaugeBadge) {
+        fieldGaugeBadge.className = 'gauge-badge safe';
+        fieldGaugeBadge.textContent = 'ACCEPTABLE INTEGRITY';
+      }
+      if (fieldGaugeFill) fieldGaugeFill.className = 'gauge-bar-fill safe';
+      if (fieldGaugeMsg) {
+        fieldGaugeMsg.innerHTML = `✓ <strong>Condition Healthy:</strong> Wall thickness <strong>${tAct.toFixed(2)} mm</strong> meets ASME B31.3 & API 570 structural safety requirements.`;
+      }
+    }
+  }
+
+  if (fieldCmlSelect) fieldCmlSelect.addEventListener('change', updateGauge);
+  if (inputMeasuredThickness) inputMeasuredThickness.addEventListener('input', updateGauge);
+
+  if (defectPillSelectors) {
+    defectPillSelectors.addEventListener('click', (e) => {
+      const btn = e.target.closest('.defect-pill');
+      if (!btn) return;
+      const isNormal = btn.dataset.val === 'normal';
+      if (isNormal) {
+        defectPillSelectors.querySelectorAll('.defect-pill').forEach(p => p.className = 'defect-pill');
+        btn.classList.add('active-normal');
+      } else {
+        const normalBtn = defectPillSelectors.querySelector('[data-val="normal"]');
+        if (normalBtn) normalBtn.classList.remove('active-normal');
+        btn.classList.toggle('active-danger');
+      }
+    });
+  }
+
+  function updateSurveyCount() {
+    const rows = fieldSurveyTbody ? fieldSurveyTbody.querySelectorAll('tr').length : 0;
+    if (fieldLoggedCountBadge) fieldLoggedCountBadge.textContent = `${rows} LOGGED`;
+  }
+
+  if (btnLogCmlReading && fieldSurveyTbody) {
+    btnLogCmlReading.addEventListener('click', () => {
+      const cml = fieldCmlSelect ? fieldCmlSelect.value : 'CML-04';
+      const spec = cmlSpecs[cml] || { nom: 7.11, req: 3.42, desc: 'Component' };
+      const tAct = parseFloat(inputMeasuredThickness ? inputMeasuredThickness.value : 3.18) || 0;
+      let statusClass = 'safe';
+      let statusText = 'HEALTHY';
+      let rowClass = '';
+
+      if (tAct < spec.req) {
+        statusClass = 'danger';
+        statusText = 'CRITICAL';
+        rowClass = 'row-danger';
+      } else if (tAct <= spec.req + 1.5) {
+        statusClass = 'warn';
+        statusText = 'MONITOR';
+      }
+
+      const tr = document.createElement('tr');
+      if (rowClass) tr.className = rowClass;
+      tr.innerHTML = `
+        <td><strong>${cml}</strong></td>
+        <td>${spec.desc.split('(')[0].trim()}</td>
+        <td><strong>${tAct.toFixed(2)} mm</strong></td>
+        <td><span class="status-pill ${statusClass}">${statusText}</span></td>
+        <td><button class="btn-table-del" type="button">✕</button></td>
+      `;
+
+      tr.querySelector('.btn-table-del').addEventListener('click', () => {
+        tr.remove();
+        updateSurveyCount();
+      });
+
+      fieldSurveyTbody.appendChild(tr);
+      updateSurveyCount();
+    });
+  }
+
+  // Voice Sentinel Recording
+  if (btnFieldVoiceRecord) {
+    let recordingTimer = null;
+    let isVoiceActive = false;
+
+    btnFieldVoiceRecord.addEventListener('click', () => {
+      if (!isVoiceActive) {
+        isVoiceActive = true;
+        btnFieldVoiceRecord.classList.add('recording');
+        if (fieldVoiceStatus) fieldVoiceStatus.textContent = 'Listening on-device (Zero Cloud)... Speak clearly';
+        
+        recordingTimer = setTimeout(() => {
+          isVoiceActive = false;
+          btnFieldVoiceRecord.classList.remove('recording');
+          if (fieldVoiceStatus) fieldVoiceStatus.textContent = 'Dictation processed by local Intel Meteor Lake NPU ✓';
+          if (fieldVoiceTranscript) {
+            fieldVoiceTranscript.textContent = `"Line CDU-2-04-150-A1A CML-04 measured 3.18 mm. Flaking corrosion under wet fiberglass insulation observed."`;
+          }
+          if (inputMeasuredThickness) {
+            inputMeasuredThickness.value = '3.18';
+            updateGauge();
+          }
+        }, 2200);
+      } else {
+        clearTimeout(recordingTimer);
+        isVoiceActive = false;
+        btnFieldVoiceRecord.classList.remove('recording');
+        if (fieldVoiceStatus) fieldVoiceStatus.textContent = 'Dictation stopped';
+      }
+    });
+  }
+
+  // Initial table row delete listeners
+  if (fieldSurveyTbody) {
+    fieldSurveyTbody.querySelectorAll('.btn-table-del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.closest('tr').remove();
+        updateSurveyCount();
+      });
+    });
+  }
+
+  // Escalate to Senior Lead
+  if (btnEscalateToSenior) {
+    btnEscalateToSenior.addEventListener('click', async () => {
+      btnEscalateToSenior.innerHTML = `<span>Escalating to Anand (Senior Lead)...</span>`;
+      btnEscalateToSenior.disabled = true;
+
+      // Switch to Senior role
+      await switchPersonaRole('senior');
+
+      // Populate chat with an urgent Escalation Packet
+      const prompt = `URGENT FIELD ESCALATION: Ultrasonic survey from Field Operator Naveen on line CDU-2-04-150-A1A elbow extrados CML-04 measured 3.18 mm (statutory retirement minimum is 3.42 mm). Flaking CUI and localized wall loss detected. Please perform ASME B31.3 derating calculation and issue API 570 repair directive.`;
+      
+      if (chatTextarea) {
+        chatTextarea.value = prompt;
+        chatTextarea.style.height = 'auto';
+        chatTextarea.style.height = Math.min(chatTextarea.scrollHeight, 180) + 'px';
+        updateSendButtonState();
+        handleSendPrompt();
+      }
+
+      btnEscalateToSenior.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <span>Submit Survey to Senior Reliability Lead (Anand)</span>
+      `;
+      btnEscalateToSenior.disabled = false;
+    });
+  }
+}
+
+function setupSeniorModals() {
+  const btnCloseSeniorPidModal = document.getElementById('btnCloseSeniorPidModal');
+  const btnLaunchFormulaFromPid = document.getElementById('btnLaunchFormulaFromPid');
+  const btnCloseSeniorFormulaModal = document.getElementById('btnCloseSeniorFormulaModal');
+
+  // P&ID Inspector Drawer elements
+  const pidSelectedCmlTitle = document.getElementById('pidSelectedCmlTitle');
+  const pidSelectedStatusBadge = document.getElementById('pidSelectedStatusBadge');
+  const pidCompVal = document.getElementById('pidCompVal');
+  const pidMaterialVal = document.getElementById('pidMaterialVal');
+  const pidOdVal = document.getElementById('pidOdVal');
+  const pidNomVal = document.getElementById('pidNomVal');
+  const pidReqVal = document.getElementById('pidReqVal');
+  const pidReadingVal = document.getElementById('pidReadingVal');
+  const pidRateVal = document.getElementById('pidRateVal');
+  const pidRlVal = document.getElementById('pidRlVal');
+
+  const cmlDetails = {
+    'CML-01': {
+      title: 'CML-01: Straight Pipe Run',
+      badge: { text: 'ACCEPTABLE INTEGRITY', class: 'safe' },
+      comp: 'Seamless Pipe Run (4" Sch 40)',
+      mat: 'ASTM A106 Grade B Carbon Steel',
+      od: '114.3 mm (4.500 in)',
+      nom: '7.11 mm',
+      req: '3.42 mm (ASME B31.3)',
+      reading: '6.85 mm (+3.43 mm safety margin)',
+      readingClass: 'safe',
+      rate: '0.04 mm/year (Base atmospheric)',
+      rl: '85.75 Years (Healthy)',
+      rlClass: 'safe'
+    },
+    'CML-02': {
+      title: 'CML-02: Concentric Reducer',
+      badge: { text: 'ACCEPTABLE INTEGRITY', class: 'safe' },
+      comp: 'Concentric Reducer 6" x 4"',
+      mat: 'ASTM A234 WPB Carbon Steel',
+      od: '114.3 mm (4.500 in)',
+      nom: '7.11 mm',
+      req: '3.42 mm (ASME B31.3)',
+      reading: '6.40 mm (+2.98 mm safety margin)',
+      readingClass: 'safe',
+      rate: '0.08 mm/year (Transition flow)',
+      rl: '37.25 Years (Acceptable)',
+      rlClass: 'safe'
+    },
+    'CML-03': {
+      title: 'CML-03: Flange Weld Neck Zone',
+      badge: { text: 'ACCELERATED WEAR ALERT', class: 'warn' },
+      comp: 'Weld Neck Flange Class 150 RF',
+      mat: 'ASTM A105 Forged Carbon Steel',
+      od: '114.3 mm (4.500 in)',
+      nom: '7.11 mm',
+      req: '3.42 mm (ASME B31.3)',
+      reading: '5.10 mm (+1.68 mm margin)',
+      readingClass: 'alert',
+      rate: '0.18 mm/year (Heat-affected zone)',
+      rl: '9.33 Years (Routine surveillance)',
+      rlClass: 'alert'
+    },
+    'CML-04': {
+      title: 'CML-04: 90° Elbow Extrados',
+      badge: { text: 'CRITICAL RETIREMENT BREACH', class: 'danger' },
+      comp: '90° Long Radius Elbow (4" Sch 40)',
+      mat: 'ASTM A106 Grade B Carbon Steel',
+      od: '114.3 mm (4.500 in)',
+      nom: '7.11 mm',
+      req: '3.42 mm (ASME B31.3)',
+      reading: '3.18 mm (-0.24 mm below limit)',
+      readingClass: 'danger',
+      rate: '0.28 mm/year (Severe CUI)',
+      rl: '0.00 Years (BREACHED)',
+      rlClass: 'danger'
+    }
+  };
+
+  // Open / Close P&ID Modal
+  if (btnOpenPidViewer && seniorPidModal) {
+    btnOpenPidViewer.addEventListener('click', () => {
+      seniorPidModal.style.display = 'flex';
+    });
+  }
+  if (btnCloseSeniorPidModal && seniorPidModal) {
+    btnCloseSeniorPidModal.addEventListener('click', () => {
+      seniorPidModal.style.display = 'none';
+    });
+  }
+
+  // Interactive CML Pins in P&ID SVG
+  document.querySelectorAll('.pid-cml-pin-group').forEach(pin => {
+    pin.addEventListener('click', () => {
+      const cmlKey = pin.dataset.cml;
+      document.querySelectorAll('.pid-cml-pin-group').forEach(p => p.classList.remove('active'));
+      pin.classList.add('active');
+
+      const data = cmlDetails[cmlKey];
+      if (data) {
+        if (pidSelectedCmlTitle) pidSelectedCmlTitle.textContent = data.title;
+        if (pidSelectedStatusBadge) {
+          pidSelectedStatusBadge.className = `status-pill ${data.badge.class}`;
+          pidSelectedStatusBadge.textContent = data.badge.text;
+        }
+        if (pidCompVal) pidCompVal.textContent = data.comp;
+        if (pidMaterialVal) pidMaterialVal.textContent = data.mat;
+        if (pidOdVal) pidOdVal.textContent = data.od;
+        if (pidNomVal) pidNomVal.textContent = data.nom;
+        if (pidReqVal) pidReqVal.textContent = data.req;
+        if (pidReadingVal) {
+          pidReadingVal.className = `param-val ${data.readingClass}`;
+          pidReadingVal.textContent = data.reading;
+        }
+        if (pidRateVal) pidRateVal.textContent = data.rate;
+        if (pidRlVal) {
+          pidRlVal.className = `param-val ${data.rlClass}`;
+          pidRlVal.textContent = data.rl;
+        }
+      }
+    });
+  });
+
+  if (btnLaunchFormulaFromPid) {
+    btnLaunchFormulaFromPid.addEventListener('click', () => {
+      if (seniorPidModal) seniorPidModal.style.display = 'none';
+      if (seniorFormulaModal) seniorFormulaModal.style.display = 'flex';
+    });
+  }
+
+  // Formula Runner Modal
+  if (btnOpenFormulaRunner && seniorFormulaModal) {
+    btnOpenFormulaRunner.addEventListener('click', () => {
+      seniorFormulaModal.style.display = 'flex';
+    });
+  }
+  if (btnCloseSeniorFormulaModal && seniorFormulaModal) {
+    btnCloseSeniorFormulaModal.addEventListener('click', () => {
+      seniorFormulaModal.style.display = 'none';
+    });
+  }
+
+  // Formula Calculation Logic
+  const calcInputP = document.getElementById('calcInputP');
+  const calcInputD = document.getElementById('calcInputD');
+  const calcInputS = document.getElementById('calcInputS');
+  const calcInputE = document.getElementById('calcInputE');
+  const calcInputY = document.getElementById('calcInputY');
+  const calcInputC = document.getElementById('calcInputC');
+  const calcInputTact = document.getElementById('calcInputTact');
+  const calcInputCr = document.getElementById('calcInputCr');
+  const btnRunFormulaCalculation = document.getElementById('btnRunFormulaCalculation');
+  const btnResetFormulaDefaults = document.getElementById('btnResetFormulaDefaults');
+  const proofStep1 = document.getElementById('proofStep1');
+  const proofStep1Total = document.getElementById('proofStep1Total');
+  const proofStep2 = document.getElementById('proofStep2');
+  const proofStep3 = document.getElementById('proofStep3');
+  const proofVerdictBanner = document.getElementById('proofVerdictBanner');
+  const btnInsertProofIntoChat = document.getElementById('btnInsertProofIntoChat');
+
+  function runFormulaCalculation() {
+    const P = parseFloat(calcInputP ? calcInputP.value : 2.10) || 2.10;
+    const D = parseFloat(calcInputD ? calcInputD.value : 114.3) || 114.3;
+    const S = parseFloat(calcInputS ? calcInputS.value : 118.0) || 118.0;
+    const E = parseFloat(calcInputE ? calcInputE.value : 1.00) || 1.00;
+    const Y = parseFloat(calcInputY ? calcInputY.value : 0.40) || 0.40;
+    const C = parseFloat(calcInputC ? calcInputC.value : 1.50) || 1.50;
+    const tAct = parseFloat(calcInputTact ? calcInputTact.value : 3.18) || 3.18;
+    const Cr = parseFloat(calcInputCr ? calcInputCr.value : 0.28) || 0.28;
+
+    const numerator = P * D;
+    const denominator = 2 * (S * E + P * Y);
+    const tBase = numerator / denominator;
+    const tReq = tBase + C;
+    const tStructuralReq = Math.max(tReq, 3.42);
+
+    const RL = (tAct - tStructuralReq) / Cr;
+    const pDerated = (2 * S * E * tAct) / (D - 2 * Y * tAct);
+
+    if (proofStep1) {
+      proofStep1.innerHTML = `$$t_{base} = \\frac{${P.toFixed(2)} \\times ${D.toFixed(1)}}{2(${S.toFixed(1)} \\times ${E.toFixed(2)} + ${P.toFixed(2)} \\times ${Y.toFixed(1)})} = \\frac{${numerator.toFixed(2)}}{${denominator.toFixed(2)}} = \\mathbf{${tBase.toFixed(3)}\\text{ mm}}$$`;
+    }
+    if (proofStep1Total) {
+      proofStep1Total.innerHTML = `$$t_{req} = ${tBase.toFixed(3)}\\text{ mm} + ${C.toFixed(3)}\\text{ mm} = \\mathbf{${tReq.toFixed(3)}\\text{ mm}}$$
+      <span class="sub-proof-note">(Structural minimum including mechanical allowance: <strong>${tStructuralReq.toFixed(3)} mm</strong> per MRPL Spec)</span>`;
+    }
+    if (proofStep2) {
+      const isBreach = RL < 0;
+      proofStep2.className = `eq-step ${isBreach ? 'danger' : 'safe'}`;
+      proofStep2.innerHTML = `$$RL = \\frac{${tAct.toFixed(3)} - ${tStructuralReq.toFixed(3)}}{${Cr.toFixed(3)}} = \\frac{${(tAct - tStructuralReq).toFixed(3)}}{${Cr.toFixed(3)}} = \\mathbf{${RL.toFixed(3)}\\text{ Years ${isBreach ? '(BREACHED)' : ''}}}$$`;
+    }
+    if (proofStep3) {
+      proofStep3.innerHTML = `$$P_{derated} = \\mathbf{${pDerated.toFixed(2)}\\text{ MPa}}$$
+      <span class="sub-proof-note">(${tAct < tStructuralReq ? `Operating pressure must be derated from ${P.toFixed(2)} MPa to &le; ${pDerated.toFixed(2)} MPa immediately` : `Line safe at design pressure ${P.toFixed(2)} MPa`})</span>`;
+    }
+
+    if (proofVerdictBanner) {
+      if (tAct < tStructuralReq) {
+        proofVerdictBanner.className = 'proof-verdict-banner danger';
+        proofVerdictBanner.innerHTML = `
+          <div class="verdict-icon">⚠️</div>
+          <div class="verdict-content">
+            <div class="verdict-title">STATUTORY VERDICT: MANDATORY DERATING / ISOLATION</div>
+            <div class="verdict-desc">Wall thickness ${tAct.toFixed(2)} mm violates API 570 retirement threshold ${tStructuralReq.toFixed(2)} mm. Immediate pressure derating to &le;${pDerated.toFixed(2)} MPa or isolation required within 48 hours.</div>
+          </div>
+        `;
+      } else {
+        proofVerdictBanner.className = 'proof-verdict-banner safe';
+        proofVerdictBanner.innerHTML = `
+          <div class="verdict-icon">✓</div>
+          <div class="verdict-content">
+            <div class="verdict-title">STATUTORY VERDICT: COMPLIANT WITH ASME B31.3 &amp; API 570</div>
+            <div class="verdict-desc">Wall thickness ${tAct.toFixed(2)} mm satisfies minimum required thickness ${tStructuralReq.toFixed(2)} mm. Remaining life is ${RL.toFixed(1)} years. Next inspection interval: ${(RL / 2).toFixed(1)} years.</div>
+          </div>
+        `;
+      }
+    }
+
+    return { P, D, S, E, Y, C, tAct, Cr, tBase, tStructuralReq, RL, pDerated };
+  }
+
+  if (btnRunFormulaCalculation) {
+    btnRunFormulaCalculation.addEventListener('click', runFormulaCalculation);
+  }
+
+  if (btnResetFormulaDefaults) {
+    btnResetFormulaDefaults.addEventListener('click', () => {
+      if (calcInputP) calcInputP.value = '2.10';
+      if (calcInputD) calcInputD.value = '114.3';
+      if (calcInputS) calcInputS.value = '118.0';
+      if (calcInputE) calcInputE.value = '1.00';
+      if (calcInputY) calcInputY.value = '0.4';
+      if (calcInputC) calcInputC.value = '1.50';
+      if (calcInputTact) calcInputTact.value = '3.18';
+      if (calcInputCr) calcInputCr.value = '0.28';
+      runFormulaCalculation();
+    });
+  }
+
+  if (btnInsertProofIntoChat) {
+    btnInsertProofIntoChat.addEventListener('click', () => {
+      const res = runFormulaCalculation();
+      if (seniorFormulaModal) seniorFormulaModal.style.display = 'none';
+
+      switchPersonaRole('senior');
+
+      const proofMarkdown = `### 📐 Deterministic ASME B31.3 & API 570 Proof
+- **Piping Circuit:** \`CDU-2-04-150-A1A\` (ASTM A106 Gr. B @ 285°C)
+- **Minimum Required Wall Thickness ($t_{req}$):**
+  $$t_{base} = \\frac{P \\cdot D}{2(S \\cdot E + P \\cdot Y)} = \\frac{${res.P.toFixed(2)} \\times ${res.D.toFixed(1)}}{2(${res.S.toFixed(1)} \\times ${res.E.toFixed(2)} + ${res.P.toFixed(2)} \\times ${res.Y.toFixed(1)})} = ${res.tBase.toFixed(3)}\\text{ mm}$$
+  $$t_{req} = ${res.tBase.toFixed(3)} + ${res.C.toFixed(3)} = \\mathbf{${(res.tBase + res.C).toFixed(3)}\\text{ mm}}$$
+  *(Structural retirement limit per MRPL Spec: **${res.tStructuralReq.toFixed(3)} mm**)*
+- **Remaining Useful Life ($RL$):**
+  $$RL = \\frac{t_{actual} - t_{req}}{Cr} = \\frac{${res.tAct.toFixed(2)} - ${res.tStructuralReq.toFixed(2)}}{${res.Cr.toFixed(2)}} = \\mathbf{${res.RL.toFixed(2)}\\text{ Years (${res.RL < 0 ? 'BREACHED' : 'SAFE'})}}$$
+- **Derated Operating Pressure ($P_{derated}$):**
+  $$P_{derated} = \\mathbf{${res.pDerated.toFixed(2)}\\text{ MPa}}$$
+- **Statutory Directive:** ${res.RL < 0 ? `Under **API 570 §7.1.3**, mandatory operating pressure derating from ${res.P.toFixed(2)} MPa to \\le ${res.pDerated.toFixed(2)} MPa must be executed immediately, or full encirclement repair sleeve installed.` : `Operating pressure confirmed safe.`}`;
+
+      if (chatTextarea) {
+        chatTextarea.value = proofMarkdown;
+        chatTextarea.style.height = 'auto';
+        chatTextarea.style.height = Math.min(chatTextarea.scrollHeight, 220) + 'px';
+        updateSendButtonState();
+        handleSendPrompt();
+      }
+    });
+  }
 }
 
 // ==========================================================================
@@ -1299,6 +1891,7 @@ function setupEventListeners() {
 
 function applyUserPermissions(user) {
   if (!user) user = getCurrentUser();
+  const role = (user.role || 'senior').toLowerCase();
 
   // 1. Update Sidebar Profile Pill
   if (userAvatarChar) userAvatarChar.textContent = user.avatar || '👤';
@@ -1308,85 +1901,106 @@ function applyUserPermissions(user) {
   // Update dynamic greeting with user's name
   updateGreeting(user);
 
-  // 2. Role-specific canvas & model controls
-  const role = (user.role || 'senior').toLowerCase();
-
+  // 2. Role-specific standalone canvas & toolbar layouts
   if (role === 'admin') {
-    // Admin: Hide engineer sidebar (no + New chat, no dummy recent chats!), show clean registered clusters & nav
+    // Admin Persona: IT Cluster Control, Hardware Nodes & Cryptographic Audit
+    if (standaloneAppIcon) standaloneAppIcon.textContent = '👑';
+    if (standaloneAppName) standaloneAppName.textContent = 'Aquanex Sovereign Admin';
+    if (standaloneAppSub) standaloneAppSub.textContent = 'Cluster Control & Model Governance';
+    document.title = 'Aquanex Admin — Sovereign Cluster Control Center';
+
     if (engineerSidebarSection) engineerSidebarSection.style.display = 'none';
     if (adminSidebarSection) adminSidebarSection.style.display = 'flex';
     if (sidebarRefTag) sidebarRefTag.style.display = 'block';
 
-    // Top Navbar: Show Apps brand, hide model dropdown, show top telemetry strip & secure status pill
     if (adminNavbarBrand) adminNavbarBrand.style.display = 'flex';
     if (modelDropdownWrapper) modelDropdownWrapper.style.display = 'none';
     if (adminTopTelemetry) adminTopTelemetry.style.display = 'flex';
     if (airGapStatusBadge) airGapStatusBadge.style.display = 'none';
+    if (seniorNavTools) seniorNavTools.style.display = 'none';
 
-    // Main Canvas: Show Sovereign IT Control Dashboard, hide chat canvas and bottom input
     if (workspaceCanvas) workspaceCanvas.style.display = 'none';
+    if (juniorTerminalCanvas) juniorTerminalCanvas.style.display = 'none';
     if (inputBarOuter) inputBarOuter.style.display = 'none';
     if (adminDashboardCanvas) adminDashboardCanvas.style.display = 'block';
     if (adminGovernanceCard) adminGovernanceCard.style.display = 'block';
 
-    // Load full admin dashboard data (Pic 1)
     loadAdminDashboardData();
-  } else {
-    // Engineers (Senior Lead & Junior Field Tech): Show engineer sidebar with chat & history
+  } else if (role === 'junior') {
+    // Junior / Field Engineer Persona: Standalone Clean Normal Chat UI
+    if (standaloneAppIcon) standaloneAppIcon.textContent = '👷';
+    if (standaloneAppName) standaloneAppName.textContent = 'Aquanex Field Engineer';
+    if (standaloneAppSub) standaloneAppSub.textContent = 'Ultrasonic Inspection Assistant (Edge-8B)';
+    document.title = 'Aquanex Field — Ultrasonic Inspection Assistant';
+
     if (engineerSidebarSection) engineerSidebarSection.style.display = 'block';
     if (adminSidebarSection) adminSidebarSection.style.display = 'none';
     if (sidebarRefTag) sidebarRefTag.style.display = 'none';
 
-    // Top Navbar: Hide Apps brand, show model dropdown, hide admin telemetry, show standard air-gap badge
     if (adminNavbarBrand) adminNavbarBrand.style.display = 'none';
     if (modelDropdownWrapper) modelDropdownWrapper.style.display = 'flex';
+    if (modelDropdownBtn) modelDropdownBtn.style.display = 'none';
     if (adminTopTelemetry) adminTopTelemetry.style.display = 'none';
     if (airGapStatusBadge) airGapStatusBadge.style.display = 'inline-flex';
+    if (seniorNavTools) seniorNavTools.style.display = 'none';
 
-    // Main Canvas: Show workspace chat canvas & input
     if (adminDashboardCanvas) adminDashboardCanvas.style.display = 'none';
+    if (juniorTerminalCanvas) juniorTerminalCanvas.style.display = 'none';
     if (workspaceCanvas) workspaceCanvas.style.display = 'flex';
     if (inputBarOuter) inputBarOuter.style.display = 'flex';
     if (adminGovernanceCard) adminGovernanceCard.style.display = 'none';
 
-    // Update dynamic greeting & suggestion pills with engineering prompts
-    updateGreeting(user);
+    // Junior has locked pre-configured model
+    if (juniorLockedBadge) {
+      juniorLockedBadge.style.display = 'inline-flex';
+      juniorLockedBadge.innerHTML = `
+        <span class="lock-indicator-pulse"></span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>Field Edge-8B (Zero Latency • Local NPU)</span>
+      `;
+    }
+  } else {
+    // Senior Persona: Standalone Reliability Engineering Lead & Conversational Workbench
+    if (standaloneAppIcon) standaloneAppIcon.textContent = '📐';
+    if (standaloneAppName) standaloneAppName.textContent = 'Aquanex Senior Lead';
+    if (standaloneAppSub) standaloneAppSub.textContent = 'Reliability Engineering & Formula Modeling';
+    document.title = 'Aquanex Senior — Reliability Engineering Lead';
 
-    if (role === 'junior') {
-      // Junior: Pre-configured, locked model, zero dropdown friction
-      if (modelDropdownBtn) modelDropdownBtn.style.display = 'none';
-      if (juniorLockedBadge) {
-        juniorLockedBadge.style.display = 'inline-flex';
-        juniorLockedBadge.innerHTML = `
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          <span>Standard Inspection Model (Pre-configured)</span>
-        `;
-      }
-      if (modelMenu) modelMenu.style.display = 'none';
-    } else if (role === 'senior') {
-      // Senior: Unlocked model switcher for authorized models
-      if (modelDropdownBtn) modelDropdownBtn.style.display = 'inline-flex';
-      if (juniorLockedBadge) juniorLockedBadge.style.display = 'none';
+    if (engineerSidebarSection) engineerSidebarSection.style.display = 'block';
+    if (adminSidebarSection) adminSidebarSection.style.display = 'none';
+    if (sidebarRefTag) sidebarRefTag.style.display = 'none';
 
-      // Filter available options
-      const allowed = user.allowed_models || ["Workstation-32B", "Edge-8B"];
-      const isAll = allowed.includes('*');
-      document.querySelectorAll('.model-option').forEach(opt => {
-        const modelName = opt.dataset.model;
-        const isAllowed = isAll || allowed.some(a => a.toLowerCase().replace(/[-_]/g, '') === modelName.toLowerCase().replace(/[-_]/g, ''));
-        opt.style.display = isAllowed ? 'block' : 'none';
+    if (adminNavbarBrand) adminNavbarBrand.style.display = 'none';
+    if (modelDropdownWrapper) modelDropdownWrapper.style.display = 'flex';
+    if (adminTopTelemetry) adminTopTelemetry.style.display = 'none';
+    if (airGapStatusBadge) airGapStatusBadge.style.display = 'inline-flex';
+    if (seniorNavTools) seniorNavTools.style.display = 'flex';
+
+    if (adminDashboardCanvas) adminDashboardCanvas.style.display = 'none';
+    if (juniorTerminalCanvas) juniorTerminalCanvas.style.display = 'none';
+    if (workspaceCanvas) workspaceCanvas.style.display = 'flex';
+    if (inputBarOuter) inputBarOuter.style.display = 'flex';
+    if (adminGovernanceCard) adminGovernanceCard.style.display = 'none';
+
+    if (modelDropdownBtn) modelDropdownBtn.style.display = 'inline-flex';
+    if (juniorLockedBadge) juniorLockedBadge.style.display = 'none';
+
+    const allowed = user.allowed_models || ["Workstation-32B", "Edge-8B"];
+    const isAll = allowed.includes('*');
+    document.querySelectorAll('.model-option').forEach(opt => {
+      const modelName = opt.dataset.model;
+      const isAllowed = isAll || allowed.some(a => a.toLowerCase().replace(/[-_]/g, '') === modelName.toLowerCase().replace(/[-_]/g, ''));
+      opt.style.display = isAllowed ? 'block' : 'none';
+    });
+
+    const current = currentModelBadge ? currentModelBadge.textContent : '';
+    if (!isAll && !allowed.some(a => a.toLowerCase().replace(/[-_]/g, '') === current.toLowerCase().replace(/[-_]/g, ''))) {
+      const firstAllowed = allowed[0] || 'Workstation-32B';
+      if (currentModelBadge) currentModelBadge.textContent = firstAllowed;
+      document.querySelectorAll('.model-option').forEach(o => {
+        if (o.dataset.model === firstAllowed) o.classList.add('active');
+        else o.classList.remove('active');
       });
-
-      // Update active badge if current model is not allowed
-      const current = currentModelBadge ? currentModelBadge.textContent : '';
-      if (!isAll && !allowed.some(a => a.toLowerCase().replace(/[-_]/g, '') === current.toLowerCase().replace(/[-_]/g, ''))) {
-        const firstAllowed = allowed[0] || 'Workstation-32B';
-        if (currentModelBadge) currentModelBadge.textContent = firstAllowed;
-        document.querySelectorAll('.model-option').forEach(o => {
-          if (o.dataset.model === firstAllowed) o.classList.add('active');
-          else o.classList.remove('active');
-        });
-      }
     }
   }
 

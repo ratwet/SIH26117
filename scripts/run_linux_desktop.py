@@ -28,7 +28,7 @@ BOOTLOADER_SPLASH_HTML = """<!DOCTYPE html>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: #090c13;
+      background: #000000;
       color: #e2e8f0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       display: flex;
@@ -39,14 +39,14 @@ BOOTLOADER_SPLASH_HTML = """<!DOCTYPE html>
       user-select: none;
     }
     .splash-card {
-      background: #0f1420;
-      border: 1px solid rgba(59, 130, 246, 0.25);
-      border-radius: 16px;
+      background: #080808;
+      border: 1px solid #1a1a1a;
+      border-radius: 14px;
       padding: 40px 48px;
       max-width: 480px;
       width: 90%;
       text-align: center;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 40px rgba(59, 130, 246, 0.12);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
     }
     .logo-pulse {
       width: 72px;
@@ -352,8 +352,20 @@ def run_gtk_webkit_app(target_url: str, title: str, wm_class: str, snapshot_path
                     GLib.timeout_add(500, self.trigger_audit_action)
                 elif self.action == "offline-chat":
                     GLib.timeout_add(800, self.trigger_offline_chat_action)
+                elif self.action == "new-chat":
+                    GLib.timeout_add(500, self.trigger_new_chat_action)
                 elif self.snapshot_path:
                     GLib.timeout_add(1000, self.capture_snapshot)
+
+        def trigger_new_chat_action(self):
+            js = """
+            const btn = document.getElementById('btnNewChat');
+            if (btn) btn.click();
+            """
+            self.webview.run_javascript(js, None, None, None)
+            if self.snapshot_path:
+                GLib.timeout_add(1000, self.capture_snapshot)
+            return False
 
         def trigger_settings_action(self):
             js = """
@@ -429,7 +441,7 @@ def main():
     parser.add_argument("--persona", choices=["admin", "senior", "junior", "field"], default=None, help="Refinery Persona / Access Level")
     parser.add_argument("--snapshot", dest="snapshot", default=None, help="Save screenshot to file path")
     parser.add_argument("--quit-after-snapshot", action="store_true", help="Close app after taking screenshot")
-    parser.add_argument("--action", choices=["settings", "audit", "offline-chat"], default=None, help="Trigger UI action before capture")
+    parser.add_argument("--action", choices=["settings", "audit", "offline-chat", "new-chat"], default=None, help="Trigger UI action before capture")
     parser.add_argument("--browser", action="store_true", help="Force launch in standalone browser app mode")
     parser.add_argument("--demo", action="store_true", help="Launch in demo exhibition mode (bypass WAN lockdown)")
     args = parser.parse_args()
@@ -440,24 +452,26 @@ def main():
         target_persona = "junior"
 
     if target_persona == "admin":
-        window_title = "Aquanex Admin — IT Systems & Model Governance (Level 1)"
+        window_title = "Aquanex Admin — Sovereign Cluster Control Center"
         wm_class = "aquanex-admin"
     elif target_persona == "senior":
-        window_title = "Aquanex Senior — Reliability Engineering Lead (Level 2)"
+        window_title = "Aquanex Senior — Reliability Engineering Lead"
         wm_class = "aquanex-senior"
     elif target_persona == "junior":
-        window_title = "Aquanex Field — Ultrasonic Inspection Operator (Level 3)"
+        window_title = "Aquanex Field — Ultrasonic Inspection Assistant"
         wm_class = "aquanex-field"
     else:
         window_title = "Aquanex — Sovereign AI Workbench (MRPL PS 117)"
         wm_class = "aquanex"
 
-    # Construct final target URL with persona query parameter
+    # Construct final target URL with persona and standalone query parameters
     target_url = args.url
     if target_persona:
         delim = "&" if "?" in target_url else "?"
         if f"persona={target_persona}" not in target_url:
-            target_url = f"{target_url}{delim}persona={target_persona}"
+            target_url = f"{target_url}{delim}persona={target_persona}&standalone=1"
+        elif "standalone=" not in target_url:
+            target_url = f"{target_url}&standalone=1"
 
     if args.demo or args.snapshot:
         delim = "&" if "?" in target_url else "?"

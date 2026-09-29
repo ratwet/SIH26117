@@ -68,6 +68,23 @@ app.include_router(telemetry_router)
 app.include_router(voice_router)
 app.include_router(actions_router)
 
+@app.get("/api/info")
+async def api_info():
+    """Root API information endpoint."""
+    return {
+        "system": f"SovereignWorkbench Server Node (Node 1: {settings.SERVER_NODE_IP})",
+        "organization": "Mangalore Refinery and Petrochemicals Limited (MRPL)",
+        "security": "100% On-Premise Air-Gapped",
+        "lan_topology": {
+            "server_node_1": f"http://{settings.SERVER_NODE_IP}:{settings.PORT}",
+            "admin_node_2": f"http://{settings.ADMIN_NODE_IP}",
+            "user_node_3": f"http://{settings.USER_NODE_IP}",
+        },
+        "documentation": "/docs",
+        "health_check": "/api/health",
+    }
+
+
 # Mount Aquanex Frontend SPA if built in frontend/dist
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -84,22 +101,6 @@ if FRONTEND_DIST.exists() and (FRONTEND_DIST / "index.html").exists():
         """Serves compiled Aquanex UI to any browser on the isolated LAN."""
         return FileResponse(str(FRONTEND_DIST / "index.html"))
 
-    @app.get("/api/info")
-    async def api_info():
-        """Root API information endpoint."""
-        return {
-            "system": f"SovereignWorkbench Server Node (Node 1: {settings.SERVER_NODE_IP})",
-            "organization": "Mangalore Refinery and Petrochemicals Limited (MRPL)",
-            "security": "100% On-Premise Air-Gapped",
-            "lan_topology": {
-                "server_node_1": f"http://{settings.SERVER_NODE_IP}:{settings.PORT}",
-                "admin_node_2": f"http://{settings.ADMIN_NODE_IP}",
-                "user_node_3": f"http://{settings.USER_NODE_IP}",
-            },
-            "documentation": "/docs",
-            "health_check": "/api/health",
-        }
-
     @app.get("/{file_path:path}", include_in_schema=False)
     async def serve_static_or_spa(file_path: str):
         """Serves public assets (e.g. logos, favicon) or falls back to index.html."""
@@ -111,15 +112,5 @@ else:
     @app.get("/")
     async def root():
         """Root landing endpoint providing system identity."""
-        return {
-            "system": f"SovereignWorkbench Server Node (Node 1: {settings.SERVER_NODE_IP})",
-            "organization": "Mangalore Refinery and Petrochemicals Limited (MRPL)",
-            "security": "100% On-Premise Air-Gapped",
-            "lan_topology": {
-                "server_node_1": f"http://{settings.SERVER_NODE_IP}:{settings.PORT}",
-                "admin_node_2": f"http://{settings.ADMIN_NODE_IP}",
-                "user_node_3": f"http://{settings.USER_NODE_IP}",
-            },
-            "documentation": "/docs",
-            "health_check": "/api/health",
-        }
+        return await api_info()
+

@@ -168,6 +168,31 @@ class FoundationModelEngine:
                             raw_content = choices[0].get("message", {}).get("content", "")
                             thought, content = self._extract_deepseek_r1_thought(raw_content)
                             return content, thought
+                    elif res.status_code == 404:
+                        # Auto-adapt to available models on connected server (e.g., qwen2.5:2b, qwen2.5-coder:1.5b)
+                        m_res = await client.get(f"{base_url}/models")
+                        if m_res.status_code == 200:
+                            avail = [m.get("id") for m in m_res.json().get("data", []) if m.get("id")]
+                            if avail:
+                                fallback_model = avail[0]
+                                if model_type == "coder":
+                                    coder_match = [m for m in avail if "coder" in m.lower()]
+                                    if coder_match:
+                                        fallback_model = coder_match[0]
+                                else:
+                                    general_match = [m for m in avail if "coder" not in m.lower()]
+                                    if general_match:
+                                        fallback_model = general_match[0]
+                                logger.info(f"Auto-mapping requested '{model_name}' to installed model '{fallback_model}'")
+                                payload["model"] = fallback_model
+                                retry_res = await client.post(f"{base_url}/chat/completions", json=payload)
+                                if retry_res.status_code == 200:
+                                    retry_data = retry_res.json()
+                                    choices = retry_data.get("choices", [])
+                                    if choices:
+                                        raw_content = choices[0].get("message", {}).get("content", "")
+                                        thought, content = self._extract_deepseek_r1_thought(raw_content)
+                                        return content, thought
                     else:
                         logger.warning(
                             f"{server_label} returned HTTP {res.status_code}: {res.text[:200]}"
