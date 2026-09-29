@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - Sandbox Runner (app/sandbox/runner.py)
+Aquanex - Sandbox Runner (app/sandbox/runner.py)
 Executes LLM-generated Python math scripts in an isolated Bubblewrap (bwrap) namespace
 or graceful local fallback with strict resource caps, filesystem whitelisting, and JSON output parsing.
 """

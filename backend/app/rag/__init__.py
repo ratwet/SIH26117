@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - Sovereign RAG Engine
+Aquanex - Sovereign RAG Engine
 Local, air-gapped CPU-based retrieval-augmented generation for refinery SOPs and standards.
 """
 

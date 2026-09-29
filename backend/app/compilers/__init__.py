@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - Omni-Modal Industrial Deliverable Compilers
+Aquanex - Omni-Modal Industrial Deliverable Compilers
 Generates:
 1. Executive Word approval notes (.docx)
 2. Financial cost & risk workbooks (.xlsx)

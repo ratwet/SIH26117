@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - PDF Inspection Certificate Compiler (app/compilers/pdf_builder.py)
+Aquanex - PDF Inspection Certificate Compiler (app/compilers/pdf_builder.py)
 Generates statutory, print-ready API 570 / ASME B31.3 Piping Inspection & Fitness-for-Service
 Certificates (.pdf) for MRPL Technical Services using ReportLab.
 """
@@ -240,7 +240,7 @@ def compile_inspection_certificate_pdf(
     story.append(s_table)
     story.append(Spacer(1, 8))
     story.append(Paragraph(
-        "<i>NOTICE: This document is an AI-assisted diagnostic draft compiled by SovereignWorkbench. "
+        "<i>NOTICE: This document is an AI-assisted diagnostic draft compiled by Aquanex. "
         "Statutory compliance under OISD-118 and ASME B31.3 requires human wet-ink sign-off above prior to procurement.</i>",
         ParagraphStyle("CertNotice", parent=body_style, fontSize=7, leading=9, textColor=colors.HexColor("#64748B"), alignment=1)
     ))

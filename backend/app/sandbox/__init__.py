@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - Sandbox Module
+Aquanex - Sandbox Module
 Secure execution runner and traceback distiller.
 """
 

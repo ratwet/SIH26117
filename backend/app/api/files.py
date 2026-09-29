@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - Files & Deliverables API (app/api/files.py)
+Aquanex - Files & Deliverables API (app/api/files.py)
 Handles file uploads (inspection PDFs, P&ID blueprints) and deliverable downloads
 (.docx approval notes, .xlsx cost matrices).
 """

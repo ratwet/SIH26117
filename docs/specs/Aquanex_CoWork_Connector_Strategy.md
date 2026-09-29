@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document outlines how SovereignWorkbench (Aquanex) can evolve into an air-gapped, policy-governed industrial coworker. The goal is to let authorized refinery, PSU, and defence users work with internal documents, email, collaboration messages, Office files, drawings, and approved enterprise systems without sending confidential content to external AI services.
+This document outlines how Aquanex (Aquanex) can evolve into an air-gapped, policy-governed industrial coworker. The goal is to let authorized refinery, PSU, and defence users work with internal documents, email, collaboration messages, Office files, drawings, and approved enterprise systems without sending confidential content to external AI services.
 
 > Scope note: This is an engineering and product roadmap, not legal advice. Any integration must be approved by the organization’s IT, OT, cybersecurity, legal, records-management, and data-governance teams.
 

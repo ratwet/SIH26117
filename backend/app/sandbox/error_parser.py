@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - Error Distiller (app/sandbox/error_parser.py)
+Aquanex - Error Distiller (app/sandbox/error_parser.py)
 Distills noisy Python tracebacks into concise 2-3 line root-cause summaries
 suitable for LLM self-healing loops.
 """

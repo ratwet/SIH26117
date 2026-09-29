@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - Admin & Model Registry Endpoints (app/api/admin.py)
+Aquanex - Admin & Model Registry Endpoints (app/api/admin.py)
 Owned by Rajat (Dev 1: Orchestration & API Lead).
 """
 
@@ -114,7 +114,7 @@ async def register_new_model(request: ModelRegisterRequest):
         "status": "REGISTERED",
         "filename": request.filename,
         "assigned_role": request.role,
-        "message": f"Model '{request.filename}' successfully registered into SovereignWorkbench.",
+        "message": f"Model '{request.filename}' successfully registered into Aquanex.",
     }
 
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =====================================================================
-# SovereignWorkbench - Live Egress Verification (scripts/verify_sovereignty.sh)
+# Aquanex - Live Egress Verification (scripts/verify_sovereignty.sh)
 # Live Technical Proof of 100% Air-Gap Sovereignty for SIH Evaluators
 # Uses kernel routing table inspection and tcpdump packet monitoring.
 # =====================================================================

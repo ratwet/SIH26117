@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - Internal Air-Gapped Email Connector (app/connectors/email_connector.py)
+Aquanex - Internal Air-Gapped Email Connector (app/connectors/email_connector.py)
 Automates drafting of inspection briefs and Turnaround notifications to MRPL internal exchange.
 Strictly gated by human approval tokens. Outbound WAN connections are hard blocked.
 """

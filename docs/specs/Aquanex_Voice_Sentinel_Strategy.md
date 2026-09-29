@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document describes how SovereignWorkbench (Aquanex) can add local audio input/output, voice-assistant interaction, reminders, alerts, and employee-support workflows while preserving air-gap, privacy, safety, and human-control principles.
+This document describes how Aquanex (Aquanex) can add local audio input/output, voice-assistant interaction, reminders, alerts, and employee-support workflows while preserving air-gap, privacy, safety, and human-control principles.
 
 The intended experience is a capable “Jarvis-like” workplace assistant. The intended operating model is not surveillance or autonomous management of employees; it is a consent-aware, policy-governed operational assistant for authorized users.
 

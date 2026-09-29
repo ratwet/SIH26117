@@ -1,8 +1,8 @@
-# SovereignWorkbench (Aquanex): Gap Analysis and Recommended Roadmap
+# Aquanex (Aquanex): Gap Analysis and Recommended Roadmap
 
 ## Purpose
 
-This document assesses the current SovereignWorkbench (Aquanex) design against common requirements for production-grade, air-gapped AI platforms in refinery, PSU, defence, and other regulated environments. It focuses on practical gaps, their impact, and implementation-oriented recommendations.
+This document assesses the current Aquanex (Aquanex) design against common requirements for production-grade, air-gapped AI platforms in refinery, PSU, defence, and other regulated environments. It focuses on practical gaps, their impact, and implementation-oriented recommendations.
 
 > Scope note: This is an engineering roadmap, not legal advice. Confirm final controls with MRPL/ONGC security, legal, IT, OT, and records-management teams.
 

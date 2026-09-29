@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - Sovereign RAG Retriever (app/rag/retriever.py)
+Aquanex - Sovereign RAG Retriever (app/rag/retriever.py)
 Queries the local CPU-embedded vector database for refinery engineering standards,
 OISD procedures, and API specifications.
 """

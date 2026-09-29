@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - Excel Cost Matrix Compiler (app/compilers/xlsx_builder.py)
+Aquanex - Excel Cost Matrix Compiler (app/compilers/xlsx_builder.py)
 Generates audit-ready financial estimates and cost workbooks with active Excel formulas,
 contingency calculations, and statutory risk flags using openpyxl.
 """

@@ -1,6 +1,6 @@
 # Product Requirements Document (PRD)
 
-# Project: SovereignWorkbench
+# Project: Aquanex
 ### Sovereign On-Premise Agentic AI Workbench for Confidential Industrial Work
 **Problem Statement ID:** SIH26117 (PS 117)  
 **Client / Beneficiary Organization:** Mangalore Refinery and Petrochemicals Limited (MRPL) / MoPNG  
@@ -13,11 +13,11 @@
 ## 1. Executive Summary & Product Vision
 
 ### 1.1 Product Vision
-**SovereignWorkbench** is an enterprise-grade, 100% air-gapped, multi-tier agentic AI platform engineered specifically for oil refineries, Public Sector Undertakings (PSUs), and defence-linked manufacturing units. It empowers process engineers, plant inspectors, and technical committees to automate high-stakes knowledge work-such as technical drawing audits (P&IDs), safety compliance calculations (API 570 / ASME), and executive approval dossiers-without a single byte of confidential enterprise data leaving the physical premises.
+**Aquanex** is an enterprise-grade, 100% air-gapped, multi-tier agentic AI platform engineered specifically for oil refineries, Public Sector Undertakings (PSUs), and defence-linked manufacturing units. It empowers process engineers, plant inspectors, and technical committees to automate high-stakes knowledge work-such as technical drawing audits (P&IDs), safety compliance calculations (API 570 / ASME), and executive approval dossiers-without a single byte of confidential enterprise data leaving the physical premises.
 
 ### 1.2 Core Philosophy
 * **Zero Trust, Zero Cloud:** 100% on-premise execution with an active, kernel-enforced **Air-Gap Interlock (Kill Switch)** that freezes operations if an external internet route is detected.
-* **Deterministic Orchestration over the Model (LangGraph):** Foundation models are passive computational engines; the SovereignWorkbench LangGraph state orchestrator provides deterministic memory, conditional graph routing, cyclic self-healing recovery, code execution sandboxing, and enterprise deliverable generation.
+* **Deterministic Orchestration over the Model (LangGraph):** Foundation models are passive computational engines; the Aquanex LangGraph state orchestrator provides deterministic memory, conditional graph routing, cyclic self-healing recovery, code execution sandboxing, and enterprise deliverable generation.
 * **Deterministic Math over Hallucination:** Critical engineering figures are never mentally estimated by an LLM; they are compiled into Python scripts and executed in an isolated local sandbox with an autonomous **Self-Healing Error Recovery Loop**.
 * **Zero Friction for Plant Staff:** Native cross-platform desktop application (`.exe`, `.AppImage`, `.dmg`) with mDNS auto-discovery (`mrpl-server.local`) requiring zero terminal commands or IP configuration from plant engineers.
 
@@ -44,7 +44,7 @@ Consequently, industrial engineers face a productivity deadlock:
 
 The system enforces strict enterprise role segregation matching PSU operational hierarchy:
 
-| Persona | Role in Organization | Core Needs from SovereignWorkbench | Assigned System Tier & Permissions |
+| Persona | Role in Organization | Core Needs from Aquanex | Assigned System Tier & Permissions |
 | :--- | :--- | :--- | :--- |
 | **P1: IT & Security Admin** | Corporate IT & Cyber Security Cell | • Securely import model weights (`.gguf`)<br>• Enforce air-gap compliance<br>• Allocate GPU compute quotas | **Admin Console (Laptop 1):** Full access to Model Registry, RBAC tiering, system audit logs, and hardware telemetry. |
 | **P2: Senior Process Engineer** | Maintenance Superintendent / Chief Inspector | • Audit complex P&ID blueprints<br>• Run API 570 pipe failure calculations<br>• Export signed Word approval notes | **Senior Tier (Laptop 3):** Full access to `DeepSeek-R1` reasoning, `Qwen2-VL` vision, sandbox code execution, and unwatermarked `.docx`/`.xlsx` exports. |
@@ -153,7 +153,7 @@ To guarantee flawless live demonstrability and reflect real refinery deployment,
    * Laptop 1 (Admin), Laptop 2 (Server), and Laptop 3 (Client) connect to the offline Wi-Fi hotspot (`MRPL_AIRGAP`).
    * WAN cable is visibly disconnected.
 2. **Launch:**
-   * Chemical Engineer launches `SovereignWorkbench.AppImage` on Laptop 3.
+   * Chemical Engineer launches `Aquanex.AppImage` on Laptop 3.
    * Client automatically displays: `[GREEN] Connected to Plant Server (mrpl-server.local) | [LOCKED] Air-Gap Active`.
 3. **Ingestion:**
    * Engineer drags-and-drops `CDU2_Ultrasonic_Inspection_Report.pdf` and `P&ID_Drawing_Line150.png`.
@@ -212,7 +212,7 @@ To guarantee flawless live demonstrability and reflect real refinery deployment,
 
 The project architecture is directly mapped against the core dimensions typically weighted by SIH judging committees:
 
-| SIH Evaluation Dimension | Strategic Alignment in SovereignWorkbench |
+| SIH Evaluation Dimension | Strategic Alignment in Aquanex |
 | :--- | :--- |
 | **Technical Novelty & AI Depth** | Multi-model dynamic scheduling, LangGraph cyclic state machine with autonomous self-healing, CPU-based sovereign RAG, and sandboxed deterministic code execution instead of a basic chat wrapper. |
 | **Fulfillment of Problem Statement** | 100% adherence to MRPL requirements: runs on organization server, demonstrable on a mid-range GPU, zero cloud traffic, native `.docx`/`.xlsx` deliverables. |

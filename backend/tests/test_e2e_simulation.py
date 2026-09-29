@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - End-to-End Industrial Audit Simulation (backend/tests/test_e2e_simulation.py)
+Aquanex - End-to-End Industrial Audit Simulation (backend/tests/test_e2e_simulation.py)
 Simulates complete pipeline: P&ID OCR -> Math Derivation -> Sandbox Run -> Word & Excel Compilation -> Audit Ledger.
 """
 

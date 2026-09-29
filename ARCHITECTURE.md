@@ -1,4 +1,4 @@
-# 🛡️ Aquanex (SovereignWorkbench) - Technical Architecture Specification
+# 🛡️ Aquanex (Aquanex) - Technical Architecture Specification
 > **Document Reference:** `AQUANEX-ARCH-2026-V1`  
 > **System Classification:** Mission-Critical Industrial AI Workbench (Air-Gapped Sovereign Compute)  
 > **Target Environment:** Mangalore Refinery and Petrochemicals Limited (MRPL) / Public Sector Undertakings (PSUs)  
@@ -196,7 +196,7 @@ Standard LangChain pipelines and linear DAG frameworks are intrinsically ill-sui
 3. **State Transparency:** LangGraph enforces a single, typed state object passed across nodes. Every node mutates the state explicitly, creating an auditable trace suitable for regulatory review.
 
 ### 3.2 State Container Definition (`AgentState`)
-Located at [`backend/app/graph/state.py`](file:///home/cyanide/SIH/backend/app/graph/state.py), the `AgentState` typed dictionary represents the complete ephemeral lifecycle of a single user interaction:
+Located at [`backend/app/graph/state.py`](backend/app/graph/state.py), the `AgentState` typed dictionary represents the complete ephemeral lifecycle of a single user interaction:
 
 ```python
 class AgentState(TypedDict):
@@ -240,25 +240,25 @@ class AgentState(TypedDict):
 
 ### 3.3 Deep Dive into the 8 Graph Nodes
 
-#### Node 1: `route_task_node` ([`nodes.py:L120`](file:///home/cyanide/SIH/backend/app/graph/nodes.py#L120))
+#### Node 1: `route_task_node` ([`nodes.py:L120`](backend/app/graph/nodes.py#L120))
 * **Objective:** Disambiguates user intent by analyzing prompt keywords and MIME types.
 * **Mechanism:** Rather than routing every file attachment to computationally heavy vision models, the router evaluates file extensions and semantic tokens. If a user uploads an engineering drawing (`.png`, `.dxf`, `.stl`) or asks for corrosion/wall thickness assessment, it routes to `VISION_AUDIT`. If the prompt queries standards or manuals (`OISD`, `API 570`, `ASME`), it routes to `SOP_LOOKUP`.
 * **Hardware Adaptation:** If `user_role == "junior"`, the active tier is automatically constrained to `EDGE_LAPTOP_8B` to guarantee sub-second field responsiveness.
 
-#### Node 2: `vision_extraction_node` ([`nodes.py:L166`](file:///home/cyanide/SIH/backend/app/graph/nodes.py#L166))
+#### Node 2: `vision_extraction_node` ([`nodes.py:L166`](backend/app/graph/nodes.py#L166))
 * **Objective:** Ingests P&ID raster scans, isometric diagrams, and ultrasonic NDT inspection sheets to extract operational metallurgy and dimensions.
 * **Extraction Architecture:** 
   1. Invokes multimodal vision weights (`Qwen2-VL-72B` on Datacenter, `Qwen2-VL-7B` on Workstation/Edge).
   2. Prompts for structured JSON output adhering to refinery nomenclature: `line_tag`, `material_spec`, `nominal_thickness_mm`, `actual_thickness_mm`, `design_pressure_psi`, `design_temp_celsius`.
   3. **Defensive Parsing Layer:** Employs regex pattern matching against prompt text for asset tags (e.g., `\b([A-Z]{2,4}-\d{1,2}-\d{2,3}-[A-Z0-9\-]+)\b`) and physical metrics. If an engineer pastes custom prompt overrides (`"measured thickness is 3.1mm"`), the extractor dynamically overwrites default drawing baselines.
-  4. Yields a validated [`PipeInspectionData`](file:///home/cyanide/SIH/backend/app/schemas.py#L47) Pydantic entity.
+  4. Yields a validated [`PipeInspectionData`](backend/app/schemas.py#L47) Pydantic entity.
 
-#### Node 3: `rag_retrieval_node` ([`nodes.py:L288`](file:///home/cyanide/SIH/backend/app/graph/nodes.py#L288))
+#### Node 3: `rag_retrieval_node` ([`nodes.py:L288`](backend/app/graph/nodes.py#L288))
 * **Objective:** Injects authoritative statutory regulatory clauses into the working state.
 * **Implementation:** Offloads retrieval to an asynchronous worker thread targeting local ChromaDB (`CHROMA_PERSIST_DIR`). Embeddings are generated purely on CPU using `FastEmbed` (`bge-small-en-v1.5`), eliminating GPU VRAM contention.
 * **Citations:** Retrieves top-5 relevant chunks from indexed PDFs: API 570 (*Inspection and Replacement of In-Service Piping*), ASME B31.3 (*Process Piping Design*), and OISD-STD-118 (*Layout and Fire Protection for Refineries*).
 
-#### Node 4: `math_generation_node` ([`nodes.py:L325`](file:///home/cyanide/SIH/backend/app/graph/nodes.py#L325))
+#### Node 4: `math_generation_node` ([`nodes.py:L325`](backend/app/graph/nodes.py#L325))
 * **Objective:** Synthesizes a deterministic Python verification script implementing Program-Aided Language (PAL).
 * **The Mathematical Formulation:**
   The generated script calculates three exact industrial parameters:
@@ -273,20 +273,20 @@ class AgentState(TypedDict):
 
 * **Self-Healing Injection:** If `retry_count > 0`, the node dynamically prepends the distilled error and traceback from the previous execution cycle, prompting the coder engine to emit defensive guards (e.g., zero-division checks, type coercions).
 
-#### Node 5: `sandbox_execution_node` ([`nodes.py:L409`](file:///home/cyanide/SIH/backend/app/graph/nodes.py#L409))
+#### Node 5: `sandbox_execution_node` ([`nodes.py:L409`](backend/app/graph/nodes.py#L409))
 * **Objective:** Dispatches the unverified Python script into a fully isolated Bubblewrap Linux container.
 * **Concurrency:** Uses `asyncio.to_thread` to prevent blocking the FastAPI asynchronous event loop during sandbox process instantiation.
-* **Return Contract:** Captures process exit code, stdout, and raw stderr, assembling a typed [`SandboxResult`](file:///home/cyanide/SIH/backend/app/schemas.py#L27).
+* **Return Contract:** Captures process exit code, stdout, and raw stderr, assembling a typed [`SandboxResult`](backend/app/schemas.py#L27).
 
-#### Node 6: `distill_error_node` ([`nodes.py:L443`](file:///home/cyanide/SIH/backend/app/graph/nodes.py#L443))
+#### Node 6: `distill_error_node` ([`nodes.py:L443`](backend/app/graph/nodes.py#L443))
 * **Objective:** Parses raw compiler or interpreter failure output into an actionable root-cause distillation.
-* **Mechanism:** Leverages [`app.sandbox.error_parser`](file:///home/cyanide/SIH/backend/app/sandbox/error_parser.py) to extract the failing line number, exception type, and variable values while stripping environmental noise. Increments `retry_count += 1`.
+* **Mechanism:** Leverages [`app.sandbox.error_parser`](backend/app/sandbox/error_parser.py) to extract the failing line number, exception type, and variable values while stripping environmental noise. Increments `retry_count += 1`.
 
-#### Node 7: `compile_deliverables_node` ([`nodes.py:L468`](file:///home/cyanide/SIH/backend/app/graph/nodes.py#L468))
+#### Node 7: `compile_deliverables_node` ([`nodes.py:L468`](backend/app/graph/nodes.py#L468))
 * **Objective:** Compiles the verified mathematical model and metallurgy specs into 10 enterprise deliverables simultaneously.
-* **Artifact Generation:** Calls dedicated builders in [`app/compilers/`](file:///home/cyanide/SIH/backend/app/compilers/) (Word, Excel, AutoCAD DXF, 3D STL mesh, PDF certificates, etc.). Calculates individual SHA-256 hashes for all output files and synthesizes `MRPL_Audit_Manifest_<session>.json`.
+* **Artifact Generation:** Calls dedicated builders in [`app/compilers/`](backend/app/compilers/) (Word, Excel, AutoCAD DXF, 3D STL mesh, PDF certificates, etc.). Calculates individual SHA-256 hashes for all output files and synthesizes `MRPL_Audit_Manifest_<session>.json`.
 
-#### Node 8: `audit_ledger_node` ([`nodes.py:L625`](file:///home/cyanide/SIH/backend/app/graph/nodes.py#L625))
+#### Node 8: `audit_ledger_node` ([`nodes.py:L625`](backend/app/graph/nodes.py#L625))
 * **Objective:** Cryptographically commits the transaction to the append-only SQLite ledger (`mrpl_audit.db`).
 * **Non-Repudiation:** Chains the entry with the previous block's SHA-256 digest, recording prompt hash, output hash, tool exit codes, user ID, and timestamp.
 
@@ -332,7 +332,7 @@ To safely execute Python code synthesized dynamically by an LLM, Aquanex utilize
 +---------------------------------------------------------------------------------------------------+
 ```
 
-#### Execution CLI Breakdown ([`app/sandbox/runner.py`](file:///home/cyanide/SIH/backend/app/sandbox/runner.py)):
+#### Execution CLI Breakdown ([`app/sandbox/runner.py`](backend/app/sandbox/runner.py)):
 ```bash
 /usr/bin/bwrap \
   --unshare-all \
@@ -352,7 +352,7 @@ To safely execute Python code synthesized dynamically by an LLM, Aquanex utilize
 ```
 
 #### Fail-Closed Security Setting
-In [`backend/app/config.py`](file:///home/cyanide/SIH/backend/app/config.py):
+In [`backend/app/config.py`](backend/app/config.py):
 ```python
 ALLOW_UNSANDBOXED_FALLBACK: bool = False
 ```
@@ -361,7 +361,7 @@ If `/usr/bin/bwrap` is missing or fails kernel namespace creation (e.g. unprivil
 ---
 
 ### 4.2 Network Watchdog & Reactive Air-Gap Kill-Switch
-To guarantee continuous statutory compliance, Aquanex implements an autonomous network monitoring daemon located in [`backend/app/security/network_monitor.py`](file:///home/cyanide/SIH/backend/app/security/network_monitor.py).
+To guarantee continuous statutory compliance, Aquanex implements an autonomous network monitoring daemon located in [`backend/app/security/network_monitor.py`](backend/app/security/network_monitor.py).
 
 ```text
                +-------------------------------------------------------------+
@@ -410,7 +410,7 @@ The watchdog actively monitors interface detachment. If an unauthorized 4G USB d
 ## 5. Bring-Your-Own-Model (BYOM) & Inference Gateway
 
 ### 5.1 Model Gateway Abstraction (`FoundationModelEngine`)
-Refineries must never be locked into a single AI model provider or specific parameter weight. Aquanex implements a unified inference gateway in [`backend/app/llm/engine.py`](file:///home/cyanide/SIH/backend/app/llm/engine.py) that adheres strictly to OpenAI-compatible REST specifications (`/v1/chat/completions` and `/v1/models`).
+Refineries must never be locked into a single AI model provider or specific parameter weight. Aquanex implements a unified inference gateway in [`backend/app/llm/engine.py`](backend/app/llm/engine.py) that adheres strictly to OpenAI-compatible REST specifications (`/v1/chat/completions` and `/v1/models`).
 
 ```text
                       +-------------------------------------------------------+
@@ -434,7 +434,7 @@ Refineries must never be locked into a single AI model provider or specific para
 ```
 
 ### 5.2 Sizing & Deployment Tier Matrix
-Aquanex is designed with a hardware-agnostic profile selector ([`app/config.py`](file:///home/cyanide/SIH/backend/app/config.py)):
+Aquanex is designed with a hardware-agnostic profile selector ([`app/config.py`](backend/app/config.py)):
 
 | Metric / Parameter | Tier 1: ENTERPRISE_100B | Tier 2: WORKSTATION_32B | Tier 3: EDGE_LAPTOP_8B |
 | :--- | :--- | :--- | :--- |
@@ -504,14 +504,14 @@ A fundamental architectural divergence between Aquanex and conversational AI cha
 
 | # | File Extension | Compiler Module | Primary Purpose & Contents |
 | :- | :--- | :--- | :--- |
-| **1** | `.docx` | [`docx_builder.py`](file:///home/cyanide/SIH/backend/app/compilers/docx_builder.py) | **Official MRPL Executive Approval Note:** Formal corporate letterhead, statutory citations, equation derivation walkthroughs, recommended procurement actions, and dual signatory blocks for Senior Inspection and Chief Technical Managers. |
-| **2** | `.xlsx` | [`xlsx_builder.py`](file:///home/cyanide/SIH/backend/app/compilers/xlsx_builder.py) | **Capex/Opex Cost & Risk Matrix:** Formatted spreadsheet with live dynamic Excel formulas (`SUM`, `PRODUCT`), color-coded risk flags (Red = Critical Replacement, Green = Compliant), line-item procurement breakdown, and automated 10% contingency calculations. |
-| **3** | `.pptx` | [`pptx_builder.py`](file:///home/cyanide/SIH/backend/app/compilers/pptx_builder.py) | **Board-Level Executive Slide Deck:** High-impact executive briefing containing plant asset health summaries, turnaround risk evaluations, and financial impact assessments. |
-| **4** | `.pdf` | [`pdf_builder.py`](file:///home/cyanide/SIH/backend/app/compilers/pdf_builder.py) | **Statutory Inspection Certificate:** Vector PDF document formatted to OISD-STD-118 and ASME standards with document hashing metadata and official stamping layouts. |
-| **5** | `.dxf` | [`cad_builder.py`](file:///home/cyanide/SIH/backend/app/compilers/cad_builder.py) | **AutoCAD 2D Piping Spool Schematic:** Native DXF vector CAD layout displaying nominal bore dimensions, weld necks, flange ratings (Class 150 RF), and corrosion measurement thickness callouts. |
-| **6** | `.stl` | [`stl_builder.py`](file:///home/cyanide/SIH/backend/app/compilers/stl_builder.py) | **3D CAD Mesh:** Tessellated 3D facet geometry of the affected piping spool for inspection visualization, spatial clearance checks, or rapid additive manufacturing. |
-| **7** | `.png` | [`image_builder.py`](file:///home/cyanide/SIH/backend/app/compilers/image_builder.py) | **Ultrasonic Corrosion Heatmap:** Visual degradation spectrum mapping measured wall thickness across grid coordinate inspection locations. |
-| **8** | `.csv` | [`csv_builder.py`](file:///home/cyanide/SIH/backend/app/compilers/csv_builder.py) | **Raw NDT Thickness Survey Log:** Comma-separated dataset of Condition Monitoring Locations (CML) ready for ingestion into SAP Plant Maintenance (PM) or Meridium APM. |
+| **1** | `.docx` | [`docx_builder.py`](backend/app/compilers/docx_builder.py) | **Official MRPL Executive Approval Note:** Formal corporate letterhead, statutory citations, equation derivation walkthroughs, recommended procurement actions, and dual signatory blocks for Senior Inspection and Chief Technical Managers. |
+| **2** | `.xlsx` | [`xlsx_builder.py`](backend/app/compilers/xlsx_builder.py) | **Capex/Opex Cost & Risk Matrix:** Formatted spreadsheet with live dynamic Excel formulas (`SUM`, `PRODUCT`), color-coded risk flags (Red = Critical Replacement, Green = Compliant), line-item procurement breakdown, and automated 10% contingency calculations. |
+| **3** | `.pptx` | [`pptx_builder.py`](backend/app/compilers/pptx_builder.py) | **Board-Level Executive Slide Deck:** High-impact executive briefing containing plant asset health summaries, turnaround risk evaluations, and financial impact assessments. |
+| **4** | `.pdf` | [`pdf_builder.py`](backend/app/compilers/pdf_builder.py) | **Statutory Inspection Certificate:** Vector PDF document formatted to OISD-STD-118 and ASME standards with document hashing metadata and official stamping layouts. |
+| **5** | `.dxf` | [`cad_builder.py`](backend/app/compilers/cad_builder.py) | **AutoCAD 2D Piping Spool Schematic:** Native DXF vector CAD layout displaying nominal bore dimensions, weld necks, flange ratings (Class 150 RF), and corrosion measurement thickness callouts. |
+| **6** | `.stl` | [`stl_builder.py`](backend/app/compilers/stl_builder.py) | **3D CAD Mesh:** Tessellated 3D facet geometry of the affected piping spool for inspection visualization, spatial clearance checks, or rapid additive manufacturing. |
+| **7** | `.png` | [`image_builder.py`](backend/app/compilers/image_builder.py) | **Ultrasonic Corrosion Heatmap:** Visual degradation spectrum mapping measured wall thickness across grid coordinate inspection locations. |
+| **8** | `.csv` | [`csv_builder.py`](backend/app/compilers/csv_builder.py) | **Raw NDT Thickness Survey Log:** Comma-separated dataset of Condition Monitoring Locations (CML) ready for ingestion into SAP Plant Maintenance (PM) or Meridium APM. |
 | **9** | `.py` | `compile_deliverables_node` | **Standalone Verification Script:** Independent, self-contained Python script allowing any field engineer to re-verify the exact math calculations offline on any computer. |
 | **10**| `.json`| `compile_deliverables_node` | **Cryptographic Audit Manifest:** Machine-readable manifest containing environmental metadata, hardware tiers, input parameters, and SHA-256 hashes of the other 9 artifacts. |
 
@@ -520,7 +520,7 @@ A fundamental architectural divergence between Aquanex and conversational AI cha
 ## 7. Cryptographic SHA-256 Audit Chain Architecture
 
 ### 7.1 Mathematical Specification of the Ledger
-Located at [`backend/app/security/audit_chain.py`](file:///home/cyanide/SIH/backend/app/security/audit_chain.py), the audit ledger guarantees tamper-evidence and non-repudiation for Indian statutory bodies (MoPNG, OISD, CERT-In).
+Located at [`backend/app/security/audit_chain.py`](backend/app/security/audit_chain.py), the audit ledger guarantees tamper-evidence and non-repudiation for Indian statutory bodies (MoPNG, OISD, CERT-In).
 
 The ledger is implemented as an append-only SQLite database table (`audit_ledger` in `mrpl_audit.db`). Each transaction block $n$ is defined as:
 
@@ -596,7 +596,7 @@ If an attacker modifies a single character, thickness value, or timestamp in a h
 ### 8.1 Persona Capability Matrix
 Industrial organizations enforce strict hierarchical signoff protocols. A field technician cannot approve a $1,000,000$ INR spool procurement; an IT administrator has no need for engineering prompt chips.
 
-Aquanex enforces a strict **3-Tier RBAC Architecture** ([`backend/app/api/admin.py`](file:///home/cyanide/SIH/backend/app/api/admin.py)):
+Aquanex enforces a strict **3-Tier RBAC Architecture** ([`backend/app/api/admin.py`](backend/app/api/admin.py)):
 
 ```text
                                   +---------------------------------------+
@@ -636,7 +636,7 @@ The desktop client and web SPA pass identity metadata across all HTTP and WebSoc
 * `X-User-Role`: `admin` | `senior` | `junior`
 * `X-User-Id`: Unique identifier (e.g., `USR-ADMIN-01`, `USR-SNR-02`, `USR-JNR-03`)
 
-The FastAPI backend validates incoming requests against [`RBAC_REGISTRY`](file:///home/cyanide/SIH/backend/app/api/admin.py#L23) via the dependency injector `require_permission(perm)`. Any attempt by a Junior token to register a model or alter permissions triggers an immediate `HTTP 403 Forbidden`.
+The FastAPI backend validates incoming requests against [`RBAC_REGISTRY`](backend/app/api/admin.py#L23) via the dependency injector `require_permission(perm)`. Any attempt by a Junior token to register a model or alter permissions triggers an immediate `HTTP 403 Forbidden`.
 
 ---
 

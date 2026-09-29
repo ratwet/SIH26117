@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - Shared Pytest Fixtures (tests/conftest.py)
+Aquanex - Shared Pytest Fixtures (tests/conftest.py)
 Configures test isolation and enables synthetic contract mode for offline CI runs.
 """
 

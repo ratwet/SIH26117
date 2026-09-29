@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - Security & Audit Module
+Aquanex - Security & Audit Module
 Air-gap network telemetry monitor and SHA-256 cryptographic audit chain.
 """
 

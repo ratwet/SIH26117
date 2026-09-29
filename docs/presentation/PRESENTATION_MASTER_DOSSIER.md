@@ -1,4 +1,4 @@
-# 🏆 SovereignWorkbench - Master Presentation & Technical Dossier
+# 🏆 Aquanex - Master Presentation & Technical Dossier
 ## Complete End-to-End Blueprint for SIH 2026 Presentation, Slide Deck & Judge Defense
 **Problem Statement ID:** PS 117 (SIH26117)  
 **Problem Statement Title:** Sovereign On-Premise Agentic AI Workbench using Open-Weight Multimodal LLMs for Confidential Industrial Work  
@@ -17,7 +17,7 @@
 2. [The 10-Slide Winning Presentation Deck](#2-the-10-slide-winning-presentation-deck)
    - [Slide 1: Title & Identity](#slide-1-title--identity)
    - [Slide 2: The Industrial Pain Point & Cloud Dilemma](#slide-2-the-industrial-pain-point--the-cloud-dilemma)
-   - [Slide 3: Our Solution - SovereignWorkbench](#slide-3-our-solution--sovereignworkbench)
+   - [Slide 3: Our Solution - Aquanex](#slide-3-our-solution--sovereignworkbench)
    - [Slide 4: Physical 3-Node Offline LAN Architecture](#slide-4-physical-3-node-offline-lan-architecture)
    - [Slide 5: The Agentic Brain (LangGraph State Machine)](#slide-5-the-agentic-brain-langgraph-state-machine)
    - [Slide 6: Zero-Hallucination Sandbox Execution](#slide-6-zero-hallucination-sandbox-execution)
@@ -35,11 +35,11 @@
 
 ### 💡 The 30-Second Elevator Pitch
 > *"Public cloud AI tools like ChatGPT or Claude are strictly prohibited in petroleum refineries because uploading a single Piping & Instrumentation Diagram (P&ID) or crude column inspection scan violates national cybersecurity norms and OISD regulations.*  
-> *SovereignWorkbench is an on-premise, 100% air-gapped agentic AI workbench. Deployed across three physical Ubuntu machines on an offline Ethernet switch with zero default gateway, it extracts engineering parameters from scanned blueprints, executes safety-critical math inside an unprivileged Linux namespace sandbox (`bwrap`), autonomously self-heals calculation errors, and compiles publication-ready Word Approval Notes with MRPL letterheads and Excel financial workbooks with live formulas - all with verifiable cryptographic proof of zero outbound network bytes."*
+> *Aquanex is an on-premise, 100% air-gapped agentic AI workbench. Deployed across three physical Ubuntu machines on an offline Ethernet switch with zero default gateway, it extracts engineering parameters from scanned blueprints, executes safety-critical math inside an unprivileged Linux namespace sandbox (`bwrap`), autonomously self-heals calculation errors, and compiles publication-ready Word Approval Notes with MRPL letterheads and Excel financial workbooks with live formulas - all with verifiable cryptographic proof of zero outbound network bytes."*
 
 ### 🚗 The Fundamental Engineering Analogy
-> **"An open-weight model is merely an engine lying on the garage floor. SovereignWorkbench is the complete operating vehicle."**  
-> An engine cannot steer, brake, read road signs, or protect passengers. Similarly, a raw LLM cannot safely audit a refinery: it hallucinates arithmetic, has no memory of corporate SOPs, cannot output formatted `.docx` files, and cannot prove data security. SovereignWorkbench provides the steering (LangGraph state machine), eyes (vision OCR), deterministic hands (`bwrap` sandbox), and safety interlocks (kill switch and SHA-256 audit ledger).
+> **"An open-weight model is merely an engine lying on the garage floor. Aquanex is the complete operating vehicle."**  
+> An engine cannot steer, brake, read road signs, or protect passengers. Similarly, a raw LLM cannot safely audit a refinery: it hallucinates arithmetic, has no memory of corporate SOPs, cannot output formatted `.docx` files, and cannot prove data security. Aquanex provides the steering (LangGraph state machine), eyes (vision OCR), deterministic hands (`bwrap` sandbox), and safety interlocks (kill switch and SHA-256 audit ledger).
 
 ---
 
@@ -48,13 +48,13 @@
 ---
 
 ### Slide 1: Title & Identity
-* **Slide Headline:** SovereignWorkbench: Sovereign On-Premise Agentic AI Workbench for Confidential Industrial Work
+* **Slide Headline:** Aquanex: Sovereign On-Premise Agentic AI Workbench for Confidential Industrial Work
 * **Sub-headline:** 100% Air-Gapped Multimodal Engineering Intelligence for Mangalore Refinery & Petrochemicals Ltd.
 * **Metadata Block:**
   * **Problem Statement ID:** PS 117 (SIH26117)
   * **Organization:** MRPL / Ministry of Petroleum and Natural Gas (MoPNG)
   * **Category:** Software | **Theme:** Smart Automation
-* **Visual Asset:** Logo of MRPL, Indian National Flag/Emblem, SovereignWorkbench Shield Icon.
+* **Visual Asset:** Logo of MRPL, Indian National Flag/Emblem, Aquanex Shield Icon.
 * **Key Takeaway:** A production-grade, zero-cloud system built specifically for the highest-security public sector industrial environments.
 
 ---
@@ -70,8 +70,8 @@
 
 ---
 
-### Slide 3: Our Solution - SovereignWorkbench
-* **Slide Headline:** SovereignWorkbench: The Complete Air-Gapped Industrial Vehicle
+### Slide 3: Our Solution - Aquanex
+* **Slide Headline:** Aquanex: The Complete Air-Gapped Industrial Vehicle
 * **Four Core Pillars:**
   1. **100% On-Premise Air-Gap:** Zero external network calls. Verified at the Linux kernel level (`routes: []`, no default gateway).
   2. **Autonomous Agentic Orchestration (LangGraph):** Multi-step planning, tool selection, error observation, and a 3-retry cyclic self-healing recovery loop.
@@ -246,7 +246,7 @@ Here is the exact speech script and action checklist to follow during the live p
   > *"Finally, judges, how do we prove 100% air-gap sovereignty? Look at Laptop 2 showing our live kernel packet telemetry - 0 outbound WAN bytes.  
   > Now, watch this: what if an employee connects a rogue Wi-Fi dongle? I just turned on my phone's hotspot.  
   > Within two seconds... BOOM. Look at the screen. The entire application locks down with a Red Security Alert. All inference is frozen, and an immutable SHA-256 block is logged in our cryptographic ledger. When the hotspot is turned off, operational status is restored.  
-  > This is SovereignWorkbench: 100% sovereign, zero hallucinations, enterprise-ready for MRPL. Thank you."*
+  > This is Aquanex: 100% sovereign, zero hallucinations, enterprise-ready for MRPL. Thank you."*
 
 ---
 

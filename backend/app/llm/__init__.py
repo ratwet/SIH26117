@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - LLM Module Package
+Aquanex - LLM Module Package
 """
 
 from .engine import FoundationModelEngine, foundation_engine

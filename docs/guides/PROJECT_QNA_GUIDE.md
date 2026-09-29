@@ -54,7 +54,7 @@ A Large Language Model is a deep neural network trained on trillions of tokens o
 
 ### How LLMs Are Used in Aquanex
 
-The `FoundationModelEngine` in [`engine.py`](file:///home/cyanide/SIH/backend/app/llm/engine.py) is the unified gateway. It talks to local model servers via the **OpenAI-compatible REST API** (`/v1/chat/completions`):
+The `FoundationModelEngine` in [`engine.py`](backend/app/llm/engine.py) is the unified gateway. It talks to local model servers via the **OpenAI-compatible REST API** (`/v1/chat/completions`):
 
 ```python
 # engine.py - Dispatching inference to Ollama or vLLM
@@ -168,7 +168,7 @@ GGUF (GPT-Generated Unified Format) is the standard file format for quantized mo
 
 ### How Quantization Is Used in Aquanex
 
-The 3-tier hardware profile in [`config.py`](file:///home/cyanide/SIH/backend/app/config.py) uses different quantization levels:
+The 3-tier hardware profile in [`config.py`](backend/app/config.py) uses different quantization levels:
 
 ```python
 # config.py - Hardware tier profiles
@@ -248,7 +248,7 @@ graph.add_conditional_edges("validate", lambda s: "research" if s["retry_count"]
 
 ### How LangGraph Is Used in Aquanex
 
-The [`AgentState`](file:///home/cyanide/SIH/backend/app/graph/state.py) is a TypedDict with 30+ fields tracking the entire lifecycle of one user interaction:
+The [`AgentState`](backend/app/graph/state.py) is a TypedDict with 30+ fields tracking the entire lifecycle of one user interaction:
 
 ```python
 class AgentState(TypedDict):
@@ -354,7 +354,7 @@ User Query ──► Embed (same embedding model)
 
 ### How RAG Is Used in Aquanex
 
-The [`retriever.py`](file:///home/cyanide/SIH/backend/app/rag/retriever.py) implements RAG with a critical addition: **Pre-Retrieval ABAC filtering** (explained in Section 10).
+The [`retriever.py`](backend/app/rag/retriever.py) implements RAG with a critical addition: **Pre-Retrieval ABAC filtering** (explained in Section 10).
 
 ```python
 # retriever.py - The 5-step retrieval pipeline
@@ -477,7 +477,7 @@ Step 4: The number 3.14 is the DEFINITIVE answer - computed by Python, not by LL
 
 ### How PAL Is Used in Aquanex
 
-Node 4 (`math_generation_node`) in [`nodes.py`](file:///home/cyanide/SIH/backend/app/graph/nodes.py) asks the coder model (Qwen2.5-Coder) to generate a self-contained Python script. Node 5 (`sandbox_execution_node`) executes it in an isolated Bubblewrap container. The result is parsed from stdout.
+Node 4 (`math_generation_node`) in [`nodes.py`](backend/app/graph/nodes.py) asks the coder model (Qwen2.5-Coder) to generate a self-contained Python script. Node 5 (`sandbox_execution_node`) executes it in an isolated Bubblewrap container. The result is parsed from stdout.
 
 **The engineering formulas computed by PAL:**
 
@@ -610,7 +610,7 @@ HMAC proves two things:
 
 ### How Cryptography Is Used in Aquanex
 
-**1. HMAC-SHA256 Action Approval Tokens** ([`approval_tokens.py`](file:///home/cyanide/SIH/backend/app/policy/approval_tokens.py)):
+**1. HMAC-SHA256 Action Approval Tokens** ([`approval_tokens.py`](backend/app/policy/approval_tokens.py)):
 
 When the AI prepares a consequential action (like sending an email), it generates an approval token:
 
@@ -685,7 +685,7 @@ Example:
 
 ### How ABAC Is Used in Aquanex RAG
 
-The [`_is_authorized()`](file:///home/cyanide/SIH/backend/app/rag/retriever.py#L94-L109) function implements pre-retrieval ABAC:
+The [`_is_authorized()`](backend/app/rag/retriever.py#L94-L109) function implements pre-retrieval ABAC:
 
 ```python
 CLEARANCE_RANK = {
@@ -822,7 +822,7 @@ data = PipeInspectionData(line_tag=123, nominal_thickness_mm="not a number", ...
 
 ### How They're Used in Aquanex
 
-[`schemas.py`](file:///home/cyanide/SIH/backend/app/schemas.py) is the **frozen contract** between all three developers. Every data structure flowing through the system is a validated Pydantic model:
+[`schemas.py`](backend/app/schemas.py) is the **frozen contract** between all three developers. Every data structure flowing through the system is a validated Pydantic model:
 
 ```python
 # schemas.py - The contract between developers
@@ -842,7 +842,7 @@ class ActionApprovalRequest(BaseModel):
     payload_hash: str     # SHA-256 of the action payload
 ```
 
-**Configuration with Pydantic Settings:** [`config.py`](file:///home/cyanide/SIH/backend/app/config.py) uses `pydantic-settings` to load environment variables with type-safe defaults:
+**Configuration with Pydantic Settings:** [`config.py`](backend/app/config.py) uses `pydantic-settings` to load environment variables with type-safe defaults:
 
 ```python
 class Settings(BaseSettings):

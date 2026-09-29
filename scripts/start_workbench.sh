@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =====================================================================
-# SovereignWorkbench - Service Launcher (scripts/start_workbench.sh)
+# Aquanex - Service Launcher (scripts/start_workbench.sh)
 # Starts local Ollama model engine and FastAPI/LangGraph backend server
 # =====================================================================
 

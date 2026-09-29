@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - AgentState Definition.
+Aquanex - AgentState Definition.
 Owned by Rajat (Dev 1: Orchestration & API Lead).
 
 This TypedDict represents the state passed between all nodes in the LangGraph workflow.
@@ -12,7 +12,7 @@ from app.schemas import SandboxResult, PipeInspectionData, RagChunk
 
 class AgentState(TypedDict):
     """
-    Central state dictionary for SovereignWorkbench LangGraph execution.
+    Central state dictionary for Aquanex LangGraph execution.
     Every node in the graph receives this state and returns a dictionary
     updating one or more fields.
     """

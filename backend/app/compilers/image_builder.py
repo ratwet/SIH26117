@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - Visual Inspection Markup & Heatmap Compiler (app/compilers/image_builder.py)
+Aquanex - Visual Inspection Markup & Heatmap Compiler (app/compilers/image_builder.py)
 Generates high-resolution annotated P&ID schematics and corrosion heatmaps (.png)
 using Pillow. Highlights ultrasonic wall-thinning zones and safety clearances.
 """

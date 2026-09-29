@@ -143,7 +143,7 @@ In safety-critical piping inspection, a rounding error or arithmetic hallucinati
 ---
 
 ### 3.3 Zero-Egress Air-Gap Security Benchmark
-The air-gap enforcement watchdog ([`backend/app/security/network_monitor.py`](file:///home/cyanide/SIH/backend/app/security/network_monitor.py)) and client daemon ([`frontend/src-tauri/src/lib.rs`](file:///home/cyanide/SIH/frontend/src-tauri/src/lib.rs)) monitor network routing tables:
+The air-gap enforcement watchdog ([`backend/app/security/network_monitor.py`](backend/app/security/network_monitor.py)) and client daemon ([`frontend/src-tauri/src/lib.rs`](frontend/src-tauri/src/lib.rs)) monitor network routing tables:
 
 ```
 [External Threat Scenario]

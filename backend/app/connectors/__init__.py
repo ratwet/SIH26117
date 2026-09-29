@@ -1,4 +1,4 @@
-"""SovereignWorkbench - Enterprise On-Premise Connectors."""
+"""Aquanex - Enterprise On-Premise Connectors."""
 from .email_connector import (
     create_inspection_email_draft,
     approve_and_dispatch_email,

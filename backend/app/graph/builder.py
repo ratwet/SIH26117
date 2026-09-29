@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - LangGraph StateGraph Assembly & Compilation (app/graph/builder.py)
+Aquanex - LangGraph StateGraph Assembly & Compilation (app/graph/builder.py)
 Owned by Rajat (Dev 1: Orchestration & API Lead).
 
 This file connects all nodes and conditional edges into a compiled, runnable
@@ -27,7 +27,7 @@ from app.graph.edges import (
 
 def build_sovereign_graph():
     """
-    Constructs and compiles the complete SovereignWorkbench agentic state machine.
+    Constructs and compiles the complete Aquanex agentic state machine.
 
     Topology:
     1. ENTRY -> route_task

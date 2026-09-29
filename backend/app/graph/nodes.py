@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - LangGraph Node Definitions (app/graph/nodes.py)
+Aquanex - LangGraph Node Definitions (app/graph/nodes.py)
 Owned by Rajat (Dev 1: Orchestration & API Lead).
 
 This file defines the worker nodes executed in the LangGraph StateGraph.
@@ -705,16 +705,16 @@ async def general_chat_node(state: AgentState) -> Dict[str, Any]:
         thought = "Thinking through your question..."
         content, trace = await call_llm(
             prompt=prompt,
-            system_prompt="You are Aquanex SovereignWorkbench Assistant, an on-premise industrial AI assistant for refinery engineering at Mangalore Refinery and Petrochemicals Limited (MRPL). All data remains strictly within refinery on-premise infrastructure.",
+            system_prompt="You are Aquanex Aquanex Assistant, an on-premise industrial AI assistant for refinery engineering at Mangalore Refinery and Petrochemicals Limited (MRPL). All data remains strictly within refinery on-premise infrastructure.",
             model_type="reasoning"
         )
         if content:
-            if not content.startswith("Aquanex SovereignWorkbench Assistant"):
-                resp = f"Aquanex SovereignWorkbench Assistant: {content}"
+            if not content.startswith("Aquanex Aquanex Assistant"):
+                resp = f"Aquanex Aquanex Assistant: {content}"
             else:
                 resp = content
         else:
-            resp = f"Aquanex SovereignWorkbench Assistant: Processed query regarding '{prompt[:50]}...'. All data remains strictly within refinery on-premise infrastructure."
+            resp = f"Aquanex Aquanex Assistant: Processed query regarding '{prompt[:50]}...'. All data remains strictly within refinery on-premise infrastructure."
 
     return {
         "final_response": resp,

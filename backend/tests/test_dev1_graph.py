@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - Dev 1 LangGraph Unit Verification Suite (backend/tests/test_dev1_graph.py)
+Aquanex - Dev 1 LangGraph Unit Verification Suite (backend/tests/test_dev1_graph.py)
 Owned by Rajat (Dev 1: Orchestration & API Lead).
 
 Validates:
@@ -130,7 +130,7 @@ async def test_general_chat_flow():
     """Verifies generic non-engineering queries route to general_chat branch."""
     initial_state: AgentState = {
         "session_id": "test_general_004",
-        "user_prompt": "Hello, how does SovereignWorkbench work?",
+        "user_prompt": "Hello, how does Aquanex work?",
         "uploaded_files": [],
         "user_role": "junior",
         "task_type": None,
@@ -153,4 +153,4 @@ async def test_general_chat_flow():
     final_state = await sovereign_graph.ainvoke(initial_state)
 
     assert final_state["task_type"] == "GENERAL_QUERY"
-    assert "SovereignWorkbench Assistant" in final_state["final_response"]
+    assert "Aquanex Assistant" in final_state["final_response"]

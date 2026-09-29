@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - Hardened Strategic Security & Governance Verification Tests
+Aquanex - Hardened Strategic Security & Governance Verification Tests
 (backend/tests/test_sovereign_hardened.py)
 
 Validates the full enterprise gap closure:

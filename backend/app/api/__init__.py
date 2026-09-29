@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - Unified API Package (app/api/__init__.py)
+Aquanex - Unified API Package (app/api/__init__.py)
 Includes endpoints owned by Rajat (Chat, Health, Admin) and Anand (Files, Telemetry).
 """
 

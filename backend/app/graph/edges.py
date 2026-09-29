@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - LangGraph Conditional Routing & Edges (app/graph/edges.py)
+Aquanex - LangGraph Conditional Routing & Edges (app/graph/edges.py)
 Owned by Rajat (Dev 1: Orchestration & API Lead).
 
 This file defines the conditional routing logic that steers the agent through the
@@ -68,7 +68,7 @@ async def escalate_human_node(state: AgentState) -> Dict[str, Any]:
 
     escalation_msg = f"""### ⚠️ Manual Engineering Review Required (Circuit Breaker Tripped)
 
-The SovereignWorkbench autonomous calculation engine encountered persistent sandbox execution issues after **{retry_count} self-healing attempts**.
+The Aquanex autonomous calculation engine encountered persistent sandbox execution issues after **{retry_count} self-healing attempts**.
 
 **Last Error Captured:**
 ```

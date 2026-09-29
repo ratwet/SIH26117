@@ -1,4 +1,4 @@
-// src/api.js - SovereignWorkbench API Client
+// src/api.js - Aquanex API Client
 // Strict Sovereign Air-Gapped Architecture (Zero Fake Emulation, Zero WAN Exfiltration)
 
 export const DEFAULT_LOCAL_URL = "http://127.0.0.1:8000";

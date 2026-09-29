@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - Word Approval Note Compiler (app/compilers/docx_builder.py)
+Aquanex - Word Approval Note Compiler (app/compilers/docx_builder.py)
 Generates high-fidelity, corporate executive evaluation and approval dossiers
 for Mangalore Refinery and Petrochemicals Limited (MRPL) using python-docx.
 """

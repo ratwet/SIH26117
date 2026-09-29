@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - Health & Telemetry Endpoint (app/api/health.py)
+Aquanex - Health & Telemetry Endpoint (app/api/health.py)
 Owned by Rajat (Dev 1: Orchestration & API Lead).
 """
 
@@ -23,7 +23,7 @@ async def get_health_status():
 
     return {
         "status": "OPERATIONAL",
-        "system": "SovereignWorkbench Server Node (Node 1: 192.168.1.100)",
+        "system": "Aquanex Server Node (Node 1: 192.168.1.100)",
         "air_gap_verified": net_stats.is_air_gapped,
         "wan_connection": "DISABLED_ISOLATED_SUBNET" if net_stats.is_air_gapped else "EXTERNAL_GATEWAY_DETECTED",
         "outbound_wan_bytes_delta": net_stats.outbound_wan_bytes_delta,

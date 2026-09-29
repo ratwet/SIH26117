@@ -1,5 +1,5 @@
 """
-SovereignWorkbench Backend Configuration.
+Aquanex Backend Configuration.
 
 All settings are loaded from environment variables with sensible defaults
 for local development. In production/Docker, override via .env or compose env.

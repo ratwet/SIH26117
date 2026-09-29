@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - Cryptographic Audit Chain (app/security/audit_chain.py)
+Aquanex - Cryptographic Audit Chain (app/security/audit_chain.py)
 Maintains an immutable, append-only SHA-256 hash chain in SQLite (mrpl_audit.db)
 for tamper-proof statutory audit trails.
 """

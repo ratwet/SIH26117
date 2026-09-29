@@ -1,5 +1,5 @@
 """
-SovereignWorkbench - Main FastAPI Application Entry Point (app/main.py)
+Aquanex - Main FastAPI Application Entry Point (app/main.py)
 Owned by Rajat (Dev 1: Orchestration & API Lead).
 
 Runs on Node 2 (GPU Server / Gaming Laptop) on an isolated local subnet.
@@ -72,7 +72,7 @@ app.include_router(actions_router)
 async def api_info():
     """Root API information endpoint."""
     return {
-        "system": f"SovereignWorkbench Server Node (Node 1: {settings.SERVER_NODE_IP})",
+        "system": f"Aquanex Server Node (Node 1: {settings.SERVER_NODE_IP})",
         "organization": "Mangalore Refinery and Petrochemicals Limited (MRPL)",
         "security": "100% On-Premise Air-Gapped",
         "lan_topology": {
