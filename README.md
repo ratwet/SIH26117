@@ -70,12 +70,10 @@ Autonomously compiles statutory inspection deliverables from a single conversati
 - Every prompt, response, sandbox exit code, and deliverable hash is recorded
 - One-click chain integrity verification
 
-### Flexible GPU Deployment
-| Tier | Hardware | Models |
-|:-----|:---------|:-------|
-| Edge | Laptop CPU/iGPU | `qwen2.5:3b`, `qwen2.5-coder:1.5b` |
-| Workstation | RTX 3060 / 4060 / 4090 | Mid-range reasoning models |
-| Datacenter | Multi-GPU cluster (vLLM) | `qwen2.5:72b`, `deepseek-r1:70b` |
+### Plug-and-Play Model Backend
+- Model-agnostic — works with any Ollama or vLLM compatible model out of the box
+- Users choose which open-weight LLM to run based on their available hardware
+- Zero application-level configuration required to switch models
 
 ---
 
@@ -202,6 +200,8 @@ PYTHONPATH=backend python -m pytest backend/tests/ -v
 | **Anand** | Deterministic Tools — Bubblewrap sandbox, deliverable compilers, RAG engine |
 | **Kaushal** | GPU & Deployment — Ollama/vLLM integration, multi-tier model configuration |
 | **Naveen** | Frontend & Desktop — UI system, persona apps, GTK desktop client, air-gap lockdown |
+| **Divij** | AI & Model Integration — Prompt engineering, LLM evaluation, agentic workflow design |
+| **Sakshi** | Full-Stack & Desktop — Frontend components, backend API routes, native desktop packaging |
 
 ---
 
