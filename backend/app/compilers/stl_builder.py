@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — 3D CAD Piping Spool STL Compiler (app/compilers/stl_builder.py)
+SovereignWorkbench - 3D CAD Piping Spool STL Compiler (app/compilers/stl_builder.py)
 Generates 3D printable and CAD-importable stereolithography meshes (.stl)
 for ASME B31.3 replacement piping spools with raised-face weld-neck flanges.
 Compatible with AutoCAD 3D, SolidWorks, FreeCAD, Blender, Navisworks, and Cura/Bambu slicers.

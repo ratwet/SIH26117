@@ -9,7 +9,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE.md)
 
-A fully air-gapped, self-hosted AI platform that runs open-weight LLMs on-premise — designed for industrial environments where data **never leaves the network**.
+A fully air-gapped, self-hosted AI platform that runs open-weight LLMs on-premise - designed for industrial environments where data **never leaves the network**.
 
 [Architecture](ARCHITECTURE.md) · [Documentation](docs/wiki/Home.md) · [Q&A Guide](docs/guides/PROJECT_QNA_GUIDE.md) · [PRD](PRD.md)
 
@@ -19,13 +19,13 @@ A fully air-gapped, self-hosted AI platform that runs open-weight LLMs on-premis
 
 ## Problem
 
-Critical infrastructure organizations — refineries, power plants, defense facilities — handle classified engineering documents (P&IDs, inspection reports, equipment schematics) that **cannot be sent to public cloud AI services** due to regulatory and security constraints.
+Critical infrastructure organizations - refineries, power plants, defense facilities - handle classified engineering documents (P&IDs, inspection reports, equipment schematics) that **cannot be sent to public cloud AI services** due to regulatory and security constraints.
 
 Existing solutions force a choice: use powerful AI but leak data, or keep data safe but lose AI capabilities.
 
-**Aquanex eliminates this trade-off.** It delivers production-grade AI capabilities on a fully isolated local network with zero outbound data transfer — verified and enforced at the kernel level.
+**Aquanex eliminates this trade-off.** It delivers production-grade AI capabilities on a fully isolated local network with zero outbound data transfer - verified and enforced at the kernel level.
 
-> **Built for:** [Smart India Hackathon 2026](https://sih.gov.in) — Problem Statement SIH26117  
+> **Built for:** [Smart India Hackathon 2026](https://sih.gov.in) - Problem Statement SIH26117  
 > **Organization:** Mangalore Refinery and Petrochemicals Limited (MRPL / ONGC)
 
 ---
@@ -42,7 +42,7 @@ Existing solutions force a choice: use powerful AI but leak data, or keep data s
 | Persona | Purpose |
 |:--------|:--------|
 | **Field Engineer** | Minimalist chat interface for UT thickness logging, formula verification, and remaining life estimation |
-| **Senior Reliability Lead** | Full dossier builder — generates approval notes, cost matrices, pitch decks, DXF drawings, and 3D CAD meshes |
+| **Senior Reliability Lead** | Full dossier builder - generates approval notes, cost matrices, pitch decks, DXF drawings, and 3D CAD meshes |
 | **IT Admin Control Center** | Governance dashboard with live LAN topology, GPU VRAM monitoring, SHA-256 audit ledger, and air-gap kill-switch |
 
 ### 10-Deliverable Generation Suite
@@ -71,7 +71,7 @@ Autonomously compiles statutory inspection deliverables from a single conversati
 - One-click chain integrity verification
 
 ### Plug-and-Play Model Backend
-- Model-agnostic — works with any Ollama or vLLM compatible model out of the box
+- Model-agnostic - works with any Ollama or vLLM compatible model out of the box
 - Users choose which open-weight LLM to run based on their available hardware
 - Zero application-level configuration required to switch models
 
@@ -81,7 +81,7 @@ Autonomously compiles statutory inspection deliverables from a single conversati
 
 ```
                           [ ISOLATED LAN SWITCH ]
-                          (192.168.1.0/24 — No WAN)
+                          (192.168.1.0/24 - No WAN)
                                     |
           +-------------------------+-------------------------+
           |                         |                         |
@@ -196,15 +196,15 @@ PYTHONPATH=backend python -m pytest backend/tests/ -v
 
 | Name | Role |
 |:-----|:-----|
-| **Rajat** | Orchestration & API — LangGraph state machine, SSE streaming, model gateway |
-| **Anand** | Deterministic Tools — Bubblewrap sandbox, deliverable compilers, RAG engine |
-| **Kaushal** | GPU & Deployment — Ollama/vLLM integration, multi-tier model configuration |
-| **Naveen** | Frontend & Desktop — UI system, persona apps, GTK desktop client, air-gap lockdown |
-| **Divij** | AI & Document Intelligence — Multimodal extraction, P&ID analysis, engineering formula verification |
-| **Sakshi** | Full-Stack & Desktop — Frontend components, backend API routes, native desktop packaging |
+| **Rajat** | Orchestration & API - LangGraph state machine, SSE streaming, model gateway |
+| **Anand** | Deterministic Tools - Bubblewrap sandbox, deliverable compilers, RAG engine |
+| **Kaushal** | GPU & Deployment - Ollama/vLLM integration, multi-tier model configuration |
+| **Naveen** | Frontend & Desktop - UI system, persona apps, GTK desktop client, air-gap lockdown |
+| **Divij** | AI & Document Intelligence - Multimodal extraction, P&ID analysis, engineering formula verification |
+| **Sakshi** | Full-Stack & Desktop - Frontend components, backend API routes, native desktop packaging |
 
 ---
 
 ## License
 
-[MIT](LICENSE.md) — Built for [Smart India Hackathon 2026](https://sih.gov.in), Problem Statement SIH26117.
+[MIT](LICENSE.md) - Built for [Smart India Hackathon 2026](https://sih.gov.in), Problem Statement SIH26117.

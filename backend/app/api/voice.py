@@ -1,8 +1,8 @@
 """
-SovereignWorkbench — Local Voice Sentinel API Router (app/api/voice.py)
+SovereignWorkbench - Local Voice Sentinel API Router (app/api/voice.py)
 Implements strictly on-premise, zero-surveillance push-to-talk voice interface.
 Audio is processed exclusively in RAM with zero disk retention and zero WAN egress.
-Voice is an input modality only — never an authorization credential.
+Voice is an input modality only - never an authorization credential.
 """
 
 import io

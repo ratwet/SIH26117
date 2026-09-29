@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — Excel Cost Matrix Compiler (app/compilers/xlsx_builder.py)
+SovereignWorkbench - Excel Cost Matrix Compiler (app/compilers/xlsx_builder.py)
 Generates audit-ready financial estimates and cost workbooks with active Excel formulas,
 contingency calculations, and statutory risk flags using openpyxl.
 """
@@ -75,7 +75,7 @@ def compile_cost_matrix(payload: CostMatrixPayload, output_path: Path) -> Path:
     ws["A1"] = "MANGALORE REFINERY AND PETROCHEMICALS LIMITED"
     ws["A1"].font = font_title
     
-    ws["A2"] = f"Technical Evaluation & Procurement Cost Matrix — {payload.project_title}"
+    ws["A2"] = f"Technical Evaluation & Procurement Cost Matrix - {payload.project_title}"
     ws["A2"].font = font_subtitle
     
     ws["A3"] = f"Line Tag: {payload.line_tag} | Currency: Indian Rupees (INR)"

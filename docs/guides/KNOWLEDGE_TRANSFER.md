@@ -1,5 +1,5 @@
 ================================================================================
-AQUANEX SOVEREIGN AI WORKBENCH — TEAM ONBOARDING & KNOWLEDGE TRANSFER (KT)
+AQUANEX SOVEREIGN AI WORKBENCH - TEAM ONBOARDING & KNOWLEDGE TRANSFER (KT)
 ================================================================================
 Document Version : 2.4.0 (Hardened Sovereign Release)
 Classification   : INTERNAL // MRPL REFINERY ASSET INTEGRITY TEAM
@@ -30,7 +30,7 @@ TABLE OF CONTENTS:
 Aquanex is an on-premise, strictly air-gapped sovereign AI engineering workbench 
 developed for heavy industrial environments (specifically crude distillation 
 units, fluid catalytic crackers, and high-pressure hydrocarbon pipeline networks 
-at Mangalore Refinery and Petrochemicals Limited — MRPL).
+at Mangalore Refinery and Petrochemicals Limited - MRPL).
 
 In refining and petrochemical operations, statutory failure can lead to 
 catastrophic loss of containment, environmental violations, or plant shutdown. 
@@ -79,7 +79,7 @@ As a new engineer touching this codebase, you must preserve these 6 invariants:
 [INVARIANT 4] STATUTORY WATERMARKING ON ALL DELIVERABLES
   - Every compiled Word (.docx) and PDF (.pdf) file MUST automatically embed 
     the statutory draft watermark:
-    "AI-GENERATED DRAFT — STATUTORY HUMAN REVIEW REQUIRED"
+    "AI-GENERATED DRAFT - STATUTORY HUMAN REVIEW REQUIRED"
   - Not valid for capital procurement without physical wet-ink sign-off blocks.
 
 [INVARIANT 5] LOCAL VOICE SENTINEL (ZERO SURVEILLANCE INVARIANT)
@@ -111,7 +111,7 @@ Deliverable Engine ezdxf (CAD DXF), ReportLab (PDF), python-docx (Word),
                   openpyxl (Excel), matplotlib (Heatmaps), numpy-stl (3D STL)
 Speech Subsystem  Faster-Whisper / local speech adapter (STT), Piper TTS (WAV)
 Frontend Core     HTML5, Vanilla ES6+ JavaScript, Custom Modern CSS (CSS Grid, 
-                  Flexbox, CSS variables — zero heavy framework dependencies)
+                  Flexbox, CSS variables - zero heavy framework dependencies)
 Bundler & Dev     Vite 6.x (sub-300ms builds, zero runtime overhead)
 Desktop Wrapper   PySide6 / WebKit2GTK native Linux window launcher 
                   (scripts/run_linux_desktop.py)
@@ -171,7 +171,7 @@ Testing Suite     pytest, pytest-asyncio, anyio (58 automated test suites)
 
 Aquanex serves three distinct refinery operational personas:
 
-1. RAJAT — IT Systems Administrator (Role: "admin", Level 1)
+1. RAJAT - IT Systems Administrator (Role: "admin", Level 1)
    - Scope: Complete infrastructure governance and security oversight.
    - UI: "Sovereign Cluster Control Center" (Clean, minimalist dashboard matching
      Pic 1). No dummy chat interface; registered cluster list, access matrix, 
@@ -180,7 +180,7 @@ Aquanex serves three distinct refinery operational personas:
    - Document Clearance: RESTRICTED, CONFIDENTIAL, INTERNAL.
    - Can issue approval tokens: YES.
 
-2. ANAND — Senior Reliability Lead (Role: "senior", Level 2)
+2. ANAND - Senior Reliability Lead (Role: "senior", Level 2)
    - Scope: Line fitness calculations (API 570, ASME B31.3), remaining safe life,
      statutory sign-offs, and CAD replacement spools.
    - UI: Engineering workbench with prompt suggestion chips, live thought feed,
@@ -189,7 +189,7 @@ Aquanex serves three distinct refinery operational personas:
    - Document Clearance: CONFIDENTIAL & INTERNAL.
    - Can issue approval tokens: YES.
 
-3. NAVEEN — Field Inspection Technician (Role: "junior", Level 3)
+3. NAVEEN - Field Inspection Technician (Role: "junior", Level 3)
    - Scope: Rapid field inspection on ruggedized field laptops. Zero model friction.
    - UI: Locked model badge ("Standard Inspection Model Pre-configured"). Model 
      dropdown is hidden to eliminate configuration errors.

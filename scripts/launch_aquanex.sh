@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =====================================================================
-# Aquanex — Universal Native Linux Desktop Launcher (scripts/launch_aquanex.sh)
+# Aquanex - Universal Native Linux Desktop Launcher (scripts/launch_aquanex.sh)
 # Usage:
 #   ./scripts/launch_aquanex.sh                  # Standard launch with persona selector
 #   ./scripts/launch_aquanex.sh --persona admin  # Level 1: IT Systems Admin

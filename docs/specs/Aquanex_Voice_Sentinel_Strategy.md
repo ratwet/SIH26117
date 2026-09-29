@@ -243,10 +243,10 @@ Voice interaction must not convert an LLM into an autonomous safety decision-mak
 - Use deterministic, tested code for engineering calculations.
 - Display formulas, variables, units, input sources, and intermediate results.
 - Require qualified engineer review for inspection conclusions, replacement recommendations, and statutory artifacts.
-- Mark generated documents as `DRAFT — HUMAN REVIEW REQUIRED` until approved.
+- Mark generated documents as `DRAFT - HUMAN REVIEW REQUIRED` until approved.
 - Do not let spoken instructions directly modify DCS, SCADA, PLC, SIS, or other OT/ICS systems.
 - Keep Aquanex separated from plant-control networks in the initial architecture.
-- Use voice to retrieve information, generate drafts, and remind people—not to actuate equipment.
+- Use voice to retrieve information, generate drafts, and remind people-not to actuate equipment.
 
 ## Suggested Modules
 
@@ -444,4 +444,4 @@ Build one high-value, secure demonstration:
 
 ## Final Recommendation
 
-Build a voice-first experience, but keep it **user-controlled, local, reviewable, and bounded**. The strongest version of a “Jarvis-like” feature is not a bot that listens all day or controls employees—it is a trusted assistant that understands authorized work, explains engineering evidence, creates drafts, helps people remember commitments, and requires accountable human approval before consequential action.
+Build a voice-first experience, but keep it **user-controlled, local, reviewable, and bounded**. The strongest version of a “Jarvis-like” feature is not a bot that listens all day or controls employees-it is a trusted assistant that understands authorized work, explains engineering evidence, creates drafts, helps people remember commitments, and requires accountable human approval before consequential action.

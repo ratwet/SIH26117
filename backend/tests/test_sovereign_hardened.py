@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — Hardened Strategic Security & Governance Verification Tests
+SovereignWorkbench - Hardened Strategic Security & Governance Verification Tests
 (backend/tests/test_sovereign_hardened.py)
 
 Validates the full enterprise gap closure:
@@ -209,7 +209,7 @@ def test_email_drafting_and_gated_dispatch(sample_pipe_data, tmp_path):
         attachments=["MRPL_Inspection_Certificate.pdf"],
     )
     assert draft.status == "DRAFT_AWAITING_APPROVAL"
-    assert "AI-GENERATED DRAFT — STATUTORY HUMAN REVIEW REQUIRED" in draft.body
+    assert "AI-GENERATED DRAFT - STATUTORY HUMAN REVIEW REQUIRED" in draft.body
 
     # 2. Attempt dispatch with bogus token -> Rejected
     with pytest.raises(PermissionError):
@@ -266,7 +266,7 @@ def test_docx_statutory_watermark(sample_pipe_data, tmp_path):
                 full_text += " " + cell.text
 
     assert "CONFIDENTIAL // MRPL TECHNICAL SERVICES" in full_text
-    assert "AI-GENERATED DRAFT — STATUTORY HUMAN REVIEW REQUIRED" in full_text
+    assert "AI-GENERATED DRAFT - STATUTORY HUMAN REVIEW REQUIRED" in full_text
 
 
 def test_pdf_statutory_watermark(sample_pipe_data, tmp_path):

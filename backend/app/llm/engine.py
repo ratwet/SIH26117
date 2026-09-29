@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — Unified LLM Serving Engine (app/llm/engine.py)
+SovereignWorkbench - Unified LLM Serving Engine (app/llm/engine.py)
 Orchestrates enterprise foundation models for air-gapped refinery engineering:
 - Laptop/Edge (8B/3B Tier): Ollama OpenAI-compatible endpoint (http://127.0.0.1:11434/v1)
 - Datacenter (100B+ Tier): vLLM / SGLang multi-GPU cluster (e.g., http://127.0.0.1:8001/v1)
@@ -73,7 +73,7 @@ class FoundationModelEngine:
             "is_connected": False,
             "active_endpoint": None,
             "mode": "DISCONNECTED",
-            "datacenter_node_status": "OFFLINE — No model server reachable (vLLM or Ollama)",
+            "datacenter_node_status": "OFFLINE - No model server reachable (vLLM or Ollama)",
             "available_models": [],
         }
 

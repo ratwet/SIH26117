@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — Internal Air-Gapped Email Connector (app/connectors/email_connector.py)
+SovereignWorkbench - Internal Air-Gapped Email Connector (app/connectors/email_connector.py)
 Automates drafting of inspection briefs and Turnaround notifications to MRPL internal exchange.
 Strictly gated by human approval tokens. Outbound WAN connections are hard blocked.
 """
@@ -72,7 +72,7 @@ def create_inspection_email_draft(
     subject = f"[MRPL-INTEGRITY] Urgent Asset Notice: {pipe_data.line_tag} Inspection Dossier"
 
     body = (
-        f"CONFIDENTIAL // MRPL TECHNICAL SERVICES — INTERNAL CORRESPONDENCE\n"
+        f"CONFIDENTIAL // MRPL TECHNICAL SERVICES - INTERNAL CORRESPONDENCE\n"
         f"----------------------------------------------------------------------\n"
         f"ATTN: Plant Maintenance & Reliability Engineering Division\n\n"
         f"Ultrasonic thickness survey and API 570 fitness-for-service calculations have\n"
@@ -86,7 +86,7 @@ def create_inspection_email_draft(
         f"  • Calculated Remaining Life: {pipe_data.remaining_life_years:.2f} Years\n"
         f"  • MANDATORY ACTION: {pipe_data.mandatory_action}\n\n"
         f"STATUTORY WATERMARK NOTICE:\n"
-        f"  AI-GENERATED DRAFT — STATUTORY HUMAN REVIEW REQUIRED.\n"
+        f"  AI-GENERATED DRAFT - STATUTORY HUMAN REVIEW REQUIRED.\n"
         f"  Deliverables attached below require physical/wet-ink engineering sign-off\n"
         f"  prior to capital turnaround requisitioning.\n\n"
         f"Attached Deliverables ({len(attachments)} items):\n"

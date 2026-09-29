@@ -1,4 +1,4 @@
-# 🖥️ SovereignWorkbench — Developer 4 Frontend & Desktop Handshake Specification
+# 🖥️ SovereignWorkbench - Developer 4 Frontend & Desktop Handshake Specification
 > **Target Audience:** Developer 4 (Frontend & Tauri Desktop Lead)  
 > **Role:** Node 3 User Workbench (Desktop UI, Live SSE Thought HUD, P&ID Ingestion, Deliverables Shelf, Air-Gap Kill Switch)  
 > **Team Structure:** Rajat (Dev 1: Brain/API) | Anand (Dev 2: Sandbox/Tools/Security) | Kaushal (Dev 3: GPU Workstation) | **Dev 4 (Frontend/Tauri)**  
@@ -48,7 +48,7 @@ This is the primary endpoint for the agentic chat experience.
 * **Form Parameters:**
   | Field | Type | Required? | Default | Description |
   | :--- | :--- | :--- | :--- | :--- |
-  | `prompt` | `string` | **Yes** | — | The engineer's prompt (e.g., *"Audit line CDU-2-04-150-A1A from scan"*) |
+  | `prompt` | `string` | **Yes** | - | The engineer's prompt (e.g., *"Audit line CDU-2-04-150-A1A from scan"*) |
   | `session_id` | `string` | No | UUID (auto) | Unique session ID to trace the run |
   | `user_role` | `string` | No | `"senior"` | Role tier: `"junior"` (read-only) or `"senior"` (full audit) |
   | `files` | `file[]` | No | `null` | Optional binary file attachments (PDF, PNG) |

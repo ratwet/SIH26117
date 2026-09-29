@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — Word Approval Note Compiler (app/compilers/docx_builder.py)
+SovereignWorkbench - Word Approval Note Compiler (app/compilers/docx_builder.py)
 Generates high-fidelity, corporate executive evaluation and approval dossiers
 for Mangalore Refinery and Petrochemicals Limited (MRPL) using python-docx.
 """
@@ -94,7 +94,7 @@ def compile_approval_note(payload: ApprovalNotePayload, output_path: Path) -> Pa
         header = section.header
         header_p = header.paragraphs[0]
         header_p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-        hrun = header_p.add_run("CONFIDENTIAL // MRPL TECHNICAL SERVICES   |   AI-GENERATED DRAFT — STATUTORY HUMAN REVIEW REQUIRED")
+        hrun = header_p.add_run("CONFIDENTIAL // MRPL TECHNICAL SERVICES   |   AI-GENERATED DRAFT - STATUTORY HUMAN REVIEW REQUIRED")
         hrun.font.name = "Arial"
         hrun.font.size = Pt(7.5)
         hrun.font.bold = True
@@ -104,7 +104,7 @@ def compile_approval_note(payload: ApprovalNotePayload, output_path: Path) -> Pa
         footer = section.footer
         footer_p = footer.paragraphs[0]
         footer_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        frun = footer_p.add_run("AI-GENERATED DRAFT — STATUTORY HUMAN REVIEW REQUIRED — NOT VALID FOR CAPITAL PROCUREMENT WITHOUT PHYSICAL SIGN-OFF")
+        frun = footer_p.add_run("AI-GENERATED DRAFT - STATUTORY HUMAN REVIEW REQUIRED - NOT VALID FOR CAPITAL PROCUREMENT WITHOUT PHYSICAL SIGN-OFF")
         frun.font.name = "Arial"
         frun.font.size = Pt(7.5)
         frun.font.bold = True
@@ -130,7 +130,7 @@ def compile_approval_note(payload: ApprovalNotePayload, output_path: Path) -> Pa
     w_p = w_cell.paragraphs[0]
     w_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     w_p.paragraph_format.space_after = Pt(0)
-    w_run = w_p.add_run("⚠ AI-GENERATED DRAFT — STATUTORY HUMAN REVIEW REQUIRED")
+    w_run = w_p.add_run("⚠ AI-GENERATED DRAFT - STATUTORY HUMAN REVIEW REQUIRED")
     w_run.font.name = "Arial"
     w_run.font.size = Pt(9.5)
     w_run.font.bold = True
@@ -155,7 +155,7 @@ def compile_approval_note(payload: ApprovalNotePayload, output_path: Path) -> Pa
     subtitle_p = doc.add_paragraph()
     subtitle_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     subtitle_p.paragraph_format.space_after = Pt(4)
-    run_sub = subtitle_p.add_run("Process Maintenance & Reliability Engineering Division — Technical Evaluation & Approval Note")
+    run_sub = subtitle_p.add_run("Process Maintenance & Reliability Engineering Division - Technical Evaluation & Approval Note")
     run_sub.font.name = "Arial"
     run_sub.font.size = Pt(10.5)
     run_sub.font.italic = True

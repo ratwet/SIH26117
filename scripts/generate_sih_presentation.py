@@ -389,8 +389,8 @@ def main():
             populate_slide(shape, [
                 ("Statutory Engineering Codes & Standards", [
                     "API 570 (4th Ed.): Piping Inspection Code: In-service Inspection, Rating, Repair, and Alteration of Piping Systems (Sections 7.1.1 Remaining Life & 7.1.2 Corrosion Rate).",
-                    "ASME B31.3 (2022): Process Piping Code (Paragraph 304.1.2 Straight Pipe Under Internal Pressure — Design Minimum Thickness tm).",
-                    "OISD-STD-118: Oil Industry Safety Directorate — Layouts, Inspection Protocols & Maintenance Safety in Petroleum Refineries."
+                    "ASME B31.3 (2022): Process Piping Code (Paragraph 304.1.2 Straight Pipe Under Internal Pressure - Design Minimum Thickness tm).",
+                    "OISD-STD-118: Oil Industry Safety Directorate - Layouts, Inspection Protocols & Maintenance Safety in Petroleum Refineries."
                 ]),
                 ("Technical References & Scientific Foundations", [
                     "LangGraph & LangChain: Stateful Multi-Actor Agentic Orchestration with Cyclic Directed Graph Workflows (Harrison Chase et al., 2024).",

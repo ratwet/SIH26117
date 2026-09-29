@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — PDF Inspection Certificate Compiler (app/compilers/pdf_builder.py)
+SovereignWorkbench - PDF Inspection Certificate Compiler (app/compilers/pdf_builder.py)
 Generates statutory, print-ready API 570 / ASME B31.3 Piping Inspection & Fitness-for-Service
 Certificates (.pdf) for MRPL Technical Services using ReportLab.
 """
@@ -127,7 +127,7 @@ def compile_inspection_certificate_pdf(
     story.append(Paragraph("CONFIDENTIAL // MRPL TECHNICAL SERVICES", class_style))
     story.append(Spacer(1, 2))
     watermark_box = [
-        [Paragraph("⚠ AI-GENERATED DRAFT — STATUTORY HUMAN REVIEW REQUIRED", watermark_style)]
+        [Paragraph("⚠ AI-GENERATED DRAFT - STATUTORY HUMAN REVIEW REQUIRED", watermark_style)]
     ]
     w_table = Table(watermark_box, colWidths=[540])
     w_table.setStyle(TableStyle([

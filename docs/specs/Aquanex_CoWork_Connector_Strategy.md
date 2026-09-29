@@ -26,7 +26,7 @@ Aquanex CoWork should:
 4. Retrieve applicable SOP/API/OISD references through permission-aware local RAG.
 5. Run deterministic calculations in an isolated no-egress sandbox.
 6. Generate a DOCX approval-note draft and XLSX cost matrix with citations, calculation inputs, and classification labels.
-7. Prepare—not automatically send—an email draft with selected recipients and attachments.
+7. Prepare-not automatically send-an email draft with selected recipients and attachments.
 8. Show a preview, evidence trace, and exact write/send action to the user.
 9. Send/save only after explicit approval.
 10. Record identity, source references, model version, tool actions, approvals, artifact hashes, and policy decisions in the tamper-evident audit ledger.

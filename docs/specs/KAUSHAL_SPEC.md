@@ -1,8 +1,8 @@
-# ⚡ SovereignWorkbench — Developer 3 Implementation Specification
+# ⚡ SovereignWorkbench - Developer 3 Implementation Specification
 > **Lead Developer 3:** **Kaushal** & AI Coding Assistant  
 > **Role:** GPU Workstation Server, Ollama Daemon, Model Weights & VRAM Gateway Lead  
 > **Team Structure:** Rajat (Dev 1: Orchestrator/API) | Anand (Dev 2: Sandbox/Tools/Security) | Kaushal (Dev 3: GPU/Ollama)  
-> **Project:** SovereignWorkbench (SIH 2026, PS 117 — MRPL)  
+> **Project:** SovereignWorkbench (SIH 2026, PS 117 - MRPL)  
 > **Shared Contract:** [`backend/app/schemas.py`](backend/app/schemas.py)  
 > **Rule #1:** Expose clean async inference functions so Rajat's LangGraph state machine can invoke local models without dealing with raw Ollama sockets or VRAM crashes.
 
@@ -67,11 +67,11 @@ backend/
 ```
 
 ### 🔴 Files You MUST NOT Touch:
-* **Owned by Rajat (Dev 1 — LangGraph & API):**
+* **Owned by Rajat (Dev 1 - LangGraph & API):**
   * `app/graph/*` (`state.py`, `nodes.py`, `edges.py`, `builder.py`)
   * `app/api/chat.py`
   * `app/api/admin.py`
-* **Owned by Anand (Dev 2 — Tools, Sandbox, Deliverables, Security):**
+* **Owned by Anand (Dev 2 - Tools, Sandbox, Deliverables, Security):**
   * `app/sandbox/*` (`runner.py`, `error_parser.py`)
   * `app/compilers/*` (`docx_builder.py`, `xlsx_builder.py`)
   * `app/rag/*` (`ingest.py`, `retriever.py`)

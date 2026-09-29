@@ -8,7 +8,7 @@ This page details the statutory mathematical standards, empirical time-motion be
 
 To ensure that Aquanex outputs are legally defensible and safe for life-critical refinery turnaround decisions, all mathematical logic strictly implements the published codes of the **American Petroleum Institute (API)** and the **American Society of Mechanical Engineers (ASME)**.
 
-### 1. ASME B31.3 — Process Piping Design Thickness ($t_{\text{min}}$)
+### 1. ASME B31.3 - Process Piping Design Thickness ($t_{\text{min}}$)
 Governs the minimum required wall thickness of straight metallic pipe under internal pressure (Section 304.1.2):
 
 $$t_{\text{min}} = \frac{P \cdot D}{2(S \cdot E + P \cdot Y)} + c$$
@@ -23,7 +23,7 @@ $$t_{\text{min}} = \frac{P \cdot D}{2(S \cdot E + P \cdot Y)} + c$$
 
 ---
 
-### 2. API 570 (4th Edition) — In-Service Piping Inspection Code
+### 2. API 570 (4th Edition) - In-Service Piping Inspection Code
 
 #### A. Corrosion Rate Determination (Section 7.1.2)
 Calculated from ultrasonic thickness gauge surveys taken at Condition Monitoring Locations (CMLs):
@@ -81,7 +81,7 @@ All components are rigorously validated by automated unit and integration tests:
 
 ### Test Suite Breakdown:
 
-#### 1. Security & Compliance (`backend/tests/test_audit_fixes.py` — 14 Tests)
+#### 1. Security & Compliance (`backend/tests/test_audit_fixes.py` - 14 Tests)
 * `test_air_gap_schema_contract`: Validates air-gap health response schema and security headers.
 * `test_air_gap_kill_switch_simulation`: Simulates WAN route injection; confirms emergency lock within 50ms.
 * `test_health_air_gap_dynamic_evaluation`: Validates dynamic transition between locked and unlocked states.
@@ -94,13 +94,13 @@ All components are rigorously validated by automated unit and integration tests:
 * `test_rbac_admin_model_register_permission`: Validates administrative model management permissions.
 * `test_sop_lookup_routes_to_answer_not_cad`: Verifies SOP queries route to cited text rather than CAD.
 
-#### 2. LangGraph State Machine (`backend/tests/test_dev1_graph.py` — 8 Tests)
+#### 2. LangGraph State Machine (`backend/tests/test_dev1_graph.py` - 8 Tests)
 * `test_full_vision_audit_flow`: Validates end-to-end traversal across all 8 nodes for piping inspection.
 * `test_self_healing_error_recovery`: Simulates syntax errors and validates 3-cycle self-healing recovery.
 * `test_sop_lookup_flow`: Validates ChromaDB RAG retrieval with exact clause citations.
 * `test_general_chat_flow`: Validates fallback conversational assistant flow.
 
-#### 3. Deterministic Sandbox & Tools (`backend/tests/test_dev2_tools.py` — 8 Tests)
+#### 3. Deterministic Sandbox & Tools (`backend/tests/test_dev2_tools.py` - 8 Tests)
 * `test_sandbox_success`: Validates exit code 0 and stdout capture for valid engineering scripts.
 * `test_sandbox_self_healing_error_distillation`: Tests ZeroDivisionError extraction and distillation.
 * `test_sandbox_key_error_distillation`: Tests missing dictionary parameter extraction.
@@ -110,7 +110,7 @@ All components are rigorously validated by automated unit and integration tests:
 * `test_rag_retrieval`: Validates local FastEmbed cosine similarity search.
 * `test_audit_chain_integrity`: Validates SHA-256 block hash chaining and forward links.
 
-#### 4. Omni-Modal Compilers & Enterprise Scaling (`backend/tests/test_omni_modal_100b.py` — 10 Tests)
+#### 4. Omni-Modal Compilers & Enterprise Scaling (`backend/tests/test_omni_modal_100b.py` - 10 Tests)
 * `test_docx_compiler`: Validates Word approval note builder and table formatting.
 * `test_xlsx_compiler`: Validates Excel Capex budget matrix with dynamic conditional styles.
 * `test_pptx_compiler`: Validates PowerPoint pitch deck builder with high-contrast typography.

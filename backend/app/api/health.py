@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — Health & Telemetry Endpoint (app/api/health.py)
+SovereignWorkbench - Health & Telemetry Endpoint (app/api/health.py)
 Owned by Rajat (Dev 1: Orchestration & API Lead).
 """
 

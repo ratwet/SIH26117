@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — PowerPoint Presentation Compiler (app/compilers/pptx_builder.py)
+SovereignWorkbench - PowerPoint Presentation Compiler (app/compilers/pptx_builder.py)
 Generates high-fidelity, executive-ready presentation decks (.pptx)
 for refinery turnaround meetings, board reviews, and SIH evaluations.
 """

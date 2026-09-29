@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — Cryptographic Action Approval Tokens (app/policy/approval_tokens.py)
+SovereignWorkbench - Cryptographic Action Approval Tokens (app/policy/approval_tokens.py)
 Enforces Human-in-the-Loop authorization gates for all consequential operations
 (internal email dispatch, file commits, vault transfers).
 """

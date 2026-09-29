@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =====================================================================
-# Aquanex — macOS Desktop Build Helper (scripts/build_macos.sh)
+# Aquanex - macOS Desktop Build Helper (scripts/build_macos.sh)
 # Used by Anand on MacBook to compile the native Apple Silicon macOS app
 # =====================================================================
 

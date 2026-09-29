@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — LangGraph StateGraph Assembly & Compilation (app/graph/builder.py)
+SovereignWorkbench - LangGraph StateGraph Assembly & Compilation (app/graph/builder.py)
 Owned by Rajat (Dev 1: Orchestration & API Lead).
 
 This file connects all nodes and conditional edges into a compiled, runnable

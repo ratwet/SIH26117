@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =====================================================================
-# SovereignWorkbench — Live Egress Verification (scripts/verify_sovereignty.sh)
+# SovereignWorkbench - Live Egress Verification (scripts/verify_sovereignty.sh)
 # Live Technical Proof of 100% Air-Gap Sovereignty for SIH Evaluators
 # Uses kernel routing table inspection and tcpdump packet monitoring.
 # =====================================================================
@@ -16,7 +16,7 @@ NC='\033[0m'
 
 clear
 echo -e "${BLUE}=====================================================================${NC}"
-echo -e "${BOLD}🛡️  MRPL SOVEREIGNWORKBENCH — ZERO-EGRESS SOVEREIGNTY VERIFIER     ${NC}"
+echo -e "${BOLD}🛡️  MRPL SOVEREIGNWORKBENCH - ZERO-EGRESS SOVEREIGNTY VERIFIER     ${NC}"
 echo -e "${BLUE}=====================================================================${NC}"
 echo -e "Testing strictly offline execution across physical 3-node subnet (192.168.1.0/24)\n"
 

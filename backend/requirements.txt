@@ -1,5 +1,5 @@
 # =====================================================================
-# SovereignWorkbench — Pinned Python Dependencies (requirements.txt)
+# SovereignWorkbench - Pinned Python Dependencies (requirements.txt)
 # Exact versions for deterministic on-premise air-gapped deployment.
 # Generated from working venv on 2026-09-04.
 # =====================================================================

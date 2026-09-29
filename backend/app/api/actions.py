@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — Action Approval & CoWork Connectors API Router (app/api/actions.py)
+SovereignWorkbench - Action Approval & CoWork Connectors API Router (app/api/actions.py)
 Implements Human-in-the-Loop governance gates for consequential actions,
 email drafting to MRPL internal exchange, and scoped enterprise vaults.
 """

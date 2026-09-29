@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — Air-Gap Network Monitor (app/security/network_monitor.py)
+SovereignWorkbench - Air-Gap Network Monitor (app/security/network_monitor.py)
 Monitors network interfaces and kernel socket counters via /proc/net/dev (Linux)
 or psutil (cross-platform fallback) to prove zero outbound WAN packet egress.
 Thread-safe and compliant with frontend kill-switch contract.

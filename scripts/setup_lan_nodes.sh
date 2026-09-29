@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# SovereignWorkbench — Minimalist Air-Gap Netplan Setup
+# SovereignWorkbench - Minimalist Air-Gap Netplan Setup
 set -euo pipefail
 
 [ "${EUID:-$(id -u)}" -eq 0 ] || { echo "error: root privileges required (run with sudo)" >&2; exit 1; }

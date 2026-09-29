@@ -1,4 +1,4 @@
-# 🏗️ SovereignWorkbench — Backend Implementation Guide (`BACKEND_IMPLEMENTATION.md`)
+# 🏗️ SovereignWorkbench - Backend Implementation Guide (`BACKEND_IMPLEMENTATION.md`)
 > **Project:** SovereignWorkbench  
 > **Target System:** Node 2 (Central GPU Server / Gaming Laptop)  
 > **Framework:** FastAPI + LangGraph + Ollama  

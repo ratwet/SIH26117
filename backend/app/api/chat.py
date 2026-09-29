@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — Agentic Chat & Real-Time SSE Streaming Endpoint (app/api/chat.py)
+SovereignWorkbench - Agentic Chat & Real-Time SSE Streaming Endpoint (app/api/chat.py)
 Owned by Rajat (Dev 1: Orchestration & API Lead).
 
 Handles incoming user requests, manages conversation sessions, and streams

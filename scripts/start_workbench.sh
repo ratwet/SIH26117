@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =====================================================================
-# SovereignWorkbench — Service Launcher (scripts/start_workbench.sh)
+# SovereignWorkbench - Service Launcher (scripts/start_workbench.sh)
 # Starts local Ollama model engine and FastAPI/LangGraph backend server
 # =====================================================================
 
@@ -16,7 +16,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR/backend"
 
 echo -e "${BLUE}=====================================================================${NC}"
-echo -e "${BLUE}🛡️  STARTING SOVEREIGNWORKBENCH (MRPL PS 117) — SERVER NODE        ${NC}"
+echo -e "${BLUE}🛡️  STARTING SOVEREIGNWORKBENCH (MRPL PS 117) - SERVER NODE        ${NC}"
 echo -e "${BLUE}=====================================================================${NC}"
 
 # 1. Check Ollama Daemon

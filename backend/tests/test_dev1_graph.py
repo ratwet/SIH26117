@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — Dev 1 LangGraph Unit Verification Suite (backend/tests/test_dev1_graph.py)
+SovereignWorkbench - Dev 1 LangGraph Unit Verification Suite (backend/tests/test_dev1_graph.py)
 Owned by Rajat (Dev 1: Orchestration & API Lead).
 
 Validates:

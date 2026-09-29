@@ -1,4 +1,4 @@
-# 🔬 Aquanex — Research, Benchmarks & Literature Analysis Dossier
+# 🔬 Aquanex - Research, Benchmarks & Literature Analysis Dossier
 
 > **Smart India Hackathon (SIH) 2026 | Problem Statement ID: SIH26117**  
 > **Client / Target Domain:** Mangalore Refinery and Petrochemicals Limited (MRPL) / MoPNG / Heavy Process PSUs  
@@ -81,7 +81,7 @@ Our system architecture is directly grounded in 5 recent peer-reviewed scientifi
 | **Qian et al.** [2] | *Nature Scientific Reports*, vol. 16 (2026) | **Hierarchical Multi-Agent RL for Industrial Document QA:** Demonstrates that a hierarchy of specialized agents significantly outperforms monolithic LLMs when querying dense industrial technical manuals. | **Validates Agent Hierarchy:** Aquanex employs a modular open-weights model fleet: Intent Router (e.g. 3B), Vision Inspector (e.g. 7B), Reasoning Engine (e.g. 8B–70B), and Sandbox Runner. |
 | **D'Cruze et al.** [3] | *IAI 2025 / Springer Lecture Notes*, Springer (2026) | **Generative AI Framework for Smart Maintenance in Manufacturing:** Explores on-premise RAG and domain-adapted LLMs to synthesize operational logs, equipment histories, and maintenance workflows. | **Operational Grounding:** Validates our local RAG pipeline using ChromaDB and FastEmbed for querying refinery historical maintenance logs and statutory SOPs without external cloud access. |
 | **Automated FMEA Framework** [4] | *International Journal of System Assurance Engineering and Management*, Springer (Feb 2026) | **Automating Failure Modes and Effects Analysis (FMEA) Using LLMs and RAG:** Proves that combining RAG with structured LLM prompts automates risk priority scoring and failure mode tracking in safety-critical systems. | **Reliability Engineering:** Aquanex automates mechanical integrity scoring and flags mandatory shutdown triggers when Remaining Life ($RL \le 5.0\text{ yrs}$), adhering to formal FMEA principles. |
-| **Cvetić & Njeguš** [5] | *Sinteza 2026 — International Scientific Conference* (2026) | **Cognitive Framework for Pressure Equipment Inspection Based on Multi-Agent AI and VLLM Models:** Validates using Vision-Language LLMs for automated defect and line diagram inspection on pressure equipment. | **Multimodal Vision Stack:** Aquanex uses local `Qwen2-VL-7B` to extract line tags, nominal diameters, schedule numbers, and design ratings directly from scanned P&ID blueprints and isometric drawings. |
+| **Cvetić & Njeguš** [5] | *Sinteza 2026 - International Scientific Conference* (2026) | **Cognitive Framework for Pressure Equipment Inspection Based on Multi-Agent AI and VLLM Models:** Validates using Vision-Language LLMs for automated defect and line diagram inspection on pressure equipment. | **Multimodal Vision Stack:** Aquanex uses local `Qwen2-VL-7B` to extract line tags, nominal diameters, schedule numbers, and design ratings directly from scanned P&ID blueprints and isometric drawings. |
 
 #### Additional Foundational Literature
 * **[6] DeepSeek-AI (2025):** *"DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning."* arXiv:2501.12948. Provides the foundation for our mathematical derivation and Python code generation node without commercial API lock-in.
@@ -166,7 +166,7 @@ Front-End displays Full-Screen Red Emergency Air-Gap Lockout Modal
 ## 4. 📈 Economic & Strategic Landscape
 
 ### 4.1 Refinery Downtime Economics & Cost Justification
-In crude oil refining, an unscheduled emergency shutdown of a continuous process unit (such as the Atmospheric & Vacuum Distillation Unit — AVU or Fluidized Catalytic Cracking Unit — FCCU) is catastrophic:
+In crude oil refining, an unscheduled emergency shutdown of a continuous process unit (such as the Atmospheric & Vacuum Distillation Unit - AVU or Fluidized Catalytic Cracking Unit - FCCU) is catastrophic:
 * **Cost of Unplanned Refinery Outage:** ₹40 Lakhs to ₹60 Lakhs ($50,000–$75,000) **per day** in lost throughput, flaring penalties, and plant restart stabilization.
 * **Cost of Turnaround Extension:** If piping corrosion is discovered late during a scheduled decennial turnaround due to manual transcription oversights, replacement spools must be fabricated on emergency overtime, extending the turnaround by 3–7 days (₹1.5 to ₹3.5 Crores in losses).
 
@@ -224,13 +224,13 @@ Aquanex:           ▍ 0.75 Minutes (45 Seconds)
 
 ### 6.1 Statutory Engineering Standards
 
-#### A. API 570 (4th Edition) — Piping Inspection Code
-* **Section 7.1.1 — Remaining Life ($RL$):**
+#### A. API 570 (4th Edition) - Piping Inspection Code
+* **Section 7.1.1 - Remaining Life ($RL$):**
   $$RL = \frac{t_{\text{actual}} - t_{\text{required}}}{\text{Corrosion Rate}}$$
   * $t_{\text{actual}}$: Actual minimum thickness measured via ultrasonic gauge at CMLs.
   * $t_{\text{required}}$: Minimum required thickness calculated per ASME B31.3.
   * $\text{Corrosion Rate}$: Metal loss rate in mm/year.
-* **Section 7.1.2 — Corrosion Rate Calculation:**
+* **Section 7.1.2 - Corrosion Rate Calculation:**
   $$\text{Corrosion Rate (Short-Term)} = \frac{t_{\text{previous}} - t_{\text{actual}}}{\Delta \text{Time (years)}}$$
 * **Section 7.2 & Refinery Turnaround Mandate:**
   * Hydrocarbon refineries operate on standardized **4 to 5 year Turnaround (M&I) cycles**.
@@ -239,8 +239,8 @@ Aquanex:           ▍ 0.75 Minutes (45 Seconds)
   * The piping spool **cannot safely operate until the subsequent turnaround**.
   * **Mandatory Statutory Action:** The system triggers an emergency red callout in the executive dossier ordering immediate procurement, replacement spool pre-fabrication, and shutdown replacement during the upcoming turnaround.
 
-#### B. ASME B31.3 (2022) — Process Piping Design
-* **Paragraph 304.1.2 — Straight Pipe Under Internal Pressure:**
+#### B. ASME B31.3 (2022) - Process Piping Design
+* **Paragraph 304.1.2 - Straight Pipe Under Internal Pressure:**
   $$t_{\text{min}} = \frac{P \cdot D}{2(S \cdot E + P \cdot Y)} + c$$
   * Where $P$ = Internal design pressure (psig / bar), $D$ = Outside pipe diameter (mm), $S$ = Basic allowable material stress at design temperature, $E$ = Longitudinal joint quality factor, $Y$ = Validated wall coefficient (0.4 for ferritic steels < 482°C), $c$ = Mechanical allowances + statutory corrosion allowance.
 
@@ -308,7 +308,7 @@ Aquanex:           ▍ 0.75 Minutes (45 Seconds)
 
 [5] Cvetić, A., & Njeguš, A. (2026). "A Cognitive Framework for Pressure Equipment Inspection Based on 
     Multi-Agent AI Systems and VLLM Models." 
-    In: Sinteza 2026 — International Scientific Conference on Information Technology and Data Related Research, 2026.
+    In: Sinteza 2026 - International Scientific Conference on Information Technology and Data Related Research, 2026.
     DOI: 10.15308/Sinteza-2026-114-121
 
 [6] DeepSeek-AI. (2025). "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning." 

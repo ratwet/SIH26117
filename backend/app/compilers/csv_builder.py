@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — Ultrasonic NDT Survey CSV Compiler (app/compilers/csv_builder.py)
+SovereignWorkbench - Ultrasonic NDT Survey CSV Compiler (app/compilers/csv_builder.py)
 Generates industry-standard Condition Monitoring Location (CML) thickness survey logs (.csv)
 ready for direct ingestion into Meridium APM, SAP Plant Maintenance (PM), and GE Digital APM.
 """

@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — Shared Interface Contract (app/schemas.py)
+SovereignWorkbench - Shared Interface Contract (app/schemas.py)
 
 CRITICAL: This file is the frozen contract between:
 - Rajat (Dev 1: Agentic Brain & LangGraph State Machine)

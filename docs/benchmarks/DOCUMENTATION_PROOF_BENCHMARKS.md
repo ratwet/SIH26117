@@ -1,4 +1,4 @@
-# 📑 Aquanex — Documentation Proof & Regulatory Evidence Dossier
+# 📑 Aquanex - Documentation Proof & Regulatory Evidence Dossier
 
 **Target Audience Domain:** Refineries (MRPL, IOCL, BPCL, HPCL), PSUs, Defense & Heavy Process Industries  
 **Document Purpose:** Statutory, Technical, and Empirical Verification for SIH 2026 Presentation Claims  
@@ -38,7 +38,7 @@ In Indian refineries and petrochemical plants, routine statutory inspection of a
 TOTAL DURATION: ~150 to 180 Minutes (2.5 to 3.0 Hours per Circuit)
 ```
 
-* **Reference in Project Dossier:** [`docs/presentation/PRESENTATION_MASTER_DOSSIER.md`](docs/presentation/PRESENTATION_MASTER_DOSSIER.md#L68) — *Section 1.3: "The Copy-Paste Format Gap: Chatbots output plain markdown text. Engineers waste 2 to 3 hours re-typing calculations into corporate Word notes and Excel cost estimates manually."*
+* **Reference in Project Dossier:** [`docs/presentation/PRESENTATION_MASTER_DOSSIER.md`](docs/presentation/PRESENTATION_MASTER_DOSSIER.md#L68) - *Section 1.3: "The Copy-Paste Format Gap: Chatbots output plain markdown text. Engineers waste 2 to 3 hours re-typing calculations into corporate Word notes and Excel cost estimates manually."*
 
 ---
 
@@ -102,7 +102,7 @@ When executed via the unified sovereign multi-model pipeline, the 45-second exec
 
 ### 3.1 Statutory Standards & Mathematical Formulations
 
-#### A. API 570 (4th Edition) — Piping Inspection Code
+#### A. API 570 (4th Edition) - Piping Inspection Code
 Governs in-service inspection, rating, repair, and alteration of metallic and fiberglass piping systems.
 
 * **Section 7.1.1: Remaining Life ($RL$) Formulation:**

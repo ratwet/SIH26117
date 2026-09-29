@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — End-to-End Industrial Audit Simulation (backend/tests/test_e2e_simulation.py)
+SovereignWorkbench - End-to-End Industrial Audit Simulation (backend/tests/test_e2e_simulation.py)
 Simulates complete pipeline: P&ID OCR -> Math Derivation -> Sandbox Run -> Word & Excel Compilation -> Audit Ledger.
 """
 
@@ -20,7 +20,7 @@ from app.config import settings
 
 async def run_simulation():
     print("=" * 70)
-    print("🏭 MRPL SOVEREIGNWORKBENCH — END-TO-END INDUSTRIAL SIMULATION")
+    print("🏭 MRPL SOVEREIGNWORKBENCH - END-TO-END INDUSTRIAL SIMULATION")
     print("   Scenario: Crude Distillation Unit 2 (CDU-2) Overhead Line Audit")
     print("   Standard: API 570 / ASME B31.3 Piping Inspection Code")
     print("=" * 70)

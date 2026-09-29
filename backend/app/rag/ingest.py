@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — Sovereign RAG Ingestion (app/rag/ingest.py)
+SovereignWorkbench - Sovereign RAG Ingestion (app/rag/ingest.py)
 Ingests refinery SOPs, API standards, and inspection dossiers into a local,
 air-gapped CPU vector database.
 """

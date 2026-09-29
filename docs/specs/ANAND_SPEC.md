@@ -1,8 +1,8 @@
-# 🛠️ SovereignWorkbench — Developer 2 Implementation Specification
+# 🛠️ SovereignWorkbench - Developer 2 Implementation Specification
 > **Lead Developer 2:** **Anand** & AI Coding Assistant  
 > **Role:** Deterministic Tools, Sandboxing, Deliverables & Security Lead  
 > **Team Structure:** Rajat (Dev 1: Orchestration/API) | Anand (Dev 2: Sandbox/Tools/Security) | Kaushal (Dev 3: GPU/Ollama)  
-> **Project:** SovereignWorkbench (SIH 2026, PS 117 — MRPL)  
+> **Project:** SovereignWorkbench (SIH 2026, PS 117 - MRPL)  
 > **Shared Contract:** [`backend/app/schemas.py`](backend/app/schemas.py)  
 > **Rule #1:** Build your modules to conform **strictly** to the shared contract. DO NOT alter field names or types in `app/schemas.py`.
 
@@ -54,11 +54,11 @@ backend/
 ```
 
 ### 🔴 Files You MUST NOT Touch:
-* **Owned by Rajat (Dev 1 — LangGraph, Routing, FastAPI):**
+* **Owned by Rajat (Dev 1 - LangGraph, Routing, FastAPI):**
   * `app/graph/*` (`state.py`, `nodes.py`, `edges.py`, `builder.py`)
   * `app/api/chat.py`
   * `app/api/admin.py`
-* **Owned by Kaushal (Dev 3 — GPU, Ollama Daemon & Models):**
+* **Owned by Kaushal (Dev 3 - GPU, Ollama Daemon & Models):**
   * `app/llm/*` (`client.py`, `prompts.py`, `router.py`)
 
 ### 🟡 Shared Files (Consult Rajat & Kaushal Before Modifying):
@@ -124,7 +124,7 @@ Rajat's LangGraph nodes will directly import and call the following functions fr
 * **Library:** `python-docx`
 * **Visual Standards:**
   * Header: Bold dark blue (`#123456`) title: **MANGALORE REFINERY AND PETROCHEMICALS LIMITED (MRPL)**
-  * Subtitle: *Process Maintenance & Reliability Engineering Division — Technical Evaluation & Approval Note*
+  * Subtitle: *Process Maintenance & Reliability Engineering Division - Technical Evaluation & Approval Note*
   * Metadata Table: Reference number, Line Tag, Unit Name, Inspection Date.
   * Ultrasonic Data Table: Nominal thickness ($4.8\text{ mm}$), Actual thickness ($3.2\text{ mm}$), Minimum required ($2.1\text{ mm}$), Corrosion rate ($0.35\text{ mm/yr}$), Remaining Life ($3.14\text{ years}$).
   * Formula Derivations: Bulleted step-by-step mathematical steps per API 570 / ASME B31.3.
@@ -141,7 +141,7 @@ Rajat's LangGraph nodes will directly import and call the following functions fr
   * Active Formulas: The `Total Cost` column must use an Excel formula: `=C4*E4` (Quantity $\times$ Unit Rate).
   * Subtotal & Grand Total: `=SUM(F4:F8)` with bold double-bottom border.
   * Contingency: `=F9*0.10` (10% contingency).
-  * Risk Flag: Cell with conditional formatting — if Remaining Life $< 5$ years, cell highlights in Light Red with text: `MANDATORY REPLACEMENT REQUIRED`.
+  * Risk Flag: Cell with conditional formatting - if Remaining Life $< 5$ years, cell highlights in Light Red with text: `MANDATORY REPLACEMENT REQUIRED`.
 
 ---
 

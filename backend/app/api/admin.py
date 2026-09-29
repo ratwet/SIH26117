@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — Admin & Model Registry Endpoints (app/api/admin.py)
+SovereignWorkbench - Admin & Model Registry Endpoints (app/api/admin.py)
 Owned by Rajat (Dev 1: Orchestration & API Lead).
 """
 

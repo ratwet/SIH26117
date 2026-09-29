@@ -1,4 +1,4 @@
-# 🛡️ Aquanex — Sovereign On-Premise Agentic AI Workbench
+# 🛡️ Aquanex - Sovereign On-Premise Agentic AI Workbench
 
 Welcome to the official **Aquanex Knowledge Base & Architecture Wiki**!
 
@@ -10,10 +10,10 @@ Welcome to the official **Aquanex Knowledge Base & Architecture Wiki**!
 
 | Key Dimension | Specification |
 | :--- | :--- |
-| **Hackathon & Problem ID** | **Smart India Hackathon (SIH) 2026** — Problem Statement **SIH26117** |
+| **Hackathon & Problem ID** | **Smart India Hackathon (SIH) 2026** - Problem Statement **SIH26117** |
 | **Client Organization** | **Mangalore Refinery and Petrochemicals Limited (MRPL / MoPNG)** |
 | **Theme & Category** | Smart Automation \| Industrial Software Architecture |
-| **Verification Status** | ✅ **Production Delivery Ready (40/40 Automated Tests Passing — 100% Pass Rate)** |
+| **Verification Status** | ✅ **Production Delivery Ready (40/40 Automated Tests Passing - 100% Pass Rate)** |
 | **Data Sovereignty** | **100% Air-Gapped**: Zero telemetry, zero external API dependencies, kernel route kill-switch |
 | **Core Architecture** | Stateful Cyclic LangGraph Engine, Bubblewrap Sandbox, 10-Deliverable Compiler Suite |
 | **Model Philosophy** | **BYOM (Bring-Your-Own-Model)**: Drop-in open-weights (Ollama Edge / vLLM Datacenter Cluster) |
@@ -25,7 +25,7 @@ Welcome to the official **Aquanex Knowledge Base & Architecture Wiki**!
 In hydrocarbon refineries and petrochemical complexes, maintaining process piping integrity under statutory mandates (**OISD-STD-118/153**, **API 570**, and **ASME B31.3**) is a life-safety critical requirement. However, plants face a three-fold operational bottleneck:
 
 1. **The 3-Hour Manual Inspection Deadlock:** Engineers spend 2.5 to 3.0 hours per piping circuit manually retrieving P&ID drawings, transcribing ultrasonic thickness gauge readings, calculating short-term and long-term corrosion rates, and drafting executive Word approval notes and Excel Capex budgets.
-2. **The "Shadow AI" National Security Threat:** Frustrated by repetitive administrative transcription, field personnel risk pasting confidential piping line tags, operating pressures, and metallurgy into public cloud AI services (ChatGPT, Claude, Copilot)—violating **CERT-In IT Act Section 70B** and **MoPNG Cyber Security Directives** on Critical Information Infrastructure (CII).
+2. **The "Shadow AI" National Security Threat:** Frustrated by repetitive administrative transcription, field personnel risk pasting confidential piping line tags, operating pressures, and metallurgy into public cloud AI services (ChatGPT, Claude, Copilot)-violating **CERT-In IT Act Section 70B** and **MoPNG Cyber Security Directives** on Critical Information Infrastructure (CII).
 3. **The LLM Arithmetic Hallucination Crisis:** Generative AI models operate probabilistically (next-token prediction) and suffer high error rates (>37%) on floating-point engineering arithmetic, risking catastrophic plant failure if relied upon for turnaround decisions.
 
 ---
@@ -61,11 +61,11 @@ Aquanex replaces this fragile workflow with an end-to-end, deterministic agentic
 
 Explore the detailed engineering specifications across our structured wiki sections:
 
-* 📐 **[[Architecture and LangGraph]]** — Deep-dive into our cyclic state machine, state schema, 8 nodes, and 3-cycle autonomous self-healing recovery loop.
-* 🔒 **[[BYOM and Air Gap Security]]** — Bring-Your-Own-Model architecture, Bubblewrap fail-closed sandboxing, and Linux kernel `/proc/net/route` active watchdog.
-* 📑 **[[Omni Modal Deliverables]]** — Specification of all 10 publication-ready enterprise files generated without Microsoft Office or Autodesk software.
-* 📊 **[[Verification and Benchmarks]]** — Statutory mathematical formulas (API 570 / ASME B31.3), empirical speedup study, and 40/40 test suite breakdown.
-* 🚀 **[[Deployment and Operations]]** — Setup guide for Linux Desktop (WebKit2/GTK), 3-node offline physical LAN topology, and diagnostic scripts.
+* 📐 **[[Architecture and LangGraph]]** - Deep-dive into our cyclic state machine, state schema, 8 nodes, and 3-cycle autonomous self-healing recovery loop.
+* 🔒 **[[BYOM and Air Gap Security]]** - Bring-Your-Own-Model architecture, Bubblewrap fail-closed sandboxing, and Linux kernel `/proc/net/route` active watchdog.
+* 📑 **[[Omni Modal Deliverables]]** - Specification of all 10 publication-ready enterprise files generated without Microsoft Office or Autodesk software.
+* 📊 **[[Verification and Benchmarks]]** - Statutory mathematical formulas (API 570 / ASME B31.3), empirical speedup study, and 40/40 test suite breakdown.
+* 🚀 **[[Deployment and Operations]]** - Setup guide for Linux Desktop (WebKit2/GTK), 3-node offline physical LAN topology, and diagnostic scripts.
 
 ---
 

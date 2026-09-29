@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Aquanex — Native Linux Desktop Client & Universal Launcher (scripts/run_linux_desktop.py)
+Aquanex - Native Linux Desktop Client & Universal Launcher (scripts/run_linux_desktop.py)
 Supports:
 1. Native GTK 3.0 + WebKit2 Desktop Window
 2. Three Persona Levels: Admin (Level 1), Senior (Level 2), Junior/Field (Level 3)
@@ -452,16 +452,16 @@ def main():
         target_persona = "junior"
 
     if target_persona == "admin":
-        window_title = "Aquanex Admin — Sovereign Cluster Control Center"
+        window_title = "Aquanex Admin - Sovereign Cluster Control Center"
         wm_class = "aquanex-admin"
     elif target_persona == "senior":
-        window_title = "Aquanex Senior — Reliability Engineering Lead"
+        window_title = "Aquanex Senior - Reliability Engineering Lead"
         wm_class = "aquanex-senior"
     elif target_persona == "junior":
-        window_title = "Aquanex Field — Ultrasonic Inspection Assistant"
+        window_title = "Aquanex Field - Ultrasonic Inspection Assistant"
         wm_class = "aquanex-field"
     else:
-        window_title = "Aquanex — Sovereign AI Workbench (MRPL PS 117)"
+        window_title = "Aquanex - Sovereign AI Workbench (MRPL PS 117)"
         wm_class = "aquanex"
 
     # Construct final target URL with persona and standalone query parameters

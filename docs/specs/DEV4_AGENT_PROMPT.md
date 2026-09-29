@@ -35,7 +35,7 @@ You are building the **Node 3 User Workbench**: a native desktop application for
 ## 3. UI LAYOUT & USER EXPERIENCE (3-PANEL COMMAND CENTER)
 
 ### Header Bar
-- Title: `🛡️ SOVEREIGNWORKBENCH — MRPL REFINERY COMMAND CENTER`
+- Title: `🛡️ SOVEREIGNWORKBENCH - MRPL REFINERY COMMAND CENTER`
 - Plant Unit Selector: Dropdown (`Crude Distillation Unit 2 (CDU-2)`, `Vacuum Distillation Unit (VDU)`, `Fluid Catalytic Cracking (FCCU)`).
 - Air-Gap Pill: Pulsating green badge `[🟢 AIR-GAP ENFORCED: 0 WAN BYTES]`.
 - Mock Mode Toggle: A switch `[🧪 Mock Mode: ON/OFF]` (ON by default so you can test right now!).

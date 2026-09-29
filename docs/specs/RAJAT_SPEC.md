@@ -1,8 +1,8 @@
-# 🧠 SovereignWorkbench — Developer 1 Implementation Specification
+# 🧠 SovereignWorkbench - Developer 1 Implementation Specification
 > **Lead Developer 1:** **Rajat** (`@Rajatjyoti-arch`) & AI Coding Assistant  
 > **Role:** Agentic Brain, LangGraph State Machine, Ollama Gateway & API Lead  
 > **Team Structure:** Rajat (Dev 1: Orchestration/API) | Anand (Dev 2: Sandbox/Tools/Security) | Kaushal (Dev 3: GPU/Ollama)  
-> **Project:** SovereignWorkbench (SIH 2026, PS 117 — MRPL)  
+> **Project:** SovereignWorkbench (SIH 2026, PS 117 - MRPL)  
 > **Shared Contract:** [`backend/app/schemas.py`](backend/app/schemas.py)  
 > **Rule #1:** Build your modules to consume the shared contract. While Anand builds the tools, you mock them first to assemble the LangGraph flow.
 
@@ -46,14 +46,14 @@ backend/
 ```
 
 ### 🔴 Files You MUST NOT Touch:
-* **Owned by Anand (Dev 2 — Tools, Sandbox, Deliverables, Security):**
+* **Owned by Anand (Dev 2 - Tools, Sandbox, Deliverables, Security):**
   * `app/sandbox/*` (`runner.py`, `error_parser.py`)
   * `app/compilers/*` (`docx_builder.py`, `xlsx_builder.py`)
   * `app/rag/*` (`ingest.py`, `retriever.py`)
   * `app/security/*` (`network_monitor.py`, `audit_chain.py`)
   * `app/api/files.py`
   * `app/api/telemetry.py`
-* **Owned by Kaushal (Dev 3 — GPU, Ollama Daemon & Models):**
+* **Owned by Kaushal (Dev 3 - GPU, Ollama Daemon & Models):**
   * `app/llm/*` (`client.py`, `router.py`, `prompts.py`)
   * Local Ollama setup, GGUF models, and VRAM management
 

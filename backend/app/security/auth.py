@@ -1,5 +1,5 @@
 """
-Aquanex — Sovereign On-Premise Authentication & RBAC User Registry (app/security/auth.py)
+Aquanex - Sovereign On-Premise Authentication & RBAC User Registry (app/security/auth.py)
 Zero Cloud Dependencies • 100% Air-Gapped • Local In-Memory & File Store
 """
 

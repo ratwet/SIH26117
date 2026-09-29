@@ -337,14 +337,14 @@ Controls to add:
 - Per-task working directory and explicit output path selection.
 - Confirmation dialog showing exact write/delete action.
 - Digital sign-off or reviewer workflow for final artifacts.
-- Watermarks such as `AI-GENERATED DRAFT — HUMAN REVIEW REQUIRED` until approved.
+- Watermarks such as `AI-GENERATED DRAFT - HUMAN REVIEW REQUIRED` until approved.
 - Strict block on direct SCADA/DCS/PLC/OT control commands in the hackathon version.
 
 ## Gap 9: Engineering Correctness, Evaluation, and Safety Guardrails
 
 ### Current position
 
-The deliverable suite is impressive, but test success confirms software behavior—not necessarily technical correctness of engineering conclusions generated from arbitrary scans, noisy OCR, or hallucinated context.
+The deliverable suite is impressive, but test success confirms software behavior-not necessarily technical correctness of engineering conclusions generated from arbitrary scans, noisy OCR, or hallucinated context.
 
 ### Risk
 
@@ -421,7 +421,7 @@ Bubblewrap with read-only mounts, tmpfs, and memory limits is a solid baseline.
 
 ### Current position
 
-The 10-deliverable suite is a major differentiator. Its production readiness depends on provenance, review, classification, compatibility, and controlled storage—not just file generation.
+The 10-deliverable suite is a major differentiator. Its production readiness depends on provenance, review, classification, compatibility, and controlled storage-not just file generation.
 
 ### Recommendation
 
@@ -534,7 +534,7 @@ All services: local-only allow lists, mTLS, signed updates, offline package/mode
 - Add default-deny egress rules plus the existing reactive network monitor.
 - Produce a signed, hash-chained audit event log for one end-to-end task.
 - Add one RBAC/clearance-aware RAG demonstration with two users and two document classes.
-- Make generated artifacts explicitly marked as `DRAFT — HUMAN REVIEW REQUIRED`.
+- Make generated artifacts explicitly marked as `DRAFT - HUMAN REVIEW REQUIRED`.
 - Document model hashes, source, license, and hardware used at the venue.
 
 ### Phase 1: Pilot controls

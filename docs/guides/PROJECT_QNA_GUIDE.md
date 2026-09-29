@@ -1,4 +1,4 @@
-# Aquanex Sovereign AI Workbench — Complete Technology Learning Guide
+# Aquanex Sovereign AI Workbench - Complete Technology Learning Guide
 
 > **Purpose**: Teach every AI/ML and engineering technology used in this project from first principles, then demonstrate exactly how each one is applied.  
 > **Audience**: Students, evaluators, and new team members  
@@ -9,33 +9,33 @@
 
 ## Table of Contents
 
-1. [Large Language Models (LLMs) — The Brain](#1-large-language-models-llms--the-brain)
-2. [Transformer Architecture — How LLMs Think](#2-transformer-architecture--how-llms-think)
-3. [Model Quantization — Fitting Giants on Laptops](#3-model-quantization--fitting-giants-on-laptops)
-4. [Agentic AI & LangGraph — Orchestrating Intelligence](#4-agentic-ai--langgraph--orchestrating-intelligence)
-5. [Retrieval-Augmented Generation (RAG) — Grounding AI in Facts](#5-retrieval-augmented-generation-rag--grounding-ai-in-facts)
-6. [Vector Databases & Embeddings — The Memory System](#6-vector-databases--embeddings--the-memory-system)
-7. [Program-Aided Language (PAL) — Deterministic Math via Code](#7-program-aided-language-pal--deterministic-math-via-code)
-8. [Sandbox Isolation & Linux Namespaces — Safe Code Execution](#8-sandbox-isolation--linux-namespaces--safe-code-execution)
-9. [Cryptography in Practice — HMAC, SHA-256, Audit Chains](#9-cryptography-in-practice--hmac-sha-256-audit-chains)
-10. [Access Control — RBAC vs ABAC](#10-access-control--rbac-vs-abac)
+1. [Large Language Models (LLMs) - The Brain](#1-large-language-models-llms--the-brain)
+2. [Transformer Architecture - How LLMs Think](#2-transformer-architecture--how-llms-think)
+3. [Model Quantization - Fitting Giants on Laptops](#3-model-quantization--fitting-giants-on-laptops)
+4. [Agentic AI & LangGraph - Orchestrating Intelligence](#4-agentic-ai--langgraph--orchestrating-intelligence)
+5. [Retrieval-Augmented Generation (RAG) - Grounding AI in Facts](#5-retrieval-augmented-generation-rag--grounding-ai-in-facts)
+6. [Vector Databases & Embeddings - The Memory System](#6-vector-databases--embeddings--the-memory-system)
+7. [Program-Aided Language (PAL) - Deterministic Math via Code](#7-program-aided-language-pal--deterministic-math-via-code)
+8. [Sandbox Isolation & Linux Namespaces - Safe Code Execution](#8-sandbox-isolation--linux-namespaces--safe-code-execution)
+9. [Cryptography in Practice - HMAC, SHA-256, Audit Chains](#9-cryptography-in-practice--hmac-sha-256-audit-chains)
+10. [Access Control - RBAC vs ABAC](#10-access-control--rbac-vs-abac)
 11. [Server-Sent Events (SSE) & Async Architecture](#11-server-sent-events-sse--async-architecture)
-12. [FastAPI & Pydantic — The Backend Framework](#12-fastapi--pydantic--the-backend-framework)
-13. [Frontend Architecture — Vanilla JS, Vite, CSS Design Systems](#13-frontend-architecture--vanilla-js-vite-css-design-systems)
-14. [Multimodal Vision Models — Reading Engineering Drawings](#14-multimodal-vision-models--reading-engineering-drawings)
-15. [Speech-to-Text (STT) — Local Voice Processing](#15-speech-to-text-stt--local-voice-processing)
-16. [Industrial File Compilers — From Data to Engineering Deliverables](#16-industrial-file-compilers--from-data-to-engineering-deliverables)
-17. [Air-Gap Network Security — Kernel-Level Enforcement](#17-air-gap-network-security--kernel-level-enforcement)
-18. [End-to-End Data Flow — Putting It All Together](#18-end-to-end-data-flow--putting-it-all-together)
+12. [FastAPI & Pydantic - The Backend Framework](#12-fastapi--pydantic--the-backend-framework)
+13. [Frontend Architecture - Vanilla JS, Vite, CSS Design Systems](#13-frontend-architecture--vanilla-js-vite-css-design-systems)
+14. [Multimodal Vision Models - Reading Engineering Drawings](#14-multimodal-vision-models--reading-engineering-drawings)
+15. [Speech-to-Text (STT) - Local Voice Processing](#15-speech-to-text-stt--local-voice-processing)
+16. [Industrial File Compilers - From Data to Engineering Deliverables](#16-industrial-file-compilers--from-data-to-engineering-deliverables)
+17. [Air-Gap Network Security - Kernel-Level Enforcement](#17-air-gap-network-security--kernel-level-enforcement)
+18. [End-to-End Data Flow - Putting It All Together](#18-end-to-end-data-flow--putting-it-all-together)
 19. [Rapid-Fire Viva Q&A](#19-rapid-fire-viva-qa)
 
 ---
 
-## 1. Large Language Models (LLMs) — The Brain
+## 1. Large Language Models (LLMs) - The Brain
 
 ### What is an LLM?
 
-A Large Language Model is a deep neural network trained on trillions of tokens of text to predict the next token in a sequence. Given a prompt like "The capital of France is," the model predicts "Paris" with high probability. But modern LLMs go far beyond simple completion — they can reason, write code, analyze documents, and follow complex instructions.
+A Large Language Model is a deep neural network trained on trillions of tokens of text to predict the next token in a sequence. Given a prompt like "The capital of France is," the model predicts "Paris" with high probability. But modern LLMs go far beyond simple completion - they can reason, write code, analyze documents, and follow complex instructions.
 
 **Key characteristics:**
 - **Parameters**: The "weights" of the neural network. More parameters = more capacity to learn patterns. A 7B model has 7 billion parameters; a 70B model has 70 billion.
@@ -57,7 +57,7 @@ A Large Language Model is a deep neural network trained on trillions of tokens o
 The `FoundationModelEngine` in [`engine.py`](file:///home/cyanide/SIH/backend/app/llm/engine.py) is the unified gateway. It talks to local model servers via the **OpenAI-compatible REST API** (`/v1/chat/completions`):
 
 ```python
-# engine.py — Dispatching inference to Ollama or vLLM
+# engine.py - Dispatching inference to Ollama or vLLM
 payload = {
     "model": "deepseek-r1:70b-q8_0",
     "messages": [
@@ -80,7 +80,7 @@ response = await client.post(f"{base_url}/chat/completions", json=payload)
 DeepSeek-R1 wraps its reasoning in `<think>...</think>` tags. Aquanex extracts this:
 
 ```python
-# engine.py — Extracting the reasoning trace
+# engine.py - Extracting the reasoning trace
 def _extract_deepseek_r1_thought(self, text):
     match = re.search(r"<think>(.*?)</think>", text, re.DOTALL)
     if match:
@@ -90,23 +90,23 @@ def _extract_deepseek_r1_thought(self, text):
     return None, text
 ```
 
-The "thought" is streamed live to the UI as the model reasons, giving engineers transparency into *how* the AI arrived at its conclusion — critical for statutory audit trails.
+The "thought" is streamed live to the UI as the model reasons, giving engineers transparency into *how* the AI arrived at its conclusion - critical for statutory audit trails.
 
 ---
 
-## 2. Transformer Architecture — How LLMs Think
+## 2. Transformer Architecture - How LLMs Think
 
 ### What is a Transformer?
 
 The Transformer (Vaswani et al., 2017, "Attention Is All You Need") is the neural network architecture behind every modern LLM. Before Transformers, sequential models (RNNs, LSTMs) processed text one word at a time. Transformers process **all words simultaneously** using a mechanism called **self-attention**.
 
-### Self-Attention — The Core Idea
+### Self-Attention - The Core Idea
 
 For each word in a sentence, self-attention asks: "How much should I pay attention to every other word?"
 
 Example: *"The pipe **corroded** because the **acid** was too concentrated."*
 
-When processing "corroded," the attention mechanism assigns high weight to "acid" and "concentrated" — understanding that these explain why corrosion happened. This is computed as:
+When processing "corroded," the attention mechanism assigns high weight to "acid" and "concentrated" - understanding that these explain why corrosion happened. This is computed as:
 
 ```
 Attention(Q, K, V) = softmax(Q × K^T / √d_k) × V
@@ -139,7 +139,7 @@ This parallel comprehension across all tokens is why Transformers outperform seq
 
 ---
 
-## 3. Model Quantization — Fitting Giants on Laptops
+## 3. Model Quantization - Fitting Giants on Laptops
 
 ### What is Quantization?
 
@@ -171,9 +171,9 @@ GGUF (GPT-Generated Unified Format) is the standard file format for quantized mo
 The 3-tier hardware profile in [`config.py`](file:///home/cyanide/SIH/backend/app/config.py) uses different quantization levels:
 
 ```python
-# config.py — Hardware tier profiles
+# config.py - Hardware tier profiles
 "ENTERPRISE_100B": {
-    "reasoning": "deepseek-r1:70b-q8_0",      # Q8 — best quality, needs 4x A100
+    "reasoning": "deepseek-r1:70b-q8_0",      # Q8 - best quality, needs 4x A100
     "coder": "qwen2.5-coder:32b-instruct",    # Full precision on cluster
 },
 "EDGE_LAPTOP_8B": {
@@ -182,7 +182,7 @@ The 3-tier hardware profile in [`config.py`](file:///home/cyanide/SIH/backend/ap
 },
 ```
 
-**VRAM Management — Sequential Model Unloading:**
+**VRAM Management - Sequential Model Unloading:**
 
 On a laptop with 8GB VRAM, you can't load a 7B vision model AND an 8B reasoning model simultaneously. Aquanex sends `"keep_alive": 0` to Ollama, which unloads the vision model from GPU after extraction completes, freeing VRAM for the reasoning model:
 
@@ -194,7 +194,7 @@ Peak VRAM: 5.5GB (never both loaded simultaneously)
 
 ---
 
-## 4. Agentic AI & LangGraph — Orchestrating Intelligence
+## 4. Agentic AI & LangGraph - Orchestrating Intelligence
 
 ### What is Agentic AI?
 
@@ -214,7 +214,7 @@ LangGraph is a framework for building **stateful, multi-step AI agent workflows*
 - Performs some operation (LLM call, tool use, computation)
 - Returns an updated state
 
-Unlike simple chains (A → B → C), LangGraph supports **cycles** — a node can loop back to a previous node. This is critical for self-healing error recovery.
+Unlike simple chains (A → B → C), LangGraph supports **cycles** - a node can loop back to a previous node. This is critical for self-healing error recovery.
 
 ### How LangGraph Works (General Concept)
 
@@ -242,7 +242,7 @@ graph = StateGraph(MyState)
 graph.add_node("research", research_node)
 graph.add_node("validate", validate_node)
 graph.add_edge("research", "validate")
-# Conditional edge — this creates a CYCLE for retry
+# Conditional edge - this creates a CYCLE for retry
 graph.add_conditional_edges("validate", lambda s: "research" if s["retry_count"] > 0 else "end")
 ```
 
@@ -317,16 +317,16 @@ User Prompt
 
 **Why LangGraph over LangChain chains?**
 1. **Self-healing**: If sandbox code crashes, the error loops back. A linear chain would crash entirely.
-2. **Typed state**: Every node mutation is explicit in the typed state — auditors can trace exactly what happened at each step.
+2. **Typed state**: Every node mutation is explicit in the typed state - auditors can trace exactly what happened at each step.
 3. **Deterministic routing**: Transitions are pure functions, not LLM hallucinations.
 
 ---
 
-## 5. Retrieval-Augmented Generation (RAG) — Grounding AI in Facts
+## 5. Retrieval-Augmented Generation (RAG) - Grounding AI in Facts
 
 ### What is RAG?
 
-LLMs are trained on general internet text — they don't have access to your private documents, proprietary standards, or recent data. **RAG** solves this by:
+LLMs are trained on general internet text - they don't have access to your private documents, proprietary standards, or recent data. **RAG** solves this by:
 
 1. **Indexing**: Breaking your documents into chunks and converting them to vector embeddings
 2. **Retrieving**: When a user asks a question, finding the most relevant chunks
@@ -357,13 +357,13 @@ User Query ──► Embed (same embedding model)
 The [`retriever.py`](file:///home/cyanide/SIH/backend/app/rag/retriever.py) implements RAG with a critical addition: **Pre-Retrieval ABAC filtering** (explained in Section 10).
 
 ```python
-# retriever.py — The 5-step retrieval pipeline
+# retriever.py - The 5-step retrieval pipeline
 def query_sovereign_rag(query, top_k=5, user_role="senior", clearance="CONFIDENTIAL"):
     
     # Step 1: Query ChromaDB with semantic embeddings
     results = collection.query(query_embeddings=embeddings, n_results=top_k * 3)
     
-    # Step 2: ABAC filter — remove chunks the user isn't authorized to see
+    # Step 2: ABAC filter - remove chunks the user isn't authorized to see
     for chunk in results:
         if not _is_authorized(chunk.classification, chunk.roles, user_role, clearance):
             continue  # DENIED: chunk never enters the pipeline
@@ -382,14 +382,14 @@ def query_sovereign_rag(query, top_k=5, user_role="senior", clearance="CONFIDENT
 ```
 
 **What documents are indexed?**
-- API 570 (Piping Inspection Code) — corrosion rate and remaining life formulas
-- ASME B31.3 (Process Piping) — minimum wall thickness calculations
-- OISD-STD-118 (Oil Industry Safety Directorate) — inspection frequency mandates
+- API 570 (Piping Inspection Code) - corrosion rate and remaining life formulas
+- ASME B31.3 (Process Piping) - minimum wall thickness calculations
+- OISD-STD-118 (Oil Industry Safety Directorate) - inspection frequency mandates
 - MRPL internal engineering standards and audit documents
 
 ---
 
-## 6. Vector Databases & Embeddings — The Memory System
+## 6. Vector Databases & Embeddings - The Memory System
 
 ### What is a Vector Embedding?
 
@@ -403,13 +403,13 @@ An embedding is a **fixed-length numerical representation** of text. The key pro
 
 **How embeddings are computed:**
 A small neural network (the "embedding model") processes the text and outputs a fixed-size vector. Popular models:
-- `bge-small-en-v1.5` (33M params, 384-dim vectors) — used in Aquanex
-- `text-embedding-3-small` (OpenAI) — cloud-only, can't be used here
-- `all-MiniLM-L6-v2` (22M params, 384-dim) — another popular local option
+- `bge-small-en-v1.5` (33M params, 384-dim vectors) - used in Aquanex
+- `text-embedding-3-small` (OpenAI) - cloud-only, can't be used here
+- `all-MiniLM-L6-v2` (22M params, 384-dim) - another popular local option
 
 ### What is a Vector Database?
 
-A vector database stores embedding vectors and supports **similarity search** — given a query vector, find the K nearest vectors in the database. This is fundamentally different from SQL (`WHERE name = 'X'`) or keyword search (`LIKE '%keyword%'`).
+A vector database stores embedding vectors and supports **similarity search** - given a query vector, find the K nearest vectors in the database. This is fundamentally different from SQL (`WHERE name = 'X'`) or keyword search (`LIKE '%keyword%'`).
 
 **Similarity metrics:**
 - **Cosine Similarity**: Measures the angle between two vectors. Score 1.0 = identical, 0.0 = unrelated.
@@ -418,13 +418,13 @@ A vector database stores embedding vectors and supports **similarity search** �
 ### How ChromaDB Is Used in Aquanex
 
 **Why ChromaDB?**
-- **Embedded** — runs as a Python library, no external server process
-- **Persistent** — stores data in a local directory (`data/chromadb/`)
-- **CPU-only embeddings** — uses `FastEmbed` with `bge-small-en-v1.5` on CPU, avoiding GPU VRAM contention with LLMs
-- **Metadata support** — each chunk stores classification level, department, and authorized roles for ABAC filtering
+- **Embedded** - runs as a Python library, no external server process
+- **Persistent** - stores data in a local directory (`data/chromadb/`)
+- **CPU-only embeddings** - uses `FastEmbed` with `bge-small-en-v1.5` on CPU, avoiding GPU VRAM contention with LLMs
+- **Metadata support** - each chunk stores classification level, department, and authorized roles for ABAC filtering
 
 ```python
-# config.py — ChromaDB configuration
+# config.py - ChromaDB configuration
 EMBEDDING_MODEL: str = "BAAI/bge-small-en-v1.5"
 CHROMA_PERSIST_DIR: Path = Path("data/chromadb")
 RAG_CHUNK_SIZE: int = 500      # 500-word chunks
@@ -432,24 +432,24 @@ RAG_CHUNK_OVERLAP: int = 50    # 50-word overlap between chunks
 RAG_TOP_K: int = 5             # Return top 5 most relevant chunks
 ```
 
-**Why not OpenAI embeddings?** They require an API call to `api.openai.com` — violating the zero-egress air-gap invariant. `bge-small-en-v1.5` runs entirely locally with competitive quality.
+**Why not OpenAI embeddings?** They require an API call to `api.openai.com` - violating the zero-egress air-gap invariant. `bge-small-en-v1.5` runs entirely locally with competitive quality.
 
-**Why not FAISS?** FAISS is a vector similarity library, not a database. It doesn't persist data to disk or support metadata filtering. ChromaDB wraps similarity search with persistence and metadata — a better fit for ABAC.
+**Why not FAISS?** FAISS is a vector similarity library, not a database. It doesn't persist data to disk or support metadata filtering. ChromaDB wraps similarity search with persistence and metadata - a better fit for ABAC.
 
 ---
 
-## 7. Program-Aided Language (PAL) — Deterministic Math via Code
+## 7. Program-Aided Language (PAL) - Deterministic Math via Code
 
 ### What is PAL?
 
 PAL (Gao et al., 2023) is a technique where instead of asking an LLM to directly compute a mathematical answer, you ask it to **write a program** that computes the answer. The program is then executed in a separate runtime.
 
 **Why PAL exists:**
-LLMs perform arithmetic in their attention layers — essentially doing "vibes-based math." They frequently make errors:
+LLMs perform arithmetic in their attention layers - essentially doing "vibes-based math." They frequently make errors:
 ```
-LLM without PAL: "23.7 × 4.2 = 99.54"  (correct: 99.54 ✓ — but only by luck)
-LLM without PAL: "156.3 × 0.87 = 135.981"  (correct: 135.981 ✓ — lucky again)
-LLM without PAL: "4.8 - 3.2 / 4.57 = 0.35"  (correct: 0.350... ✓ — but what about edge cases?)
+LLM without PAL: "23.7 × 4.2 = 99.54"  (correct: 99.54 ✓ - but only by luck)
+LLM without PAL: "156.3 × 0.87 = 135.981"  (correct: 135.981 ✓ - lucky again)
+LLM without PAL: "4.8 - 3.2 / 4.57 = 0.35"  (correct: 0.350... ✓ - but what about edge cases?)
 ```
 
 The problem: you can't tell when the LLM got lucky vs. when it's wrong. In a refinery, a 0.4mm error in corrosion calculation means the difference between safe operation and **catastrophic pipe rupture**.
@@ -472,7 +472,7 @@ Step 2: LLM generates Python code:
 
 Step 3: Code executes in sandbox → stdout = {"remaining_life_years": 3.14}
 
-Step 4: The number 3.14 is the DEFINITIVE answer — computed by Python, not by LLM weights
+Step 4: The number 3.14 is the DEFINITIVE answer - computed by Python, not by LLM weights
 ```
 
 ### How PAL Is Used in Aquanex
@@ -497,29 +497,29 @@ Statutory Action:
 
 ---
 
-## 8. Sandbox Isolation & Linux Namespaces — Safe Code Execution
+## 8. Sandbox Isolation & Linux Namespaces - Safe Code Execution
 
 ### What is Sandboxing?
 
 When an AI generates code, you cannot trust it. It might:
 - Read sensitive files (`/etc/passwd`, SSH keys)
 - Open network connections (data exfiltration)
-- Fork bomb (`:(){ :|:& };:`) — crashing the system
+- Fork bomb (`:(){ :|:& };:`) - crashing the system
 - Consume unlimited RAM (out-of-memory kill)
 
 **Sandboxing** runs untrusted code in an isolated environment where it cannot affect the host system.
 
-### Linux Namespaces — The Kernel Mechanism
+### Linux Namespaces - The Kernel Mechanism
 
 Linux namespaces are kernel features that isolate what a process can see and access:
 
 | Namespace | Flag | What It Isolates |
 |-----------|------|-----------------|
-| **PID** | `CLONE_NEWPID` | Process IDs — sandbox sees only its own processes |
-| **NET** | `CLONE_NEWNET` | Network — sandbox has NO network interfaces at all |
-| **MNT** | `CLONE_NEWNS` | Filesystem — sandbox sees only whitelisted directories |
-| **IPC** | `CLONE_NEWIPC` | Inter-process communication — no shared memory with host |
-| **USER** | `CLONE_NEWUSER` | UID/GID mapping — sandbox user has no host privileges |
+| **PID** | `CLONE_NEWPID` | Process IDs - sandbox sees only its own processes |
+| **NET** | `CLONE_NEWNET` | Network - sandbox has NO network interfaces at all |
+| **MNT** | `CLONE_NEWNS` | Filesystem - sandbox sees only whitelisted directories |
+| **IPC** | `CLONE_NEWIPC` | Inter-process communication - no shared memory with host |
+| **USER** | `CLONE_NEWUSER` | UID/GID mapping - sandbox user has no host privileges |
 
 These are the same primitives that Docker uses, but Bubblewrap (`bwrap`) applies them directly without needing a daemon or root.
 
@@ -546,7 +546,7 @@ Bubblewrap is a lightweight, unprivileged sandboxing tool. It creates an isolate
 When Node 4 generates a Python script, Node 5 (`sandbox_execution_node`) dispatches it to `execute_in_sandbox()`:
 
 ```python
-# nodes.py — Sandbox execution node
+# nodes.py - Sandbox execution node
 async def sandbox_execution_node(state):
     code = state.get("generated_code", "")
     
@@ -563,20 +563,20 @@ async def sandbox_execution_node(state):
 
 **Security guarantees:**
 1. **No network**: Even if the LLM generates `requests.get("http://evil.com")`, it fails with `EPERM`
-2. **No file access**: Host `/home`, `/etc`, SSH keys are unmapped — invisible to the script
+2. **No file access**: Host `/home`, `/etc`, SSH keys are unmapped - invisible to the script
 3. **No resource abuse**: 256MB RAM cap, 5-second timeout, SIGKILL on violation
 4. **No orphans**: `--die-with-parent` prevents zombie processes
 5. **Fail-closed**: If `/usr/bin/bwrap` is missing, `ALLOW_UNSANDBOXED_FALLBACK = False` prevents unsandboxed execution entirely
 
 **Why not Docker?**
-- Docker requires root daemon (`dockerd`) — attack surface
-- Docker images need registries — impossible in air-gap without pre-staging
+- Docker requires root daemon (`dockerd`) - attack surface
+- Docker images need registries - impossible in air-gap without pre-staging
 - Docker adds ~200MB overhead per image; bwrap adds zero
 - Bwrap is a single binary, already installed on most Linux systems
 
 ---
 
-## 9. Cryptography in Practice — HMAC, SHA-256, Audit Chains
+## 9. Cryptography in Practice - HMAC, SHA-256, Audit Chains
 
 ### What is SHA-256?
 
@@ -654,11 +654,11 @@ Block 2:            prev_hash = "def456..."  ← links to Block 1
                          = "ghi789..."
 ```
 
-If anyone tampers with Block 1 (e.g., changes the model name), its hash changes from "def456..." to something else, but Block 2 still expects "def456..." as `prev_hash`. The chain **breaks** — tamper detected.
+If anyone tampers with Block 1 (e.g., changes the model name), its hash changes from "def456..." to something else, but Block 2 still expects "def456..." as `prev_hash`. The chain **breaks** - tamper detected.
 
 ---
 
-## 10. Access Control — RBAC vs ABAC
+## 10. Access Control - RBAC vs ABAC
 
 ### What is RBAC (Role-Based Access Control)?
 
@@ -672,7 +672,7 @@ Junior → Can access EDGE model only, CANNOT issue tokens
 
 ### What is ABAC (Attribute-Based Access Control)?
 
-ABAC is more granular — it evaluates **attributes** of the data, the user, and the environment:
+ABAC is more granular - it evaluates **attributes** of the data, the user, and the environment:
 
 ```
 Access Decision = f(user.role, user.clearance, document.classification, document.department)
@@ -756,12 +756,12 @@ data: {"complete": true, "deliverables": [...]}
 Python's `async/await` allows concurrent I/O operations without blocking. When one request waits for a model response (120s), other requests can still be served:
 
 ```python
-# WITHOUT async — blocks everything during model call
+# WITHOUT async - blocks everything during model call
 def handle_request():
     result = model.generate(prompt)  # Thread blocked for 120 seconds!
     return result
 
-# WITH async — serves other requests while waiting
+# WITH async - serves other requests while waiting
 async def handle_request():
     result = await model.generate(prompt)  # Yields control while waiting
     return result
@@ -772,7 +772,7 @@ async def handle_request():
 **The "Thought Stream"**: As LangGraph progresses through nodes, each node appends progress messages to `state["thought_stream"]`. These are streamed to the frontend via SSE, showing the user exactly what the AI is doing in real-time:
 
 ```python
-# nodes.py — Each node appends to the thought stream
+# nodes.py - Each node appends to the thought stream
 async def rag_retrieval_node(state):
     thought = "Checking refinery safety standards and statutory guidelines..."
     current_thoughts = state.get("thought_stream", [])
@@ -789,7 +789,7 @@ result = await asyncio.to_thread(execute_in_sandbox, code)
 
 ---
 
-## 12. FastAPI & Pydantic — The Backend Framework
+## 12. FastAPI & Pydantic - The Backend Framework
 
 ### What is FastAPI?
 
@@ -825,7 +825,7 @@ data = PipeInspectionData(line_tag=123, nominal_thickness_mm="not a number", ...
 [`schemas.py`](file:///home/cyanide/SIH/backend/app/schemas.py) is the **frozen contract** between all three developers. Every data structure flowing through the system is a validated Pydantic model:
 
 ```python
-# schemas.py — The contract between developers
+# schemas.py - The contract between developers
 class SandboxResult(BaseModel):
     success: bool                   # Did the code execute successfully?
     exit_code: int                  # Process exit code (0 = success)
@@ -856,7 +856,7 @@ class Settings(BaseSettings):
 
 ---
 
-## 13. Frontend Architecture — Vanilla JS, Vite, CSS Design Systems
+## 13. Frontend Architecture - Vanilla JS, Vite, CSS Design Systems
 
 ### Why Vanilla JavaScript?
 
@@ -875,7 +875,7 @@ Vite is a frontend build tool that serves ES modules natively during development
 The frontend dynamically shows/hides UI components based on the persona query parameter:
 
 ```javascript
-// main.js — Role-based UI switching
+// main.js - Role-based UI switching
 const params = new URLSearchParams(window.location.search);
 const persona = params.get('persona') || 'senior';
 
@@ -892,7 +892,7 @@ if (persona === 'admin') {
 
 ---
 
-## 14. Multimodal Vision Models — Reading Engineering Drawings
+## 14. Multimodal Vision Models - Reading Engineering Drawings
 
 ### What is a Vision-Language Model (VLM)?
 
@@ -903,7 +903,7 @@ A VLM is a model that can process both images and text simultaneously. It combin
 Node 2 (`vision_extraction_node`) uses **Qwen2-VL** to extract engineering parameters from uploaded P&ID drawings and NDT inspection reports:
 
 ```python
-# nodes.py — Vision extraction
+# nodes.py - Vision extraction
 llm_prompt = "Extract piping inspection parameters from the attached technical drawings"
 content, trace = await call_llm(
     prompt=llm_prompt,
@@ -930,7 +930,7 @@ This dual approach (VLM extraction + regex fallback) ensures robust parameter ex
 
 ---
 
-## 15. Speech-to-Text (STT) — Local Voice Processing
+## 15. Speech-to-Text (STT) - Local Voice Processing
 
 ### What is Whisper?
 
@@ -938,14 +938,14 @@ Whisper is OpenAI's open-source speech recognition model. It converts audio wave
 
 ### Faster-Whisper
 
-Faster-Whisper is a CTranslate2-optimized implementation of Whisper that runs 4× faster on CPU and 2× faster on GPU compared to the original. It's used in Aquanex because it runs entirely locally — no cloud API calls.
+Faster-Whisper is a CTranslate2-optimized implementation of Whisper that runs 4× faster on CPU and 2× faster on GPU compared to the original. It's used in Aquanex because it runs entirely locally - no cloud API calls.
 
 ### The Zero-Surveillance Protocol
 
 ```python
-# voice.py — Privacy-first voice processing
+# voice.py - Privacy-first voice processing
 async def transcribe_voice(audio_stream):
-    # 1. Push-to-Talk only — no always-on listening
+    # 1. Push-to-Talk only - no always-on listening
     raw_bytes = io.BytesIO()           # In-memory buffer, NOT a file
     raw_bytes.write(audio_stream)
     
@@ -960,11 +960,11 @@ async def transcribe_voice(audio_stream):
     return text
 ```
 
-**Why this matters**: In a refinery, voice conversations might contain sensitive operational data. The zero-surveillance invariant ensures no audio recordings exist after transcription — eliminating any surveillance risk.
+**Why this matters**: In a refinery, voice conversations might contain sensitive operational data. The zero-surveillance invariant ensures no audio recordings exist after transcription - eliminating any surveillance risk.
 
 ---
 
-## 16. Industrial File Compilers — From Data to Engineering Deliverables
+## 16. Industrial File Compilers - From Data to Engineering Deliverables
 
 ### What Makes Aquanex Different from ChatGPT?
 
@@ -981,7 +981,7 @@ ChatGPT outputs text. Aquanex outputs **physical engineering files** that can be
 | `.csv` | `csv` (stdlib) | NDT thickness survey data for spreadsheet analysis |
 
 **Every file gets:**
-1. A **statutory watermark**: "AI-GENERATED DRAFT — STATUTORY HUMAN REVIEW REQUIRED"
+1. A **statutory watermark**: "AI-GENERATED DRAFT - STATUTORY HUMAN REVIEW REQUIRED"
 2. A **SHA-256 checksum** recorded in the audit manifest
 3. Storage in `data/staging/` for download
 
@@ -991,7 +991,7 @@ ChatGPT outputs text. Aquanex outputs **physical engineering files** that can be
 
 ---
 
-## 17. Air-Gap Network Security — Kernel-Level Enforcement
+## 17. Air-Gap Network Security - Kernel-Level Enforcement
 
 ### What is an Air Gap?
 
@@ -1002,7 +1002,7 @@ An air gap is a **physical separation** between a secure network and any externa
 The Network Isolation Watchdog reads the Linux kernel's routing table directly:
 
 ```python
-# Pseudocode — Air-gap watchdog
+# Pseudocode - Air-gap watchdog
 def check_airgap():
     with open("/proc/net/route") as f:
         for line in f:
@@ -1015,9 +1015,9 @@ def check_airgap():
 ```
 
 **Why `/proc/net/route`?**
-- It's a **kernel interface** — reflects the actual routing table, not firewall rules (which can be misconfigured)
-- Requires **no root privileges** — unlike configuring iptables
-- **Reactive detection** — doesn't try to prevent connections (which can be circumvented) but detects them and **halts all processing**
+- It's a **kernel interface** - reflects the actual routing table, not firewall rules (which can be misconfigured)
+- Requires **no root privileges** - unlike configuring iptables
+- **Reactive detection** - doesn't try to prevent connections (which can be circumvented) but detects them and **halts all processing**
 
 **Lockdown sequence:**
 1. All API endpoints return HTTP 403
@@ -1028,7 +1028,7 @@ def check_airgap():
 
 ---
 
-## 18. End-to-End Data Flow — Putting It All Together
+## 18. End-to-End Data Flow - Putting It All Together
 
 Here's the complete journey from user prompt to engineering deliverable:
 
@@ -1043,39 +1043,39 @@ STEP 2: FASTAPI GATEWAY (Port 8000)
 ├── Air-gap check: /proc/net/route → no WAN routes → PASS
 └── Request forwarded to LangGraph engine
 
-STEP 3: LANGGRAPH NODE 1 — ROUTER
+STEP 3: LANGGRAPH NODE 1 - ROUTER
 ├── Keyword analysis: "audit", "CDU", "API 570" → VISION_AUDIT
 ├── File analysis: .png upload detected → vision model needed
 ├── Model selection: Qwen2-VL-72B (enterprise tier)
 └── State update: task_type = "VISION_AUDIT"
 
-STEP 4: LANGGRAPH NODE 2 — VISION EXTRACTION
+STEP 4: LANGGRAPH NODE 2 - VISION EXTRACTION
 ├── Qwen2-VL processes P&ID drawing → extracts line_tag, thicknesses
 ├── Regex parsing extracts user-specified parameters from prompt
 ├── Pydantic validation → PipeInspectionData entity
 └── SSE thought: "Extracted line tag CDU-2-04-150-A1A (4.8mm nominal)"
 
-STEP 5: LANGGRAPH NODE 3 — RAG RETRIEVAL
+STEP 5: LANGGRAPH NODE 3 - RAG RETRIEVAL
 ├── ChromaDB query: "API 570 corrosion remaining life"
 ├── ABAC filter: senior/CONFIDENTIAL → retrieves API 570, ASME B31.3, OISD-118
-│   (RESTRICTED board audit excluded? No — senior has CONFIDENTIAL clearance)
+│   (RESTRICTED board audit excluded? No - senior has CONFIDENTIAL clearance)
 ├── Top-5 chunks ranked by relevance
 └── Context injected into state
 
-STEP 6: LANGGRAPH NODE 4 — MATH GENERATION (PAL)
+STEP 6: LANGGRAPH NODE 4 - MATH GENERATION (PAL)
 ├── Qwen2.5-Coder generates standalone Python script
 ├── Script implements: CR = (t_nom - t_act) / years
 │                      t_min = (P×D) / (2×(S×E + P×Y))
 │                      RL = (t_act - t_min) / CR
 └── Script prints JSON result to stdout
 
-STEP 7: LANGGRAPH NODE 5 — SANDBOX EXECUTION
+STEP 7: LANGGRAPH NODE 5 - SANDBOX EXECUTION
 ├── Code → Bubblewrap container (no network, 256MB RAM, 5s timeout)
 ├── Python executes → stdout: {"remaining_life_years": 3.14, ...}
 ├── Exit code 0 → SUCCESS
 └── If exit ≠ 0 → Node 6 (distill error) → retry loop back to Node 4
 
-STEP 8: LANGGRAPH NODE 7 — COMPILE DELIVERABLES
+STEP 8: LANGGRAPH NODE 7 - COMPILE DELIVERABLES
 ├── DOCX: Executive approval note with MRPL letterhead + watermark
 ├── XLSX: Cost matrix with pipe procurement + labor + contingency
 ├── DXF: AutoCAD piping spool replacement drawing
@@ -1086,7 +1086,7 @@ STEP 8: LANGGRAPH NODE 7 — COMPILE DELIVERABLES
 ├── SHA-256 checksums computed for all files
 └── All files saved to data/staging/
 
-STEP 9: LANGGRAPH NODE 8 — AUDIT LEDGER
+STEP 9: LANGGRAPH NODE 8 - AUDIT LEDGER
 ├── Block #N appended to mrpl_audit.db
 ├── prev_hash = SHA-256 of Block #(N-1)
 ├── payload = prompt hash + output hash + model ID + timestamp + operator
@@ -1111,7 +1111,7 @@ A: A neural network architecture that processes all input tokens simultaneously 
 A: A mechanism where each token computes relevance scores against all other tokens: `Attention(Q,K,V) = softmax(QK^T/√d)×V`. This lets the model focus on the most relevant parts of the input.
 
 **Q: "What is RAG?"**
-A: Retrieval-Augmented Generation — retrieve relevant documents from a vector database, inject them into the LLM's prompt as context, then generate a grounded answer. Reduces hallucination.
+A: Retrieval-Augmented Generation - retrieve relevant documents from a vector database, inject them into the LLM's prompt as context, then generate a grounded answer. Reduces hallucination.
 
 **Q: "What is an embedding?"**
 A: A dense numerical vector representing text in high-dimensional space. Similar texts have similar vectors (close in cosine similarity). Used for semantic search in vector databases.
@@ -1120,7 +1120,7 @@ A: A dense numerical vector representing text in high-dimensional space. Similar
 A: A framework for building stateful, multi-step AI agent workflows as directed graphs with support for cycles. Unlike LangChain chains (linear), LangGraph enables retry loops and conditional branching.
 
 **Q: "What is PAL?"**
-A: Program-Aided Language — the LLM writes code to solve math problems instead of computing answers in its attention layers. Ensures deterministic, verifiable results.
+A: Program-Aided Language - the LLM writes code to solve math problems instead of computing answers in its attention layers. Ensures deterministic, verifiable results.
 
 **Q: "What is HMAC-SHA256?"**
 A: A keyed hash function that proves both message authenticity (created by secret key holder) and integrity (message wasn't modified). Used for approval tokens.
@@ -1132,10 +1132,10 @@ A: An unprivileged Linux sandboxing tool using kernel namespaces. Isolates netwo
 A: Reducing model weight precision (32-bit → 4-bit) to fit large models on smaller hardware. Q4_K_M fits a 70B model in ~40GB instead of 280GB.
 
 **Q: "What is ABAC?"**
-A: Attribute-Based Access Control — access decisions based on attributes of the data (classification level, department) and the user (role, clearance). More granular than role-based RBAC.
+A: Attribute-Based Access Control - access decisions based on attributes of the data (classification level, department) and the user (role, clearance). More granular than role-based RBAC.
 
 **Q: "What is an air gap?"**
-A: Physical network isolation — no cable, WiFi, or cellular connects the secure network to the internet. Aquanex enforces this in software by monitoring `/proc/net/route` for default gateways.
+A: Physical network isolation - no cable, WiFi, or cellular connects the secure network to the internet. Aquanex enforces this in software by monitoring `/proc/net/route` for default gateways.
 
 **Q: "Why not use Docker?"**
 A: Docker needs root daemon (attack surface), registry pulls (impossible in air-gap), and ~200MB per image. Bwrap is a single binary with zero overhead.
@@ -1147,19 +1147,19 @@ A: Sandbox error → `distill_error_node` extracts root cause → loops back to 
 A: They require API calls to `api.openai.com`, violating the zero-egress air-gap. We use `bge-small-en-v1.5` locally on CPU.
 
 **Q: "What is SSE?"**
-A: Server-Sent Events — unidirectional server-to-client streaming over HTTP. Used to push real-time "thought stream" updates as LangGraph progresses through nodes.
+A: Server-Sent Events - unidirectional server-to-client streaming over HTTP. Used to push real-time "thought stream" updates as LangGraph progresses through nodes.
 
 **Q: "Why Pydantic?"**
-A: Type-safe data validation. `PipeInspectionData`, `SandboxResult`, and `ActionApprovalRequest` are Pydantic models — invalid data raises `ValidationError` before reaching business logic.
+A: Type-safe data validation. `PipeInspectionData`, `SandboxResult`, and `ActionApprovalRequest` are Pydantic models - invalid data raises `ValidationError` before reaching business logic.
 
 **Q: "What is the statutory watermark?"**
-A: "AI-GENERATED DRAFT — STATUTORY HUMAN REVIEW REQUIRED" — embedded in all DOCX/PDF files. Prevents AI outputs from being mistaken for certified engineering documents.
+A: "AI-GENERATED DRAFT - STATUTORY HUMAN REVIEW REQUIRED" - embedded in all DOCX/PDF files. Prevents AI outputs from being mistaken for certified engineering documents.
 
 **Q: "Can it run without GPU?"**
 A: Yes. 8B models run on CPU (AVX-512) via Ollama/llama.cpp at ~10-20 tokens/sec. Slower but functional for field inspections.
 
 **Q: "How do you prevent prompt injection in RAG?"**
-A: Pre-retrieval ABAC. Unauthorized chunks are filtered at the database level — they never enter the model's context. Even if a RESTRICTED document contains a prompt injection payload, a Junior user's query never retrieves it.
+A: Pre-retrieval ABAC. Unauthorized chunks are filtered at the database level - they never enter the model's context. Even if a RESTRICTED document contains a prompt injection payload, a Junior user's query never retrieves it.
 
 **Q: "Why is the audit chain not a real blockchain?"**
 A: A blockchain requires network consensus between peers. In an air-gapped single-workstation deployment, there are no peers. SHA-256 hash chains in SQLite provide equivalent tamper-evidence for a single-authority system.
@@ -1167,4 +1167,4 @@ A: A blockchain requires network consensus between peers. In an air-gapped singl
 ---
 
 > **End of Learning Guide**  
-> *Aquanex Sovereign AI Workbench — Understand the Tech, Apply the Tech, Ship the Tech.*
+> *Aquanex Sovereign AI Workbench - Understand the Tech, Apply the Tech, Ship the Tech.*

@@ -1,4 +1,4 @@
-# SIH 2026 — Problem Statement 117 (SIH26117)
+# SIH 2026 - Problem Statement 117 (SIH26117)
 ## Sovereign On-Premise Agentic AI Workbench using Open-Weight Multimodal LLMs for Confidential Industrial Work
 
 ---
@@ -207,7 +207,7 @@ To ensure a maximum scoring impact during the SIH presentation, the demo follows
     - Generates **`CDU2_Cost_Estimate.xlsx`** with automated Capex/Opex replacement costing formulas.
     - User clicks "Download Deliverable" and opens both files locally in LibreOffice/Word.
 
-* **Step 4: The Showstopper — The Sovereign Air-Gap Proof**
+* **Step 4: The Showstopper - The Sovereign Air-Gap Proof**
   - **Action:** Presenter directs judges' attention to the live Network Telemetry Gauge.
   - **System Behavior:**
     - Shows that throughout the entire multi-modal parsing, reasoning, code execution, and document synthesis, **0 external packets** left the machine.

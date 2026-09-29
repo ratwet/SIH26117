@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =====================================================================
-# Aquanex — Desktop Entry Installer (scripts/install_desktop_entry.sh)
+# Aquanex - Desktop Entry Installer (scripts/install_desktop_entry.sh)
 # Registers Aquanex in Linux GNOME/KDE Application Drawer & Launcher
 # =====================================================================
 

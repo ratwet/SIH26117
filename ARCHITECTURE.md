@@ -1,4 +1,4 @@
-# 🛡️ Aquanex (SovereignWorkbench) — Technical Architecture Specification
+# 🛡️ Aquanex (SovereignWorkbench) - Technical Architecture Specification
 > **Document Reference:** `AQUANEX-ARCH-2026-V1`  
 > **System Classification:** Mission-Critical Industrial AI Workbench (Air-Gapped Sovereign Compute)  
 > **Target Environment:** Mangalore Refinery and Petrochemicals Limited (MRPL) / Public Sector Undertakings (PSUs)  
@@ -763,4 +763,4 @@ pytest backend/tests/ -v
 ```
 
 ---
-*End of Technical Architecture Specification — Mangalore Refinery and Petrochemicals Limited (MRPL / SIH26117)*
+*End of Technical Architecture Specification - Mangalore Refinery and Petrochemicals Limited (MRPL / SIH26117)*

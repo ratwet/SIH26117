@@ -1,4 +1,4 @@
-# 🏆 SovereignWorkbench — Master Presentation & Technical Dossier
+# 🏆 SovereignWorkbench - Master Presentation & Technical Dossier
 ## Complete End-to-End Blueprint for SIH 2026 Presentation, Slide Deck & Judge Defense
 **Problem Statement ID:** PS 117 (SIH26117)  
 **Problem Statement Title:** Sovereign On-Premise Agentic AI Workbench using Open-Weight Multimodal LLMs for Confidential Industrial Work  
@@ -17,7 +17,7 @@
 2. [The 10-Slide Winning Presentation Deck](#2-the-10-slide-winning-presentation-deck)
    - [Slide 1: Title & Identity](#slide-1-title--identity)
    - [Slide 2: The Industrial Pain Point & Cloud Dilemma](#slide-2-the-industrial-pain-point--the-cloud-dilemma)
-   - [Slide 3: Our Solution — SovereignWorkbench](#slide-3-our-solution--sovereignworkbench)
+   - [Slide 3: Our Solution - SovereignWorkbench](#slide-3-our-solution--sovereignworkbench)
    - [Slide 4: Physical 3-Node Offline LAN Architecture](#slide-4-physical-3-node-offline-lan-architecture)
    - [Slide 5: The Agentic Brain (LangGraph State Machine)](#slide-5-the-agentic-brain-langgraph-state-machine)
    - [Slide 6: Zero-Hallucination Sandbox Execution](#slide-6-zero-hallucination-sandbox-execution)
@@ -35,7 +35,7 @@
 
 ### 💡 The 30-Second Elevator Pitch
 > *"Public cloud AI tools like ChatGPT or Claude are strictly prohibited in petroleum refineries because uploading a single Piping & Instrumentation Diagram (P&ID) or crude column inspection scan violates national cybersecurity norms and OISD regulations.*  
-> *SovereignWorkbench is an on-premise, 100% air-gapped agentic AI workbench. Deployed across three physical Ubuntu machines on an offline Ethernet switch with zero default gateway, it extracts engineering parameters from scanned blueprints, executes safety-critical math inside an unprivileged Linux namespace sandbox (`bwrap`), autonomously self-heals calculation errors, and compiles publication-ready Word Approval Notes with MRPL letterheads and Excel financial workbooks with live formulas — all with verifiable cryptographic proof of zero outbound network bytes."*
+> *SovereignWorkbench is an on-premise, 100% air-gapped agentic AI workbench. Deployed across three physical Ubuntu machines on an offline Ethernet switch with zero default gateway, it extracts engineering parameters from scanned blueprints, executes safety-critical math inside an unprivileged Linux namespace sandbox (`bwrap`), autonomously self-heals calculation errors, and compiles publication-ready Word Approval Notes with MRPL letterheads and Excel financial workbooks with live formulas - all with verifiable cryptographic proof of zero outbound network bytes."*
 
 ### 🚗 The Fundamental Engineering Analogy
 > **"An open-weight model is merely an engine lying on the garage floor. SovereignWorkbench is the complete operating vehicle."**  
@@ -70,7 +70,7 @@
 
 ---
 
-### Slide 3: Our Solution — SovereignWorkbench
+### Slide 3: Our Solution - SovereignWorkbench
 * **Slide Headline:** SovereignWorkbench: The Complete Air-Gapped Industrial Vehicle
 * **Four Core Pillars:**
   1. **100% On-Premise Air-Gap:** Zero external network calls. Verified at the Linux kernel level (`routes: []`, no default gateway).
@@ -159,12 +159,12 @@ graph TD
 ### Slide 7: Tangible Enterprise Deliverables (.docx & .xlsx)
 * **Slide Headline:** Publication-Ready Artifact Generation
 * **What Engineers Receive Immediately:**
-  1. **Executive Approval Note (`.docx` — 38 KB):**
+  1. **Executive Approval Note (`.docx` - 38 KB):**
      * Formatted with official MRPL corporate navy letterhead.
      * Technical equipment summary table (Line Tag: `CDU-2-04-150-A1A`, ASTM A106 Grade B).
      * Exact step-by-step mathematical derivation per ASME B31.3.
      * Formal signatory blocks for Chief Inspection Engineer & General Manager (Maintenance).
-  2. **Financial Cost Estimate Workbook (`.xlsx` — 6 KB):**
+  2. **Financial Cost Estimate Workbook (`.xlsx` - 6 KB):**
      * Itemized procurement matrix (Seamless carbon steel pipe, flanges, weld inspections).
      * **Live Excel Formulas** (e.g., `=C6*E6` for totals, `=SUM(F6:F7)` for subtotal, `=F8*0.10` for contingency).
      * Grand Total Budget: **₹1,154,400 INR**.
@@ -243,7 +243,7 @@ Here is the exact speech script and action checklist to follow during the live p
 ### ⏱️ Minute 4:15 – 5:00 | The "WOW" Moment #2: The Live Kill Switch
 * **Speaker Action:** Pull out your phone and toggle ON your 4G mobile hotspot.
 * **Speaker Script:**
-  > *"Finally, judges, how do we prove 100% air-gap sovereignty? Look at Laptop 2 showing our live kernel packet telemetry — 0 outbound WAN bytes.  
+  > *"Finally, judges, how do we prove 100% air-gap sovereignty? Look at Laptop 2 showing our live kernel packet telemetry - 0 outbound WAN bytes.  
   > Now, watch this: what if an employee connects a rogue Wi-Fi dongle? I just turned on my phone's hotspot.  
   > Within two seconds... BOOM. Look at the screen. The entire application locks down with a Red Security Alert. All inference is frozen, and an immutable SHA-256 block is logged in our cryptographic ledger. When the hotspot is turned off, operational status is restored.  
   > This is SovereignWorkbench: 100% sovereign, zero hallucinations, enterprise-ready for MRPL. Thank you."*
@@ -312,4 +312,4 @@ Here is the exact speech script and action checklist to follow during the live p
 
 ---
 
-*Document compiled and verified for Smart India Hackathon (SIH 2026) — PS 117 (MRPL / MoPNG).*
+*Document compiled and verified for Smart India Hackathon (SIH 2026) - PS 117 (MRPL / MoPNG).*

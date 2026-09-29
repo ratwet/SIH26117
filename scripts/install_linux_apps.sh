@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =====================================================================
-# Aquanex — Universal Linux Desktop Integrator (scripts/install_linux_apps.sh)
+# Aquanex - Universal Linux Desktop Integrator (scripts/install_linux_apps.sh)
 # Installs Native Desktop Launchers for All 3 Levels:
 #   1. Aquanex Admin (Level 1 - IT Systems Administrator)
 #   2. Aquanex Senior (Level 2 - Senior Reliability Lead)
@@ -66,7 +66,7 @@ EOF
 install_entry "aquanex-admin.desktop" \
   "Aquanex Admin" \
   "IT Systems & Model Governance (Level 1)" \
-  "Aquanex Sovereign AI — IT Systems Administrator & Model Gatekeeper" \
+  "Aquanex Sovereign AI - IT Systems Administrator & Model Gatekeeper" \
   "launch_admin.sh" \
   "aquanex-admin" \
   "System;Development;Engineering;"
@@ -74,7 +74,7 @@ install_entry "aquanex-admin.desktop" \
 install_entry "aquanex-senior.desktop" \
   "Aquanex Senior" \
   "Reliability Engineering Lead (Level 2)" \
-  "Aquanex Sovereign AI — Senior Reliability Lead with Model Switcher" \
+  "Aquanex Sovereign AI - Senior Reliability Lead with Model Switcher" \
   "launch_senior.sh" \
   "aquanex-senior" \
   "Development;Engineering;"
@@ -82,7 +82,7 @@ install_entry "aquanex-senior.desktop" \
 install_entry "aquanex-field.desktop" \
   "Aquanex Field" \
   "Ultrasonic Inspection Operator (Level 3)" \
-  "Aquanex Sovereign AI — Pre-configured Field Inspection Operator" \
+  "Aquanex Sovereign AI - Pre-configured Field Inspection Operator" \
   "launch_junior.sh" \
   "aquanex-field" \
   "Development;Engineering;"

@@ -186,23 +186,23 @@ SIH/
 
 ## 7. Architecture Decision Records (ADR Log)
 
-* **ADR-001 — Core System Architecture & Inference Stack:**  
+* **ADR-001 - Core System Architecture & Inference Stack:**  
   Use Ollama for local LLM serving on `127.0.0.1`, FastAPI for REST/SSE proxy gateway on port `8000`, LangGraph for multi-step agent state machines, and Linux Bubblewrap (`bwrap`) for sub-5ms unprivileged namespace code execution.
-* **ADR-002 — Dynamic Model Routing Architecture:**  
+* **ADR-002 - Dynamic Model Routing Architecture:**  
   Heuristic and intent-driven router distributing requests across Coder (`Qwen-2.5-Coder-7B`), Vision (`Qwen2-VL-7B`), and General Reasoning (`DeepSeek-R1-8B`) models with dynamic VRAM offloading (`keep_alive: 0`).
-* **ADR-003 — Target Industrial Demonstration Scenarios:**  
+* **ADR-003 - Target Industrial Demonstration Scenarios:**  
   Focus on Piping Inspection Processing (CDU-2 Crude Unit), Sandboxed Calculation (API 570 remaining life), P&ID Diagram Parsing, and SOP RAG Search.
-* **ADR-004 — MVP Scope Locking (MoSCoW):**  
+* **ADR-004 - MVP Scope Locking (MoSCoW):**  
   Freeze core MVP features to Must-Have functional requirements for the hackathon sprint.
-* **ADR-005 — Modular Monorepo Hierarchy:**  
+* **ADR-005 - Modular Monorepo Hierarchy:**  
   Standardize on production `backend/app/` package architecture separating graph state machines, sandboxed tools, document compilers, and security monitors.
-* **ADR-006 — Physical 3-Node Offline LAN Architecture:**  
+* **ADR-006 - Physical 3-Node Offline LAN Architecture:**  
   Deploy across three physical Ubuntu laptops connected via an offline Ethernet switch (Server `192.168.1.100`, Admin `192.168.1.101`, User `192.168.1.102`).
-* **ADR-007 — Isolated Proxy Gateway & Zero-Gateway Netplan:**  
+* **ADR-007 - Isolated Proxy Gateway & Zero-Gateway Netplan:**  
   Bind inference to loopback (`127.0.0.1`) on Server, proxy via FastAPI gateway on `192.168.1.100:8000`, and strip default routes in Ubuntu Netplan (`routes: []`).
-* **ADR-008 — CPU-Offloaded Embeddings for VRAM Conservation:**  
+* **ADR-008 - CPU-Offloaded Embeddings for VRAM Conservation:**  
   Run local RAG embeddings via FastEmbed ONNX (`BAAI/bge-small-en-v1.5`) exclusively on the CPU (0 MB GPU VRAM) to leave 100% of GPU memory available for LLM inference on consumer gaming hardware.
-* **ADR-009 — Cyclic Self-Healing Error Loop:**  
+* **ADR-009 - Cyclic Self-Healing Error Loop:**  
   Intercept sandbox execution failures, distill Python `stderr` down to offending lines via `error_parser.py`, and automatically cycle back to the reasoning model with a 3-attempt circuit breaker before human escalation.
-* **ADR-010 — Aquanex Air-Gapped Desktop Architecture (Tauri v2 + Vite + Zero-CDN CSS):**  
+* **ADR-010 - Aquanex Air-Gapped Desktop Architecture (Tauri v2 + Vite + Zero-CDN CSS):**  
   Package the chemical engineer workbench via Tauri v2 and modern ES Modules with strictly 0 external CDN calls. Embed a dual-mode communication engine in `api.js` allowing instant offline simulation while consuming live Server-Sent Events from `POST /api/chat`, `POST /api/files/upload`, and `GET /api/telemetry/network/stream`. Include multi-OS build matrix via GitHub Actions (`build-desktop.yml`).

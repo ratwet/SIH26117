@@ -166,9 +166,9 @@ function updateGreeting(user = null) {
 
   if (greetingSubtitle) {
     if (role === 'senior') {
-      greetingSubtitle.textContent = "Senior Reliability Lead — Autonomous Pipeline & Refinery Analytics";
+      greetingSubtitle.textContent = "Senior Reliability Lead - Autonomous Pipeline & Refinery Analytics";
     } else if (role === 'junior') {
-      greetingSubtitle.textContent = "Field Inspection Technician — Ruggedized Edge Terminal (Pre-configured)";
+      greetingSubtitle.textContent = "Field Inspection Technician - Ruggedized Edge Terminal (Pre-configured)";
     } else {
       greetingSubtitle.textContent = "Sovereign Engineering Interface";
     }
@@ -883,7 +883,7 @@ function setupEventListeners() {
             updateSendButtonState();
           }
         } finally {
-          if (btnVoiceInput) btnVoiceInput.title = "Push to Talk (Local Voice Sentinel — Zero Cloud)";
+          if (btnVoiceInput) btnVoiceInput.title = "Push to Talk (Local Voice Sentinel - Zero Cloud)";
         }
       };
 
@@ -1907,7 +1907,7 @@ function applyUserPermissions(user) {
     if (standaloneAppIcon) standaloneAppIcon.textContent = '👑';
     if (standaloneAppName) standaloneAppName.textContent = 'Aquanex Sovereign Admin';
     if (standaloneAppSub) standaloneAppSub.textContent = 'Cluster Control & Model Governance';
-    document.title = 'Aquanex Admin — Sovereign Cluster Control Center';
+    document.title = 'Aquanex Admin - Sovereign Cluster Control Center';
 
     if (engineerSidebarSection) engineerSidebarSection.style.display = 'none';
     if (adminSidebarSection) adminSidebarSection.style.display = 'flex';
@@ -1931,7 +1931,7 @@ function applyUserPermissions(user) {
     if (standaloneAppIcon) standaloneAppIcon.textContent = '👷';
     if (standaloneAppName) standaloneAppName.textContent = 'Aquanex Field Engineer';
     if (standaloneAppSub) standaloneAppSub.textContent = 'Ultrasonic Inspection Assistant (Edge-8B)';
-    document.title = 'Aquanex Field — Ultrasonic Inspection Assistant';
+    document.title = 'Aquanex Field - Ultrasonic Inspection Assistant';
 
     if (engineerSidebarSection) engineerSidebarSection.style.display = 'block';
     if (adminSidebarSection) adminSidebarSection.style.display = 'none';
@@ -1964,7 +1964,7 @@ function applyUserPermissions(user) {
     if (standaloneAppIcon) standaloneAppIcon.textContent = '📐';
     if (standaloneAppName) standaloneAppName.textContent = 'Aquanex Senior Lead';
     if (standaloneAppSub) standaloneAppSub.textContent = 'Reliability Engineering & Formula Modeling';
-    document.title = 'Aquanex Senior — Reliability Engineering Lead';
+    document.title = 'Aquanex Senior - Reliability Engineering Lead';
 
     if (engineerSidebarSection) engineerSidebarSection.style.display = 'block';
     if (adminSidebarSection) adminSidebarSection.style.display = 'none';
@@ -2199,7 +2199,7 @@ function setupManageAccessHandlers() {
       const userRole = btn.dataset.userRole || '';
 
       if (manageAccessModalTitle) {
-        manageAccessModalTitle.textContent = `Manage Model Access — ${userName}`;
+        manageAccessModalTitle.textContent = `Manage Model Access - ${userName}`;
       }
       if (manageAccessModalSub) {
         manageAccessModalSub.textContent = `Configure execution permissions for ${userName} (${userRole})`;
@@ -2315,7 +2315,7 @@ async function loadAuditLedger() {
     if (modalAuditTableBody) {
       modalAuditTableBody.innerHTML = '';
       if (events.length === 0) {
-        modalAuditTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:16px;">Genesis State — No events recorded.</td></tr>`;
+        modalAuditTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:16px;">Genesis State - No events recorded.</td></tr>`;
       } else {
         events.forEach((ev, idx) => {
           const tr = document.createElement('tr');
@@ -2339,7 +2339,7 @@ async function loadAuditLedger() {
     if (dashAuditTableBody) {
       dashAuditTableBody.innerHTML = '';
       if (events.length === 0) {
-        dashAuditTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:20px;">Genesis State — Ledger initialized and ready.</td></tr>`;
+        dashAuditTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:20px;">Genesis State - Ledger initialized and ready.</td></tr>`;
       } else {
         events.forEach((ev, idx) => {
           const tr = document.createElement('tr');

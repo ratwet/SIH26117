@@ -1,9 +1,9 @@
-# 🛡️ Aquanex (SovereignWorkbench) — Team Collaboration & Context Guide
+# 🛡️ Aquanex (SovereignWorkbench) - Team Collaboration & Context Guide
 > **Smart India Hackathon (SIH) 2026 | Problem Statement 117 (SIH26117)**  
 > **Client / Organization:** Mangalore Refinery and Petrochemicals Limited (MRPL) / MoPNG  
 > **Project Name:** `Aquanex` (SovereignWorkbench)  
 > **Repository Root:** `/home/cyanide/SIH/`  
-> **Status:** Backend Engine Fully Implemented, Integrated & Verified (40/40 Tests Passing) — Production Delivery Ready  
+> **Status:** Backend Engine Fully Implemented, Integrated & Verified (40/40 Tests Passing) - Production Delivery Ready  
 
 ---
 
@@ -24,7 +24,7 @@ We are building a **100% on-premise, air-gapped Agentic AI Workbench** running e
 1. **Parses complex industrial documents** (scanned ultrasonic inspection PDFs and P&ID engineering drawings).
 2. **Never does mental math:** Translates engineering formulas (API 570 / ASME) into Python scripts and executes them inside an isolated, non-networked Linux sandbox (`bwrap`).
 3. **Features a Self-Healing Recovery Loop:** If a script crashes (e.g., divide-by-zero, missing parameter), the system captures `stderr`, distills the root cause, and auto-corrects the code in up to 3 autonomous retries.
-4. **Compiles Real Deliverables:** Outputs corporate `.docx` approval notes with letterhead/formulas and formatted `.xlsx` cost matrices—not just raw chat text.
+4. **Compiles Real Deliverables:** Outputs corporate `.docx` approval notes with letterhead/formulas and formatted `.xlsx` cost matrices-not just raw chat text.
 5. **Enforces a Hardware-Level Air-Gap Kill Switch:** Actively sniffs network routes; if anyone connects an external WAN (mobile hotspot/Wi-Fi), the app instantly locks down with a modal emergency screen.
 
 ---
@@ -139,7 +139,7 @@ This is the exact sequence we will perform in front of the evaluators:
 | **Rajat (Dev 1: LangGraph & API Lead)** | LangGraph Orchestrator & SSE Streaming | Python, FastAPI, LangGraph, SSE | • LangGraph state graph & conditional edges<br>• Intent routing & self-healing loop<br>• Streaming chat API (`/api/chat`) |
 | **Anand (Dev 2: Tools & Security Lead)** | Sandboxing, Self-Healing, Deliverables & Security | Linux `bwrap`, `python-docx`, `openpyxl`, ChromaDB | • Secure Bubblewrap sandbox runner<br>• Error distillation parser<br>• Word & Excel deliverable compilers<br>• CPU Sovereign RAG & SHA-256 audit |
 | **Kaushal (Dev 3: Model & GPU Lead)** | Ollama GPU Server, GGUF Models & VRAM | Ollama API, GGUF Quantization, NVIDIA CUDA | • Local Ollama daemon configuration<br>• Model weight ingestion & quantization<br>• Sequential VRAM offloader (`keep_alive: 0`)<br>• Async `call_llm` model gateway |
-| **Naveen (Dev 4 — Frontend & Desktop Lead)** | Aquanex Air-Gapped UI & Cross-Platform Desktop | Tauri v2 (Rust), Vite 6, Modern ES Modules, Vanilla CSS | • Aquanex refinery dark workspace (`frontend/`)<br>• Zero-CDN air-gapped architecture<br>• Native desktop client (Windows, Linux, macOS)<br>• Multi-OS GitHub Actions workflow (`build-desktop.yml`) |
+| **Naveen (Dev 4 - Frontend & Desktop Lead)** | Aquanex Air-Gapped UI & Cross-Platform Desktop | Tauri v2 (Rust), Vite 6, Modern ES Modules, Vanilla CSS | • Aquanex refinery dark workspace (`frontend/`)<br>• Zero-CDN air-gapped architecture<br>• Native desktop client (Windows, Linux, macOS)<br>• Multi-OS GitHub Actions workflow (`build-desktop.yml`) |
 | **QA, Pitch & Demo Lead** | Integration, Synthetic Data & Presentation | Hardware rig, PPT deck, Test scenarios | • 3-laptop network setup & hotspot routing<br>• Synthetic inspection PDFs & P&ID mockups<br>• Presentation deck & demo choreography |
 
 ---
@@ -215,16 +215,16 @@ SIH/
 ---
 
 ## 🎯 8. Team Implementation Status & Next Milestones
-1. **Rajat (Dev 1 — Agentic Brain & Streaming API):**
+1. **Rajat (Dev 1 - Agentic Brain & Streaming API):**
    * `app/graph/state.py`, `nodes.py`, `edges.py`, `builder.py` (**COMPLETED & TESTED ✅**)
    * `app/api/chat.py` (SSE streaming & sync), `health.py`, `admin.py`, `main.py` (**COMPLETED & TESTED ✅**)
-2. **Anand (Dev 2 — Tools, Sandbox, Deliverables & Security):**
+2. **Anand (Dev 2 - Tools, Sandbox, Deliverables & Security):**
    * `app/sandbox/runner.py` (Linux `bwrap`), `error_parser.py` (**COMPLETED & MERGED ✅**)
    * `app/compilers/docx_builder.py`, `xlsx_builder.py` (**COMPLETED & MERGED ✅**)
    * `app/rag/ingest.py`, `retriever.py` (ChromaDB + CPU FastEmbed) (**COMPLETED & MERGED ✅**)
    * `app/security/audit_chain.py` (SHA-256 ledger), `network_monitor.py` (**COMPLETED & MERGED ✅**)
    * `app/api/files.py`, `app/api/telemetry.py` (**COMPLETED & MERGED ✅**)
-3. **Naveen (Dev 4 — Frontend & Desktop Lead):**
+3. **Naveen (Dev 4 - Frontend & Desktop Lead):**
    * Aquanex air-gapped UI in `frontend/` with zero CDN dependencies (**COMPLETED & MERGED ✅**)
    * Native cross-platform desktop shell in `frontend/src-tauri/` (Windows, Linux, macOS) (**COMPLETED & MERGED ✅**)
    * Dual-mode API client (`frontend/src/api.js`) consuming live SSE streams + offline simulation (**COMPLETED & MERGED ✅**)

@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — LangGraph Conditional Routing & Edges (app/graph/edges.py)
+SovereignWorkbench - LangGraph Conditional Routing & Edges (app/graph/edges.py)
 Owned by Rajat (Dev 1: Orchestration & API Lead).
 
 This file defines the conditional routing logic that steers the agent through the

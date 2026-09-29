@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — Engineering Audit Findings Verification Suite (backend/tests/test_audit_fixes.py)
+SovereignWorkbench - Engineering Audit Findings Verification Suite (backend/tests/test_audit_fixes.py)
 Validates all 14 findings from 1bug.md:
 1. Air-gap verification & kill-switch schema contract (Findings 1, 2, 14)
 2. Sandbox filesystem isolation & resource limits (Findings 3, 11)

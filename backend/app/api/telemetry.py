@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — Telemetry & Security API (app/api/telemetry.py)
+SovereignWorkbench - Telemetry & Security API (app/api/telemetry.py)
 Provides network socket monitoring endpoints and SSE streaming proving 0 WAN packets,
 plus cryptographic audit ledger verification routes.
 """

@@ -1,10 +1,10 @@
-# SovereignWorkbench (MRPL) — Developer 4 Comprehensive Engineering Report
+# SovereignWorkbench (MRPL) - Developer 4 Comprehensive Engineering Report
 ## Aquanex: Air-Gapped Industrial AI Frontend & Native Cross-Platform Desktop Client
 
 ---
 
-**Author:** Developer 4 (Frontend & Desktop Lead) — `NAVEEN12-BTYE`  
-**Project:** SovereignWorkbench (SIH 2026 PS 117 — Mangalore Refinery & Petrochemicals Limited)  
+**Author:** Developer 4 (Frontend & Desktop Lead) - `NAVEEN12-BTYE`  
+**Project:** SovereignWorkbench (SIH 2026 PS 117 - Mangalore Refinery & Petrochemicals Limited)  
 **Target Platforms:** Windows (`.exe` / `.msi`), Linux (`.AppImage` / `.deb`), macOS (`.dmg` / `.app`), Web / Edge  
 **Technology Stack:** Tauri v2, Rust 1.98+, Vite 6, Modern ES Modules, Vanilla CSS (Zero CDNs), GitHub Actions  
 **Repository Branch:** `Working`  
@@ -87,7 +87,7 @@ frontend/
     * Deliverable Shelf with download buttons for Microsoft Word (`MRPL_Approval_Note.docx`) and Excel (`Cost_Matrix.xlsx`).
     * Full-screen red Emergency Air-Gap Violation Modal.
 
-### 3.2 [`src/api.js`](frontend/src/api.js) — Resilient Streaming & Offline Mock Engine
+### 3.2 [`src/api.js`](frontend/src/api.js) - Resilient Streaming & Offline Mock Engine
 * Designed with a resilient fallback architecture:
   1. Checks if the local FastAPI backend (`http://127.0.0.1:8000/api/audit/stream`) is reachable.
   2. If reachable, consumes the real-time Server-Sent Events (SSE) stream emitted by LangGraph nodes.
@@ -100,7 +100,7 @@ frontend/
   * Step 5: Sandbox executes valid script &rarr; remaining life computed as **3.1 years**.
   * Step 6: Artifact compilation triggers &rarr; Word note and Excel cost matrix generated.
 
-### 3.3 [`src/main.js`](frontend/src/main.js) — Event Handling & Deliverable Generation
+### 3.3 [`src/main.js`](frontend/src/main.js) - Event Handling & Deliverable Generation
 * Manages progressive disclosure of the thinking stream using native DOM transitions.
 * Formats timestamps and streaming tokens with typewriter micro-pacing.
 * Generates genuine binary files on the fly using standard client-side MIME blobs (`application/vnd.openxmlformats-officedocument.wordprocessingml.document` and `spreadsheetml.sheet`) so reviewers can immediately click and open functional files in Office/LibreOffice.

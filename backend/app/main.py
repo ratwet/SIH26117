@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — Main FastAPI Application Entry Point (app/main.py)
+SovereignWorkbench - Main FastAPI Application Entry Point (app/main.py)
 Owned by Rajat (Dev 1: Orchestration & API Lead).
 
 Runs on Node 2 (GPU Server / Gaming Laptop) on an isolated local subnet.
@@ -30,7 +30,7 @@ async def lifespan(app: FastAPI):
     settings.MODELS_DIR.mkdir(parents=True, exist_ok=True)
 
     print("=" * 65)
-    print(f"🛡️  AQUANEX AGENTIC WORKBENCH — NODE 1: SERVER WORKSTATION ({settings.SERVER_NODE_IP})")
+    print(f"🛡️  AQUANEX AGENTIC WORKBENCH - NODE 1: SERVER WORKSTATION ({settings.SERVER_NODE_IP})")
     print("   Air-Gap Operational Mode: STRICT ZERO-WAN ISOLATION")
     print(f"   Listening on: http://{settings.HOST}:{settings.PORT} (LAN Target: http://{settings.SERVER_NODE_IP}:{settings.PORT})")
     print(f"   Ollama Host:  {settings.OLLAMA_HOST} (Strict Loopback Isolation)")

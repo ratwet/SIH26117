@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — AutoCAD DXF Drawing Compiler (app/compilers/cad_builder.py)
+SovereignWorkbench - AutoCAD DXF Drawing Compiler (app/compilers/cad_builder.py)
 Generates industry-standard, precision 2D CAD engineering drawings (.dxf)
 for replacement piping spools per ASME B31.3 / API 570 using ezdxf.
 Compatible with AutoCAD, SolidWorks, LibreCAD, and FreeCAD.

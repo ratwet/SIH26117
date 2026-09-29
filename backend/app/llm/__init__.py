@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — LLM Module Package
+SovereignWorkbench - LLM Module Package
 """
 
 from .engine import FoundationModelEngine, foundation_engine

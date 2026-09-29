@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — AgentState Definition.
+SovereignWorkbench - AgentState Definition.
 Owned by Rajat (Dev 1: Orchestration & API Lead).
 
 This TypedDict represents the state passed between all nodes in the LangGraph workflow.

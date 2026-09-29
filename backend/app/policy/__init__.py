@@ -1,4 +1,4 @@
-"""SovereignWorkbench — Governance & Action Policy Package."""
+"""SovereignWorkbench - Governance & Action Policy Package."""
 from .approval_tokens import (
     compute_payload_hash,
     generate_approval_token,

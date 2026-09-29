@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — Omni-Modal & 100B Model Architecture Test Suite
+SovereignWorkbench - Omni-Modal & 100B Model Architecture Test Suite
 (backend/tests/test_omni_modal_100b.py)
 """
 

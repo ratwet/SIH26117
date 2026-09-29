@@ -13,7 +13,7 @@
 ## 1. Executive Summary & Product Vision
 
 ### 1.1 Product Vision
-**SovereignWorkbench** is an enterprise-grade, 100% air-gapped, multi-tier agentic AI platform engineered specifically for oil refineries, Public Sector Undertakings (PSUs), and defence-linked manufacturing units. It empowers process engineers, plant inspectors, and technical committees to automate high-stakes knowledge work—such as technical drawing audits (P&IDs), safety compliance calculations (API 570 / ASME), and executive approval dossiers—without a single byte of confidential enterprise data leaving the physical premises.
+**SovereignWorkbench** is an enterprise-grade, 100% air-gapped, multi-tier agentic AI platform engineered specifically for oil refineries, Public Sector Undertakings (PSUs), and defence-linked manufacturing units. It empowers process engineers, plant inspectors, and technical committees to automate high-stakes knowledge work-such as technical drawing audits (P&IDs), safety compliance calculations (API 570 / ASME), and executive approval dossiers-without a single byte of confidential enterprise data leaving the physical premises.
 
 ### 1.2 Core Philosophy
 * **Zero Trust, Zero Cloud:** 100% on-premise execution with an active, kernel-enforced **Air-Gap Interlock (Kill Switch)** that freezes operations if an external internet route is detected.

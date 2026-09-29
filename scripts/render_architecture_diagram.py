@@ -41,7 +41,7 @@ svg_content = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 730" 
     <!-- Overwrite bottom rounded corners of header -->
     <rect x="20" y="35" width="980" height="14" fill="#1e3a8a"/>
     <text x="510" y="37" fill="#ffffff" font-size="12" font-weight="700" letter-spacing="0.5" text-anchor="middle">
-      AIR-GAPPED CONTROL NETWORK (192.168.1.0/24) — STRICT ZERO-EGRESS INDUSTRIAL FABRIC
+      AIR-GAPPED CONTROL NETWORK (192.168.1.0/24) - STRICT ZERO-EGRESS INDUSTRIAL FABRIC
     </text>
   </g>
 
@@ -84,7 +84,7 @@ svg_content = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 730" 
   <g id="layer-2" transform="translate(40, 162)">
     <rect x="0" y="0" width="940" height="74" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="1.5" filter="url(#card-shadow)"/>
     <text x="18" y="18" fill="#92400e" font-size="10.5" font-weight="700" letter-spacing="0.4">
-      LAYER 2: SOVEREIGN GATEWAY &amp; AIR-GAP SECURITY PERIMETER (NODE 1 — 192.168.1.100)
+      LAYER 2: SOVEREIGN GATEWAY &amp; AIR-GAP SECURITY PERIMETER (NODE 1 - 192.168.1.100)
     </text>
 
     <!-- Gateway REST -->

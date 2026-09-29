@@ -1,5 +1,5 @@
 """
-SovereignWorkbench — Developer 2 Comprehensive Verification Suite (tests/test_dev2_tools.py)
+SovereignWorkbench - Developer 2 Comprehensive Verification Suite (tests/test_dev2_tools.py)
 Tests all deterministic tools, compilers, sandbox runners, RAG, and security modules
 against the shared contract in app/schemas.py.
 """
