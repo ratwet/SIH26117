@@ -171,7 +171,7 @@ PYTHONPATH=backend python -m pytest backend/tests/ -v
 ├── backend/
 │   ├── app/
 │   │   ├── api/              # REST & SSE routers
-│   │   ├── compilers/        # Deliverable generators (PDF, DOCX, XLSX, DXF, STL…)
+│   │   ├── compilers/        # Deliverable generators (PDF, DOCX, XLSX, DXF, STL)
 │   │   ├── graph/            # LangGraph state machine & self-healing engine
 │   │   ├── llm/              # Model gateway with auto-discovery
 │   │   ├── rag/              # Sovereign RAG (FastEmbed + ChromaDB)
@@ -182,8 +182,15 @@ PYTHONPATH=backend python -m pytest backend/tests/ -v
 ├── frontend/
 │   ├── src/                  # Vite + Vanilla JS client
 │   └── src-tauri/            # Tauri v2 native wrapper
-├── deploy/                   # Linux packaging & .desktop entries
-├── docs/                     # Wiki, diagrams, specs, research
+├── docs/
+│   ├── diagrams/             # Architecture SVG diagrams
+│   ├── guides/               # Q&A defense guide
+│   ├── specs/                # Problem statement & strategy docs
+│   ├── research/             # Research analysis
+│   ├── benchmarks/           # Verification benchmarks
+│   ├── presentation/         # SIH presentation deck
+│   └── wiki/                 # Project wiki pages
+├── deploy/                   # Linux .desktop entries
 ├── scripts/                  # Deployment & networking utilities
 ├── ARCHITECTURE.md
 ├── PRD.md
