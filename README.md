@@ -200,7 +200,7 @@ PYTHONPATH=backend python -m pytest backend/tests/ -v
 | **Anand** | Deterministic Tools — Bubblewrap sandbox, deliverable compilers, RAG engine |
 | **Kaushal** | GPU & Deployment — Ollama/vLLM integration, multi-tier model configuration |
 | **Naveen** | Frontend & Desktop — UI system, persona apps, GTK desktop client, air-gap lockdown |
-| **Divij** | AI & Model Integration — Prompt engineering, LLM evaluation, agentic workflow design |
+| **Divij** | AI & Document Intelligence — Multimodal extraction, P&ID analysis, engineering formula verification |
 | **Sakshi** | Full-Stack & Desktop — Frontend components, backend API routes, native desktop packaging |
 
 ---
